@@ -25,9 +25,7 @@ func LoadConfig() (Config, error) {
 	vp.AddConfigPath("/home/ashiq/Documents/shiftSync/pkg/config/")
 
 	if err := vp.ReadInConfig(); err != nil {
-
 		return Config{}, err
-
 	}
 
 	if err := vp.Unmarshal(&config); err != nil {

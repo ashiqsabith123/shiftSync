@@ -1,7 +1,10 @@
 package interfaces
 
-import "context"
+import (
+	"context"
+	"shiftsync/pkg/domain"
+)
 
 type EmployeeUseCase interface {
-	SignUp(r context.Context)
+	SignUp(r context.Context, signup domain.Employee_Signup)
 }

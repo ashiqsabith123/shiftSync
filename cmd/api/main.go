@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"shiftsync/pkg/config"
+	"shiftsync/pkg/di"
 )
 
 func main() {
-	// e := di.InitializeAPI()
-	// e.Start()
+
 	config, err := config.LoadConfig()
 
+	e := di.InitializeAPI(config)
+	e.Start()
 	fmt.Println(err, config)
 }
