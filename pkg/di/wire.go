@@ -8,6 +8,7 @@ import (
 	"shiftsync/pkg/api/handler"
 	"shiftsync/pkg/config"
 	"shiftsync/pkg/db"
+	"shiftsync/pkg/repository"
 	"shiftsync/pkg/usecases"
 
 	"github.com/google/wire"
@@ -16,6 +17,7 @@ import (
 func InitializeAPI(config config.Config) *http.ServerHTTP {
 	wire.Build(
 		db.ConnectToDatbase,
+		repository.NewEmployeeRepository,
 		usecases.NewEmployeeUseCase,
 		handler.NewEmployeeHandler,
 		http.NewHTTPServer)

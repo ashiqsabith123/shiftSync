@@ -17,6 +17,6 @@ func NewEmployeeRepository(DB *gorm.DB) repo.EmployeeRepository {
 }
 
 func (e *employeeDatabase) AddEmployee(cntxt context.Context, signup domain.Employee_Signup) error {
-	err := e.DB.Save(&signup).Error
+	err := e.DB.Create(&signup).Error
 	return err
 }

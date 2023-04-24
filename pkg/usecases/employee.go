@@ -14,8 +14,8 @@ type employeeUseCase struct {
 	employeeRepo repo.EmployeeRepository
 }
 
-func NewEmployeeUseCase() service.EmployeeUseCase {
-	return &employeeUseCase{}
+func NewEmployeeUseCase(rep repo.EmployeeRepository) service.EmployeeUseCase {
+	return &employeeUseCase{employeeRepo: rep}
 }
 
 func (u *employeeUseCase) SignUp(cntxt context.Context, signup domain.Employee_Signup) error {

@@ -6,11 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserRoutes(api *gin.RouterGroup, userHandler *handler.EmployeeHandler) {
+func UserRoutes(api *gin.RouterGroup, employeeHandler *handler.EmployeeHandler) {
 
 	// signup
 	signup := api.Group("/signup")
 	{
-		signup.GET("/", userHandler.GetSignUp)
+		signup.GET("/", employeeHandler.GetSignUp)
+		signup.POST("/", employeeHandler.PostSignup)
 	}
 }

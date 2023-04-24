@@ -9,13 +9,18 @@ package di
 import (
 	"shiftsync/pkg/api"
 	"shiftsync/pkg/api/handler"
+	"shiftsync/pkg/config"
+	"shiftsync/pkg/db"
+	"shiftsync/pkg/repository"
 	"shiftsync/pkg/usecases"
 )
 
 // Injectors from wire.go:
 
-func InitializeAPI() *http.ServerHTTP {
-	employeeUseCase := usecases.NewEmployeeUseCase()
+func InitializeAPI(config2 config.Config) *http.ServerHTTP {
+	gormDB := db.ConnectToDatbase(config2)
+	employeeRepository := repository.NewEmployeeRepository(gormDB)
+	employeeUseCase := usecases.NewEmployeeUseCase(employeeRepository)
 	employeeHandler := handler.NewEmployeeHandler(employeeUseCase)
 	serverHTTP := http.NewHTTPServer(employeeHandler)
 	return serverHTTP

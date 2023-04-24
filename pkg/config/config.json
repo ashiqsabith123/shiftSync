@@ -3,7 +3,7 @@
         "host":"localhost",
         "user":"ashiq",
         "password":"ashiq123",
-        "dbname":"",
+        "dbname":"shiftsync_db",
         "port":"5432"
     }
 }

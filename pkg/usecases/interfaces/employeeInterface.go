@@ -6,5 +6,5 @@ import (
 )
 
 type EmployeeUseCase interface {
-	SignUp(r context.Context, signup domain.Employee_Signup)
+	SignUp(r context.Context, signup domain.Employee_Signup) error
 }
