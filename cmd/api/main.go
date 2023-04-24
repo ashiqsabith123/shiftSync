@@ -7,9 +7,7 @@ import (
 )
 
 func main() {
-
 	config, err := config.LoadConfig()
-
 	e := di.InitializeAPI(config)
 	e.Start()
 	fmt.Println(err, config)
