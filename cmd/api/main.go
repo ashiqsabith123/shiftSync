@@ -1,8 +1,14 @@
 package main
 
-import "shiftsync/pkg/di"
+import (
+	"fmt"
+	"shiftsync/pkg/config"
+)
 
 func main() {
-	e := di.InitializeAPI()
-	e.Start()
+	// e := di.InitializeAPI()
+	// e.Start()
+	config, err := config.LoadConfig()
+
+	fmt.Println(err, config)
 }
