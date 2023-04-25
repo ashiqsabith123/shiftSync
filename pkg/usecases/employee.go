@@ -3,6 +3,7 @@ package usecases
 import (
 	"context"
 	"errors"
+	"fmt"
 	"shiftsync/pkg/domain"
 	repo "shiftsync/pkg/repository/interfaces"
 	service "shiftsync/pkg/usecases/interfaces"
@@ -18,7 +19,7 @@ func NewEmployeeUseCase(rep repo.EmployeeRepository) service.EmployeeUseCase {
 	return &employeeUseCase{employeeRepo: rep}
 }
 
-func (u *employeeUseCase) SignUp(cntxt context.Context, signup domain.Employee_Signup) error {
+func (u *employeeUseCase) SignUp(cntxt context.Context, signup domain.Employee) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(signup.Pass_word), 14)
 	if err != nil {
 		return errors.New("bcrypt failed:" + err.Error())
@@ -26,4 +27,22 @@ func (u *employeeUseCase) SignUp(cntxt context.Context, signup domain.Employee_S
 
 	signup.Pass_word = string(hash)
 	return u.employeeRepo.AddEmployee(cntxt, signup)
+}
+
+func (u *employeeUseCase) Login(r context.Context, login domain.Employee) (domain.Employee, error) {
+	employee, err := u.employeeRepo.FindEmployee(r, login)
+	fmt.Println(employee)
+	fmt.Println(err)
+
+	if err != nil {
+		//fmt.Println("Hello")
+		return login, errors.New(err.Error())
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(employee.Pass_word), []byte(login.Pass_word)); err != nil {
+
+		return login, errors.New("incorrect password")
+	}
+
+	return employee, nil
 }

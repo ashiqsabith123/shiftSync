@@ -14,4 +14,10 @@ func UserRoutes(api *gin.RouterGroup, employeeHandler *handler.EmployeeHandler) 
 		signup.GET("/", employeeHandler.GetSignUp)
 		signup.POST("/", employeeHandler.PostSignup)
 	}
+
+	login := api.Group("/login")
+	{
+		login.GET("/", employeeHandler.GetLogin)
+		login.POST("/", employeeHandler.PostLogin)
+	}
 }

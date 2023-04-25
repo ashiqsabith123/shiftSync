@@ -26,5 +26,5 @@ func NewHTTPServer(employeeHandler *handler.EmployeeHandler) *ServerHTTP {
 
 func (s *ServerHTTP) Start() {
 
-	s.engine.Run(":8000")
+	s.engine.Run(":8080")
 }

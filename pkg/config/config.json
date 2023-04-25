@@ -5,5 +5,9 @@
         "password":"ashiq123",
         "dbname":"shiftsync_db",
         "port":"5432"
+    },
+
+    "jwt":{
+        "secret_key":"RTyy12@q"
     }
 }

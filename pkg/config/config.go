@@ -12,8 +12,13 @@ type DBConfig struct {
 	DbPaswword string `mapstructure:"password"`
 }
 
+type JWTConfig struct {
+	Secret_key string `mapstructure:"secret_key"`
+}
+
 type Config struct {
-	Db DBConfig `mapstructure:"db"`
+	Db  DBConfig  `mapstructure:"db"`
+	JWT JWTConfig `mapstructure:"jwt"`
 }
 
 var config Config
@@ -33,4 +38,8 @@ func LoadConfig() (Config, error) {
 	}
 
 	return config, nil
+}
+
+func JwtConfig() string {
+	return config.JWT.Secret_key
 }
