@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"errors"
-	"fmt"
 	"shiftsync/pkg/domain"
 	repo "shiftsync/pkg/repository/interfaces"
 
@@ -25,12 +24,9 @@ func (e *employeeDatabase) AddEmployee(cntxt context.Context, signup domain.Empl
 
 func (e *employeeDatabase) FindEmployee(cntxt context.Context, find domain.Employee) (domain.Employee, error) {
 	var emp domain.Employee
-	//query := `select * from employees where signup_id = ? or email = ? or phone = ? or user_name = ?`
-
-	fmt.Println(find.User_name)
 
 	if err := e.DB.Where("signup_id = ? OR email = ? OR phone = ? OR user_name = ?", find.Signup_id, find.Email, find.Phone, find.User_name).First(&emp).Error; err != nil {
-		fmt.Println("problem")
+
 		return find, errors.New("no user found")
 	}
 

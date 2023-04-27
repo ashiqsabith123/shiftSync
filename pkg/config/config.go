@@ -16,9 +16,16 @@ type JWTConfig struct {
 	Secret_key string `mapstructure:"secret_key"`
 }
 
+type TwilioConfig struct {
+	Service_id  string `mapstructure:"service_id"`
+	Account_sid string `mapstructure:"accsid"`
+	Auth_token  string `mapstructure:"authtoken"`
+}
+
 type Config struct {
-	Db  DBConfig  `mapstructure:"db"`
-	JWT JWTConfig `mapstructure:"jwt"`
+	Db     DBConfig     `mapstructure:"db"`
+	JWT    JWTConfig    `mapstructure:"jwt"`
+	Twilio TwilioConfig `mapstructure:"twilio"`
 }
 
 var config Config
