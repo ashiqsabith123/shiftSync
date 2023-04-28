@@ -80,7 +80,7 @@ func ValidateTokens(signedtoken string) (jwt.StandardClaims, error) {
 		})
 
 	if err != nil || !token.Valid {
-		return jwt.StandardClaims{}, errors.New("not valid token")
+		return jwt.StandardClaims{}, errors.New("not valid tok")
 	}
 
 	if err != nil {
