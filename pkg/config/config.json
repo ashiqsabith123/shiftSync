@@ -1,15 +1,3 @@
-{
-    "db":{
-        "host":"localhost",
-        "user":"ashiq",
-        "password":"ashiq123",
-        "dbname":"shiftsync_db",
-        "port":"5432"
-    },
-
-    "jwt":{
-        "secret_key":"RTyy12@q"
-    },
 
     "twilio":{
         "service_id":"VAe1b3eed588f5720e8feaac4f107b909e",
