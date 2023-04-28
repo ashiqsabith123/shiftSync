@@ -26,7 +26,7 @@ func NewEmployeeHandler(userUseCase service.EmployeeUseCase) *EmployeeHandler {
 // -------------------Sign Up-----------------------------//
 func (u *EmployeeHandler) GetSignUp(ctxt *gin.Context) {
 
-	resp := response.SuccessResponse(200, "Welcome to signup page", domain.Employee{})
+	resp := response.SuccessResponse(200, "Welcome to signup page", request.SignUp{})
 
 	ctxt.JSON(200, resp)
 }
@@ -85,20 +85,24 @@ func (u *EmployeeHandler) VerifyOtp(ctxt *gin.Context) {
 	}
 
 	value, err := ctxt.Cookie("employee")
+	ctxt.SetCookie("employee", "", -1, "", "", false, true)
 	if err != nil {
 		resp := response.ErrorResponse(500, "unable to find details", err.Error(), nil)
 		ctxt.JSON(http.StatusInternalServerError, resp)
 		return
 	}
 
-	details, ver := auth.ValidatOtpTokens(value)
+	fmt.Println(value)
+
+	details, ver := auth.ValidateOtpTokens(value)
+	fmt.Println(details)
+	fmt.Println(ver)
+
 	if ver != nil {
 		resp := response.ErrorResponse(500, "unable to find details", err.Error(), nil)
 		ctxt.JSON(http.StatusInternalServerError, resp)
 		return
 	}
-	fmt.Println(details)
-	fmt.Println(ver)
 
 	t := verification.ValidateOtp(details.Phone, otp.Code)
 
@@ -112,7 +116,7 @@ func (u *EmployeeHandler) VerifyOtp(ctxt *gin.Context) {
 	copier.Copy(&signup, &details)
 
 	if err := u.employeeUseCase.SignUp(ctxt, signup); err != nil {
-		resp := response.ErrorResponse(400, "Invalid input", err.Error(), nil)
+		resp := response.ErrorResponse(400, "Invalid", err.Error(), nil)
 		ctxt.JSON(http.StatusBadRequest, resp)
 		return
 	} else {
@@ -159,7 +163,7 @@ func (u *EmployeeHandler) PostLogin(ctxt *gin.Context) {
 		return
 	}
 
-	token, err := auth.GenerateTokens(emp.Signup_id)
+	token, err := auth.GenerateTokens(emp.ID)
 
 	if err != nil {
 		resp := response.ErrorResponse(500, "unable to login", err.Error(), nil)
@@ -167,7 +171,41 @@ func (u *EmployeeHandler) PostLogin(ctxt *gin.Context) {
 		return
 	}
 
-	ctxt.SetCookie("user-cookie", token, 20*60, "", "", false, true)
+	ctxt.SetCookie("employee-cookie", token, 20*60, "", "", false, true)
 	resp := response.ErrorResponse(200, "succesfuly logged in", "", token)
 	ctxt.JSON(200, resp)
+}
+
+func (u *EmployeeHandler) GetForm(ctxt *gin.Context) {
+	resp := response.SuccessResponse(200, "Fill the form", request.Form{})
+	ctxt.JSON(200, resp)
+}
+
+func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
+
+	var tempForm request.Form
+
+	value, ok := ctxt.Get("employeeId")
+
+	if !ok || value == "" {
+		resp := response.ErrorResponse(500, "Value not found", "", nil)
+		ctxt.JSON(http.StatusInternalServerError, resp)
+	}
+
+	fmt.Println(value, ok)
+
+	if err := ctxt.ShouldBindJSON(&tempForm); err != nil {
+		resp := response.ErrorResponse(400, "Invalid input", err.Error(), tempForm)
+		ctxt.JSON(400, resp)
+		return
+	}
+
+	var form domain.Form
+
+	//form.Employee.ID = value.(uint)
+
+	copier.Copy(&form, &tempForm)
+
+	fmt.Println(form)
+
 }

@@ -21,6 +21,7 @@ func ConnectToDatbase(config config.Config) *gorm.DB {
 
 	db.AutoMigrate(
 		domain.Employee{},
+		domain.Form{},
 	)
 
 	fmt.Println("Connected succesfully....!")

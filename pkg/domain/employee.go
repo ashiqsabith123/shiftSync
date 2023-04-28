@@ -1,10 +1,37 @@
 package domain
 
+import (
+	"time"
+)
+
 type Employee struct {
-	Signup_id int    `json:"id"`
+	ID        uint   `json:"id" gorm:"primaryKey;unique"`
 	Full_name string `json:"fullname"`
 	Email     string `json:"email"`
 	Phone     int64  `json:"phone"`
 	User_name string `json:"username"`
 	Pass_word string `json:"password"`
+}
+
+type Form struct {
+	ID                   uint      `json:"id" gorm:"primaryKey"`
+	EmployeeID           uint      `json:"empid"`
+	Employee             Employee  `gorm:"foreignKey:EmployeeID"`
+	First_name           string    `json:"firstname"`
+	Last_name            string    `json:"lastname"`
+	Email                string    `json:"email"`
+	Gender               string    `json:"gender" gorm:"type:char(1)"`
+	Marital_status       string    `json:"maritalstatus"  gorm:"type:char(1)"`
+	Phone                int64     `json:"phone"`
+	Date_of_birth        time.Time `json:"dateofbirth"`
+	P_address            string    `json:"paddress"`
+	C_address            string    `json:"caddress"`
+	Account_no           string    `json:"accno"`
+	Ifsc_code            string    `json:"ifsccode"`
+	Name_as_per_passbokk string    `json:"nameaspass"`
+	Pan_number           string    `json:"pannumber"`
+	Adhaar_no            int64     `json:"adhaarnumber"`
+	Photo                string    `json:"photo"`
+	Status               byte      `json:"status" gorm:"type:char(1)"`
+	Correction           string    `json:"correction"`
 }

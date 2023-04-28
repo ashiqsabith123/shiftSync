@@ -25,10 +25,14 @@ func (e *employeeDatabase) AddEmployee(cntxt context.Context, signup domain.Empl
 func (e *employeeDatabase) FindEmployee(cntxt context.Context, find domain.Employee) (domain.Employee, error) {
 	var emp domain.Employee
 
-	if err := e.DB.Where("signup_id = ? OR email = ? OR phone = ? OR user_name = ?", find.Signup_id, find.Email, find.Phone, find.User_name).First(&emp).Error; err != nil {
+	if err := e.DB.Where("id= ? OR email = ? OR phone = ? OR user_name = ?", find.ID, find.Email, find.Phone, find.User_name).First(&emp).Error; err != nil {
 
 		return find, errors.New("no user found")
 	}
 
 	return emp, nil
+}
+
+func (e *employeeDatabase) AddForm(cntxt context.Context, form domain.Form) error {
+	return nil
 }

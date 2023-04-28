@@ -2,6 +2,7 @@ package routes
 
 import (
 	"shiftsync/pkg/api/handler"
+	"shiftsync/pkg/api/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,10 +17,19 @@ func UserRoutes(api *gin.RouterGroup, employeeHandler *handler.EmployeeHandler) 
 		signup.POST("/verify-otp", employeeHandler.VerifyOtp)
 	}
 
-	login := api.Group("/login")
+	signin := api.Group("/signin")
 	{
-		login.GET("/", employeeHandler.GetLogin)
-		login.POST("/", employeeHandler.PostLogin)
+		signin.GET("/", employeeHandler.GetLogin)
+		signin.POST("/", employeeHandler.PostLogin)
 
+	}
+
+	api.Use(middleware.AuthenticateUser)
+	{
+		form := api.Group("/form")
+		{
+			form.GET("/", employeeHandler.GetForm)
+			form.POST("/", employeeHandler.PostForm)
+		}
 	}
 }

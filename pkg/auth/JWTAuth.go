@@ -1,41 +1,33 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
 	"shiftsync/pkg/config"
 	"shiftsync/pkg/domain"
+	"shiftsync/pkg/helper/request"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 )
 
 var expiryTime = time.Now().Add(10 * time.Minute).Unix()
-var SECRET_KEY = config.JwtConfig()
 
-func GenerateTokens(id int) (string, error) {
+func GenerateTokens(id uint) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: expiryTime,
 		Id:        fmt.Sprint(id),
 	})
 
-	generatedTokens, err := token.SignedString([]byte(SECRET_KEY))
+	generatedTokens, err := token.SignedString([]byte(config.JwtConfig()))
 
 	return generatedTokens, err
 
 }
 
-type Values struct {
-	Full_name string `json:"fullname"`
-	Email     string `json:"email"`
-	Phone     int64  `json:"phone"`
-	User_name string `json:"username"`
-	Pass_word string `json:"password"`
-	jwt.StandardClaims
-}
-
 func GenerateTokenForOtp(val domain.Employee) (string, error) {
 
-	claims := Values{
+	claims := request.OtpCookieStruct{
 		Full_name: val.Full_name,
 		Email:     val.Email,
 		Phone:     val.Phone,
@@ -46,25 +38,74 @@ func GenerateTokenForOtp(val domain.Employee) (string, error) {
 		},
 	}
 
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(SECRET_KEY))
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(config.JwtConfig()))
 
 	return token, err
 
 }
 
-func ValidatOtpTokens(signedtoken string) (Values, error) {
+func ValidateTokens(signedtoken string) (jwt.StandardClaims, error) {
+	// token, err := jwt.ParseWithClaims(
+	// 	signedtoken, jwt.
+	// 		StandardClaims{},
+	// 	func(token *jwt.Token) (interface{}, error) {
+
+	// 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+	// 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+	// 		}
+
+	// 		return []byte(config.JwtConfig()), nil
+	// 	},
+	// )
+
+	// if err != nil || !token.Valid {
+	// 	return jwt.StandardClaims{}, errors.New("not valid token")
+	// }
+
+	// // then parse the token to claims
+	// claims, ok := token.Claims.(*jwt.StandardClaims)
+	// if !ok {
+	// 	return jwt.StandardClaims{}, errors.New("can't parse the claims")
+	// }
+
 	token, err := jwt.ParseWithClaims(
-		signedtoken, &Values{},
+		signedtoken, &jwt.StandardClaims{},
 		func(token *jwt.Token) (interface{}, error) {
-			return []byte(SECRET_KEY), nil
+
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+
+			return []byte(config.JwtConfig()), nil
+		})
+
+	if err != nil || !token.Valid {
+		return jwt.StandardClaims{}, errors.New("not valid token")
+	}
+
+	if err != nil {
+
+		return jwt.StandardClaims{}, err
+	}
+
+	claim, _ := token.Claims.(*jwt.StandardClaims)
+
+	return *claim, nil
+}
+
+func ValidateOtpTokens(signedtoken string) (request.OtpCookieStruct, error) {
+	token, err := jwt.ParseWithClaims(
+		signedtoken, &request.OtpCookieStruct{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(config.JwtConfig()), nil
 		})
 
 	if err != nil {
 
-		return Values{}, err
+		return request.OtpCookieStruct{}, err
 	}
 
-	claim, _ := token.Claims.(*Values)
+	claim, _ := token.Claims.(*request.OtpCookieStruct)
 
 	return *claim, nil
 }

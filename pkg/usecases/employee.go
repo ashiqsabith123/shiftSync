@@ -21,11 +21,6 @@ func NewEmployeeUseCase(rep repo.EmployeeRepository) service.EmployeeUseCase {
 
 func (u *employeeUseCase) SignUp(cntxt context.Context, signup domain.Employee) error {
 
-	_, err := u.employeeRepo.FindEmployee(cntxt, signup)
-	if err == nil {
-		return errors.New("user already exist")
-	}
-
 	hash, err := bcrypt.GenerateFromPassword([]byte(signup.Pass_word), 14)
 	if err != nil {
 		return errors.New("bcrypt failed:" + err.Error())
@@ -57,4 +52,8 @@ func (u *employeeUseCase) SignUpOtp(r context.Context, find domain.Employee) err
 	_, err := u.employeeRepo.FindEmployee(r, find)
 
 	return err
+}
+
+func (u *employeeUseCase) AddForm(r context.Context, form domain.Form) {
+
 }
