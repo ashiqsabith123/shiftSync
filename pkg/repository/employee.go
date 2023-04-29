@@ -36,3 +36,11 @@ func (e *employeeDatabase) FindEmployee(cntxt context.Context, find domain.Emplo
 func (e *employeeDatabase) AddForm(cntxt context.Context, form domain.Form) error {
 	return nil
 }
+
+func (e *employeeDatabase) CheckFormDetails(cntxt context.Context, form domain.Form) error {
+	if err := e.DB.Where("email = ? OR account_no = ? OR pan_number = ? OR adhaar_no =?", form.Email, form.Account_no, form.Pan_number, form.Adhaar_no).First(&domain.Form{}); err != nil {
+		return nil
+	}
+
+	return errors.New("details alredy found")
+}

@@ -15,7 +15,7 @@ type Employee struct {
 
 type Form struct {
 	ID                   uint      `json:"id" gorm:"primaryKey"`
-	EmployeeID           uint      `json:"empid"`
+	EmployeeID           int       `json:"empid"`
 	Employee             Employee  `gorm:"foreignKey:EmployeeID"`
 	First_name           string    `json:"firstname"`
 	Last_name            string    `json:"lastname"`

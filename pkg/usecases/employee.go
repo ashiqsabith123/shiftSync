@@ -54,6 +54,11 @@ func (u *employeeUseCase) SignUpOtp(r context.Context, find domain.Employee) err
 	return err
 }
 
-func (u *employeeUseCase) AddForm(r context.Context, form domain.Form) {
+func (u *employeeUseCase) AddForm(r context.Context, form domain.Form) error {
 
+	if err := u.employeeRepo.CheckFormDetails(r, form); err != nil {
+		return err
+	}
+
+	return nil
 }

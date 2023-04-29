@@ -6,10 +6,13 @@ import (
 	"net/http"
 	"shiftsync/pkg/auth"
 	"shiftsync/pkg/domain"
+	"shiftsync/pkg/encrypt"
 	"shiftsync/pkg/helper/request"
 	"shiftsync/pkg/helper/response"
 	service "shiftsync/pkg/usecases/interfaces"
 	"shiftsync/pkg/verification"
+
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
@@ -192,7 +195,7 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 		ctxt.JSON(http.StatusInternalServerError, resp)
 	}
 
-	fmt.Println(value, ok)
+	//fmt.Println(value, ok)
 
 	if err := ctxt.ShouldBindJSON(&tempForm); err != nil {
 		resp := response.ErrorResponse(400, "Invalid input", err.Error(), tempForm)
@@ -202,10 +205,15 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 
 	var form domain.Form
 
-	//form.Employee.ID = value.(uint)
+	tempid, _ := strconv.Atoi(value.(string))
+
+	form.EmployeeID = tempid
 
 	copier.Copy(&form, &tempForm)
 
-	fmt.Println(form)
+	// if err:= u.
+
+	val := encrypt.Encrypt([]byte(form.Pan_number))
+	fmt.Println("encrypt", string(val))
 
 }

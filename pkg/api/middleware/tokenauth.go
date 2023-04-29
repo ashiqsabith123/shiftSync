@@ -22,6 +22,7 @@ func authtoken(ctxt *gin.Context, user string) {
 		ctxt.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"status code ": 401,
 			"msg":          "Unauthorized User Please Login",
+			"err":          err,
 		})
 		return
 	}

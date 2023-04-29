@@ -16,6 +16,10 @@ type JWTConfig struct {
 	Secret_key string `mapstructure:"secret_key"`
 }
 
+type CryptoConfig struct {
+	Secret string `mapstructure:"secret"`
+}
+
 type TwilioConfig struct {
 	Service_id  string `mapstructure:"service_id"`
 	Account_sid string `mapstructure:"accsid"`
@@ -26,6 +30,7 @@ type Config struct {
 	Db     DBConfig     `mapstructure:"db"`
 	JWT    JWTConfig    `mapstructure:"jwt"`
 	Twilio TwilioConfig `mapstructure:"twilio"`
+	Crypto CryptoConfig `mapstructure:"crypto"`
 }
 
 var config Config
@@ -49,4 +54,8 @@ func LoadConfig() (Config, error) {
 
 func JwtConfig() string {
 	return config.JWT.Secret_key
+}
+
+func GetCryptoSecret() string {
+	return config.Crypto.Secret
 }
