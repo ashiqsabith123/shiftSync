@@ -2,9 +2,11 @@ package usecases
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"shiftsync/pkg/domain"
+	"shiftsync/pkg/encrypt"
 	repo "shiftsync/pkg/repository/interfaces"
 	service "shiftsync/pkg/usecases/interfaces"
 
@@ -57,6 +59,17 @@ func (u *employeeUseCase) SignUpOtp(r context.Context, find domain.Employee) err
 func (u *employeeUseCase) AddForm(r context.Context, form domain.Form) error {
 
 	if err := u.employeeRepo.CheckFormDetails(r, form); err != nil {
+		return err
+	}
+
+	form.Account_no = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Account_no)))
+	form.Pan_number = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Pan_number)))
+	form.Adhaar_no = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Adhaar_no)))
+	form.Ifsc_code = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Ifsc_code)))
+	form.Name_as_per_passbokk = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Name_as_per_passbokk)))
+	form.Status = "P"
+
+	if err := u.employeeRepo.AddForm(r, form); err != nil {
 		return err
 	}
 

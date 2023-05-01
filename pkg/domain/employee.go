@@ -14,9 +14,9 @@ type Employee struct {
 }
 
 type Form struct {
-	ID                   uint      `json:"id" gorm:"primaryKey"`
-	EmployeeID           int       `json:"empid"`
-	Employee             Employee  `gorm:"foreignKey:EmployeeID"`
+	EmployeeID           int       `json:"empid" gorm:"primaryKey;unique"`
+	Form_id              int       `json:"formid"`
+	Employee             Employee  `gorm:"foreignKey:Form_id"`
 	First_name           string    `json:"firstname"`
 	Last_name            string    `json:"lastname"`
 	Email                string    `json:"email"`
@@ -30,8 +30,9 @@ type Form struct {
 	Ifsc_code            string    `json:"ifsccode"`
 	Name_as_per_passbokk string    `json:"nameaspass"`
 	Pan_number           string    `json:"pannumber"`
-	Adhaar_no            int64     `json:"adhaarnumber"`
+	Adhaar_no            string    `json:"adhaarnumber"`
 	Photo                string    `json:"photo"`
-	Status               byte      `json:"status" gorm:"type:char(1)"`
+	Status               string    `json:"status" gorm:"type:char(1)"`
 	Correction           string    `json:"correction"`
+	Approved_by          string    `json:"approved"`
 }

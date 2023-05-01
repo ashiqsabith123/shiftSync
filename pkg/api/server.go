@@ -11,7 +11,7 @@ type ServerHTTP struct {
 	engine *gin.Engine
 }
 
-func NewHTTPServer(employeeHandler *handler.EmployeeHandler) *ServerHTTP {
+func NewHTTPServer(employeeHandler *handler.EmployeeHandler, adminHandler *handler.AdminHandler) *ServerHTTP {
 
 	// creating an instance of gin engine
 	server := gin.New()
@@ -19,7 +19,8 @@ func NewHTTPServer(employeeHandler *handler.EmployeeHandler) *ServerHTTP {
 	// logger middleware
 	server.Use(gin.Logger())
 
-	routes.UserRoutes(server.Group("/employee"), employeeHandler)
+	routes.EmployeeRoutes(server.Group("/employee"), employeeHandler)
+	routes.AdminRoutes(server.Group("/admin"), adminHandler)
 
 	return &ServerHTTP{engine: server}
 }

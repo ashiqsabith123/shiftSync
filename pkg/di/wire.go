@@ -18,8 +18,11 @@ func InitializeAPI(config config.Config) *http.ServerHTTP {
 	wire.Build(
 		db.ConnectToDatbase,
 		repository.NewEmployeeRepository,
+		repository.NewAdminRepository,
 		usecases.NewEmployeeUseCase,
+		usecases.NewAdminUseCase,
 		handler.NewEmployeeHandler,
+		handler.NewAdminHandler,
 		http.NewHTTPServer)
 
 	return &http.ServerHTTP{}

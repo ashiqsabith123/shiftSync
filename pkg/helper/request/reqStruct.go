@@ -33,7 +33,7 @@ type Form struct {
 	Ifsc_code            string    `json:"ifsccode"`
 	Name_as_per_passbokk string    `json:"nameinpass"`
 	Pan_number           string    `json:"pannumber"`
-	Adhaar_no            int64     `json:"adhaarno"`
+	Adhaar_no            string    `json:"adhaarno"`
 	Photo                string    `json:"photo"`
 }
 
