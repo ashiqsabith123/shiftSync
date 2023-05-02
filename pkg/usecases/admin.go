@@ -3,7 +3,6 @@ package usecases
 import (
 	"context"
 	"errors"
-	"fmt"
 	"shiftsync/pkg/domain"
 	"shiftsync/pkg/encrypt"
 	"shiftsync/pkg/helper"
@@ -58,15 +57,14 @@ func (a *adminUseCase) SignIn(ctx context.Context, details domain.Admin) (domain
 func (a *adminUseCase) Applications(ctx context.Context) ([]domain.Form, error) {
 	forms, err := a.adminRepo.GetAllForms(ctx)
 
-	// for i := 0; i < len(forms); i++ {
-	// 	fmt.Println("acc", forms[i].Account_no)
-	// 	fmt.Println(string(helper.Decode(forms[i].Account_no)))
-	// 	forms[i].Account_no = string(encrypt.Decrypt(helper.Decode(forms[i].Account_no)))
-	// }
+	for i := 0; i < len(forms); i++ {
 
-	fmt.Println("uu" + string(encrypt.Decrypt(helper.Decode(forms[0].Account_no))))
-
-	forms[0].Account_no = string(encrypt.Decrypt(helper.Decode(forms[0].Account_no)))
+		forms[i].Account_no = string(encrypt.Decrypt(helper.Decode(forms[i].Account_no)))
+		forms[i].Adhaar_no = string(encrypt.Decrypt(helper.Decode(forms[i].Adhaar_no)))
+		forms[i].Pan_number = string(encrypt.Decrypt(helper.Decode(forms[i].Pan_number)))
+		forms[i].Name_as_per_passbokk = string(encrypt.Decrypt(helper.Decode(forms[i].Name_as_per_passbokk)))
+		forms[i].Ifsc_code = string(encrypt.Decrypt(helper.Decode(forms[i].Ifsc_code)))
+	}
 
 	if err != nil {
 		return []domain.Form{}, errors.New("no forms found")
@@ -74,4 +72,24 @@ func (a *adminUseCase) Applications(ctx context.Context) ([]domain.Form, error) 
 
 	return forms, nil
 
+}
+
+func (a *adminUseCase) ApproveApplication(ctx context.Context, form domain.Form) error {
+	if err := a.adminRepo.FindFormByID(ctx, form.Employee_id); err != nil {
+		return err
+	}
+
+	a.adminRepo.ApproveApplication(ctx, form)
+
+	return nil
+}
+
+func (a *adminUseCase) FormCorrection(ctx context.Context, form domain.Form) error {
+	if err := a.adminRepo.FindFormByID(ctx, form.Employee_id); err != nil {
+		return err
+	}
+
+	a.adminRepo.FormCorrection(ctx, form)
+
+	return nil
 }

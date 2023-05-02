@@ -2,6 +2,7 @@ package routes
 
 import (
 	"shiftsync/pkg/api/handler"
+	"shiftsync/pkg/api/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,8 +21,13 @@ func AdminRoutes(api *gin.RouterGroup, adminHandler *handler.AdminHandler) {
 		signin.POST("/", adminHandler.PostSignin)
 	}
 
-	forms := api.Group("/forms")
+	api.Use(middleware.AuthenticateAdmin)
 	{
-		forms.GET("/", adminHandler.ViewApplications)
+		application := api.Group("/application")
+		{
+			application.GET("/", adminHandler.ViewApplications)
+			application.POST("/approve", adminHandler.ApproveApplication)
+			application.PATCH("/correction", adminHandler.FormCorrection)
+		}
 	}
 }

@@ -49,3 +49,12 @@ type OtpCookieStruct struct {
 	Pass_word string `json:"password"`
 	jwt.StandardClaims
 }
+
+type FormApprove struct {
+	EmployeeID int `json:"empid"`
+}
+
+type FormCorrection struct {
+	EmployeeID int    `json:"empid"`
+	Correction string `json:"correction"`
+}

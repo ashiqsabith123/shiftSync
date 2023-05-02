@@ -206,7 +206,7 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 
 	tempid, _ := strconv.Atoi(value.(string))
 
-	form.EmployeeID = tempid
+	form.Employee_id = tempid
 
 	copier.Copy(&form, &tempForm)
 

@@ -2,7 +2,6 @@ package helper
 
 import (
 	"encoding/base64"
-	"fmt"
 	"log"
 )
 
@@ -12,8 +11,6 @@ func Decode(info string) []byte {
 	if err != nil {
 		log.Fatal("erorr when decoding")
 	}
-
-	fmt.Println(data)
 
 	return data
 }

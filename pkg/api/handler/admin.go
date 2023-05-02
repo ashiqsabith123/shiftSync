@@ -109,3 +109,45 @@ func (a *AdminHandler) ViewApplications(ctx *gin.Context) {
 	})
 
 }
+
+func (a AdminHandler) ApproveApplication(ctx *gin.Context) {
+	var res request.FormApprove
+	if err := ctx.ShouldBindJSON(&res); err != nil {
+		resp := response.ErrorResponse(400, "invalid input", err.Error(), res)
+		ctx.JSON(400, resp)
+		return
+	}
+
+	var form domain.Form
+	copier.Copy(&form, &res)
+
+	if err := a.adminusecase.ApproveApplication(ctx, form); err != nil {
+		resp := response.ErrorResponse(400, "error", err.Error(), res)
+		ctx.JSON(400, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "approved succesfully", nil)
+	ctx.JSON(200, resp)
+}
+
+func (a AdminHandler) FormCorrection(ctx *gin.Context) {
+	var res request.FormCorrection
+	if err := ctx.ShouldBindJSON(&res); err != nil {
+		resp := response.ErrorResponse(400, "invalid input", err.Error(), res)
+		ctx.JSON(400, resp)
+		return
+	}
+
+	var form domain.Form
+	copier.Copy(&form, &res)
+
+	if err := a.adminusecase.FormCorrection(ctx, form); err != nil {
+		resp := response.ErrorResponse(400, "error", err.Error(), res)
+		ctx.JSON(400, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "approved succesfully", nil)
+	ctx.JSON(200, resp)
+}

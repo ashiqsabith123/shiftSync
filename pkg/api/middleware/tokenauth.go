@@ -14,6 +14,10 @@ func AuthenticateUser(ctx *gin.Context) {
 	authtoken(ctx, "employee-cookie")
 }
 
+func AuthenticateAdmin(ctx *gin.Context) {
+	authtoken(ctx, "admin-cookie")
+}
+
 func authtoken(ctxt *gin.Context, user string) {
 	token, err := ctxt.Cookie(user)
 	fmt.Println(token)

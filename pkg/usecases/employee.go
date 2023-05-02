@@ -63,6 +63,7 @@ func (u *employeeUseCase) AddForm(r context.Context, form domain.Form) error {
 	}
 
 	form.Account_no = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Account_no)))
+	fmt.Println([]byte(base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Pan_number)))))
 	form.Pan_number = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Pan_number)))
 	form.Adhaar_no = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Adhaar_no)))
 	form.Ifsc_code = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Ifsc_code)))

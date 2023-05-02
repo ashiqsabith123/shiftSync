@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"shiftsync/pkg/domain"
 	repo "shiftsync/pkg/repository/interfaces"
 
@@ -41,4 +42,23 @@ func (a *adminDatabase) GetAllForms(ctx context.Context) ([]domain.Form, error) 
 	err := a.DB.Raw("SELECT * FROM forms WHERE status='P'").Scan(&forms).Error
 
 	return forms, err
+}
+
+func (a *adminDatabase) FindFormByID(ctx context.Context, fID int) error {
+	var form domain.Form
+	if err := a.DB.Where("employee_id=?", fID).First(&form).Error; err != nil {
+		return errors.New("form not found with given id")
+	}
+	return nil
+}
+
+func (a *adminDatabase) ApproveApplication(ctx context.Context, form domain.Form) {
+
+	err := a.DB.Raw("UPDATE forms SET status='A' WHERE employee_id = ?", form.EmployeeID).Scan(&form).Error
+	fmt.Println(err)
+}
+
+func (a *adminDatabase) FormCorrection(ctx context.Context, form domain.Form) {
+	err := a.DB.Raw("UPDATE forms SET correction = ? WHERE employee_id = ?", form.Correction, form.EmployeeID).Scan(&form).Error
+	fmt.Println(err)
 }
