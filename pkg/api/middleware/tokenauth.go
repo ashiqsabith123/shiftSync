@@ -52,5 +52,5 @@ func authtoken(ctxt *gin.Context, user string) {
 	}
 
 	// claim the userId and set it on context
-	ctxt.Set("employeeId", claims.Id)
+	ctxt.Set("userId", claims.Id)
 }

@@ -187,7 +187,7 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 
 	var tempForm request.Form
 
-	value, ok := ctxt.Get("employeeId")
+	value, ok := ctxt.Get("userId")
 
 	if !ok || value == "" {
 		resp := response.ErrorResponse(500, "Value not found", "", nil)
