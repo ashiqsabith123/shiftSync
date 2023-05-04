@@ -19,11 +19,13 @@ func ConnectToDatbase(config config.Config) *gorm.DB {
 		return nil
 	}
 
-	db.AutoMigrate(
+	if err := db.AutoMigrate(
 		domain.Employee{},
 		domain.Form{},
 		domain.Admin{},
-	)
+	); err != nil {
+		fmt.Println(err)
+	}
 
 	fmt.Println("Connected succesfully....!")
 

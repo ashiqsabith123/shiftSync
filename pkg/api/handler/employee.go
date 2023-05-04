@@ -109,7 +109,7 @@ func (u *EmployeeHandler) VerifyOtp(ctxt *gin.Context) {
 	t := verification.ValidateOtp(details.Phone, otp.Code)
 
 	if t != nil {
-		resp := response.ErrorResponse(400, "Invalid otp", err.Error(), nil)
+		resp := response.ErrorResponse(400, "Invalid otp", t.Error(), nil)
 		ctxt.JSON(http.StatusBadRequest, resp)
 		return
 	}
@@ -173,7 +173,7 @@ func (u *EmployeeHandler) PostLogin(ctxt *gin.Context) {
 		return
 	}
 
-	ctxt.SetCookie("employee-cookie", token, 20*60, "", "", false, true)
+	ctxt.SetCookie("employee-cookie", token, 20*60, "/", "", false, true)
 	resp := response.ErrorResponse(200, "succesfuly logged in", "", token)
 	ctxt.JSON(200, resp)
 }
@@ -206,8 +206,7 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 
 	tempid, _ := strconv.Atoi(value.(string))
 
-	form.Employee_id = tempid
-
+	form.FormID = tempid
 	copier.Copy(&form, &tempForm)
 
 	// if err:= u.

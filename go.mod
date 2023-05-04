@@ -25,7 +25,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
-	github.com/twilio/twilio-go v1.6.0 // indirect
+	github.com/twilio/twilio-go v1.6.0
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
 

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"shiftsync/pkg/domain"
+	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
 
 	"gorm.io/gorm"
@@ -36,29 +37,30 @@ func (a *adminDatabase) SaveAdmin(ctx context.Context, admin domain.Admin) error
 	return nil
 }
 
-func (a *adminDatabase) GetAllForms(ctx context.Context) ([]domain.Form, error) {
+func (a *adminDatabase) GetAllForms(ctx context.Context) ([]response.Form, error) {
 
-	var forms []domain.Form
-	err := a.DB.Raw("SELECT * FROM forms WHERE status='P'").Scan(&forms).Error
+	var forms []response.Form
+	err := a.DB.Raw("select employees.id, employees.first_name, employees.last_name, employees.email, employees.phone, forms.gender, forms.marital_status, forms.date_of_birth, forms.p_address, forms.c_address, forms.account_no, forms.ifsc_code, forms.name_as_per_passbokk, forms.pan_number, forms.adhaar_no, forms.photo from employees inner join forms on employees.id = forms.form_id where forms.status='P'").Scan(&forms).Error
 
 	return forms, err
 }
 
 func (a *adminDatabase) FindFormByID(ctx context.Context, fID int) error {
 	var form domain.Form
-	if err := a.DB.Where("employee_id=?", fID).First(&form).Error; err != nil {
+	fmt.Println(fID)
+	if err := a.DB.Where("form_id=?", fID).First(&form).Error; err != nil {
 		return errors.New("form not found with given id")
 	}
 	return nil
 }
 
-func (a *adminDatabase) ApproveApplication(ctx context.Context, form domain.Form) {
+func (a *adminDatabase) ApproveApplication(ctx context.Context, form domain.Form, id int) {
 
-	err := a.DB.Raw("UPDATE forms SET status='A' WHERE employee_id = ?", form.EmployeeID).Scan(&form).Error
+	err := a.DB.Raw("UPDATE forms SET status='A', employee_id = ? WHERE form_id= ?", id, form.FormID).Scan(&form).Error
 	fmt.Println(err)
 }
 
 func (a *adminDatabase) FormCorrection(ctx context.Context, form domain.Form) {
-	err := a.DB.Raw("UPDATE forms SET correction = ? WHERE employee_id = ?", form.Correction, form.EmployeeID).Scan(&form).Error
+	err := a.DB.Raw("UPDATE forms SET correction = ? WHERE form_id = ?", form.Correction, form.FormID).Scan(&form).Error
 	fmt.Println(err)
 }

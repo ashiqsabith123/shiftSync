@@ -31,5 +31,6 @@ func EmployeeRoutes(api *gin.RouterGroup, employeeHandler *handler.EmployeeHandl
 			form.GET("/", employeeHandler.GetForm)
 			form.POST("/", employeeHandler.PostForm)
 		}
+
 	}
 }

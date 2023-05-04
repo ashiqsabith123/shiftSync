@@ -6,6 +6,7 @@ import (
 	"shiftsync/pkg/domain"
 	"shiftsync/pkg/encrypt"
 	"shiftsync/pkg/helper"
+	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
 	service "shiftsync/pkg/usecases/interfaces"
 
@@ -54,7 +55,7 @@ func (a *adminUseCase) SignIn(ctx context.Context, details domain.Admin) (domain
 	return admin, nil
 }
 
-func (a *adminUseCase) Applications(ctx context.Context) ([]domain.Form, error) {
+func (a *adminUseCase) Applications(ctx context.Context) ([]response.Form, error) {
 	forms, err := a.adminRepo.GetAllForms(ctx)
 
 	for i := 0; i < len(forms); i++ {
@@ -67,7 +68,7 @@ func (a *adminUseCase) Applications(ctx context.Context) ([]domain.Form, error) 
 	}
 
 	if err != nil {
-		return []domain.Form{}, errors.New("no forms found")
+		return []response.Form{}, errors.New("no forms found")
 	}
 
 	return forms, nil
@@ -75,11 +76,13 @@ func (a *adminUseCase) Applications(ctx context.Context) ([]domain.Form, error) 
 }
 
 func (a *adminUseCase) ApproveApplication(ctx context.Context, form domain.Form) error {
-	if err := a.adminRepo.FindFormByID(ctx, form.Employee_id); err != nil {
+	if err := a.adminRepo.FindFormByID(ctx, form.FormID); err != nil {
 		return err
 	}
 
-	a.adminRepo.ApproveApplication(ctx, form)
+	empid := helper.CreateId()
+
+	a.adminRepo.ApproveApplication(ctx, form, empid)
 
 	return nil
 }

@@ -1,6 +1,7 @@
 package verification
 
 import (
+	"errors"
 	"fmt"
 	"shiftsync/pkg/config"
 
@@ -46,9 +47,14 @@ func ValidateOtp(phone int64, code string) error {
 
 	resp, err := client.VerifyV2.CreateVerificationCheck(SERVICE_ID, params)
 	if err != nil {
+
 		return err
+
 	} else if *resp.Status == "approved" {
+
 		return nil
+	} else if *resp.Status == "pending" {
+		return errors.New("otp verification failed")
 	}
 
 	return nil

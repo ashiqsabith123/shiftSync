@@ -36,7 +36,7 @@ func (e *employeeDatabase) FindEmployee(cntxt context.Context, find domain.Emplo
 }
 
 func (e *employeeDatabase) CheckFormDetails(cntxt context.Context, form domain.Form) error {
-	if err := e.DB.Where("email = ? OR account_no = ? OR pan_number = ? OR adhaar_no =?", form.Email, base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Account_no))), base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Pan_number))), base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Adhaar_no)))).First(&domain.Form{}).Error; err != nil {
+	if err := e.DB.Where("form_id = ? OR account_no = ? OR pan_number = ? OR adhaar_no = ?", form.FormID, base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Account_no))), base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Pan_number))), base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Adhaar_no)))).First(&domain.Form{}).Error; err != nil {
 
 		return nil
 	}
@@ -49,5 +49,6 @@ func (e *employeeDatabase) AddForm(cntxt context.Context, form domain.Form) erro
 	if err := e.DB.Create(&form).Error; err != nil {
 		return err
 	}
+
 	return nil
 }

@@ -28,11 +28,12 @@ func GenerateTokens(id uint) (string, error) {
 func GenerateTokenForOtp(val domain.Employee) (string, error) {
 
 	claims := request.OtpCookieStruct{
-		Full_name: val.Full_name,
-		Email:     val.Email,
-		Phone:     val.Phone,
-		User_name: val.User_name,
-		Pass_word: val.Pass_word,
+		First_name: val.First_name,
+		Last_name:  val.Last_name,
+		Email:      val.Email,
+		Phone:      val.Phone,
+		User_name:  val.User_name,
+		Pass_word:  val.Pass_word,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiryTime,
 		},
@@ -45,28 +46,6 @@ func GenerateTokenForOtp(val domain.Employee) (string, error) {
 }
 
 func ValidateTokens(signedtoken string) (jwt.StandardClaims, error) {
-	// token, err := jwt.ParseWithClaims(
-	// 	signedtoken, jwt.
-	// 		StandardClaims{},
-	// 	func(token *jwt.Token) (interface{}, error) {
-
-	// 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-	// 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-	// 		}
-
-	// 		return []byte(config.JwtConfig()), nil
-	// 	},
-	// )
-
-	// if err != nil || !token.Valid {
-	// 	return jwt.StandardClaims{}, errors.New("not valid token")
-	// }
-
-	// // then parse the token to claims
-	// claims, ok := token.Claims.(*jwt.StandardClaims)
-	// if !ok {
-	// 	return jwt.StandardClaims{}, errors.New("can't parse the claims")
-	// }
 
 	token, err := jwt.ParseWithClaims(
 		signedtoken, &jwt.StandardClaims{},
@@ -80,12 +59,7 @@ func ValidateTokens(signedtoken string) (jwt.StandardClaims, error) {
 		})
 
 	if err != nil || !token.Valid {
-		return jwt.StandardClaims{}, errors.New("not valid tok")
-	}
-
-	if err != nil {
-
-		return jwt.StandardClaims{}, err
+		return jwt.StandardClaims{}, errors.New("not valid token")
 	}
 
 	claim, _ := token.Claims.(*jwt.StandardClaims)

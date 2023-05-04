@@ -3,8 +3,7 @@ package response
 import "time"
 
 type Form struct {
-	EmployeeID           int       `json:"empid" gorm:"primaryKey;unique"`
-	Form_id              int       `json:"formid"`
+	ID                   int       `json:"id"`
 	First_name           string    `json:"firstname"`
 	Last_name            string    `json:"lastname"`
 	Email                string    `json:"email"`
@@ -20,7 +19,4 @@ type Form struct {
 	Pan_number           string    `json:"pannumber"`
 	Adhaar_no            string    `json:"adhaarnumber"`
 	Photo                string    `json:"photo"`
-	Status               string    `json:"status" gorm:"type:char(1)"`
-	Correction           string    `json:"correction"`
-	Approved_by          string    `json:"approved"`
 }

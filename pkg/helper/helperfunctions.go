@@ -3,6 +3,8 @@ package helper
 import (
 	"encoding/base64"
 	"log"
+	"math/rand"
+	"time"
 )
 
 func Decode(info string) []byte {
@@ -13,4 +15,15 @@ func Decode(info string) []byte {
 	}
 
 	return data
+}
+
+func CreateId() int {
+
+	randomSource := rand.NewSource(time.Now().UnixNano())
+
+	randomGenerator := rand.New(randomSource)
+
+	randomInt := randomGenerator.Intn(100000)
+
+	return randomInt
 }
