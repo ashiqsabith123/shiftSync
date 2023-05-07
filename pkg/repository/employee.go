@@ -6,8 +6,10 @@ import (
 	"errors"
 	"shiftsync/pkg/domain"
 	"shiftsync/pkg/encrypt"
+	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
 
+	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 )
 
@@ -51,4 +53,26 @@ func (e *employeeDatabase) AddForm(cntxt context.Context, form domain.Form) erro
 	}
 
 	return nil
+}
+
+func (e *employeeDatabase) FormStatus(ctx context.Context, empID int) string {
+	var status string
+	if err := e.DB.Raw("select status from forms where form_id =? ", empID).Scan(&status).Error; err != nil {
+		return "Error"
+	}
+
+	return status
+}
+
+func (e *employeeDatabase) GetDutySchedules(ctx context.Context, id int) (response.Duty, error) {
+	var duty domain.Attendance
+	var schedule response.Duty
+
+	if err := e.DB.Where("employee_id = ? AND status='S'", id).First(&duty).Error; err != nil {
+		return schedule, err
+	}
+
+	copier.Copy(&schedule, &duty)
+
+	return schedule, nil
 }

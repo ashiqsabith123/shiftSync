@@ -7,6 +7,7 @@ import (
 	"shiftsync/pkg/helper/request"
 	"shiftsync/pkg/helper/response"
 	service "shiftsync/pkg/usecases/interfaces"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
@@ -110,7 +111,7 @@ func (a *AdminHandler) ViewApplications(ctx *gin.Context) {
 
 }
 
-func (a AdminHandler) ApproveApplication(ctx *gin.Context) {
+func (a *AdminHandler) ApproveApplication(ctx *gin.Context) {
 	var res request.FormApprove
 	if err := ctx.ShouldBindJSON(&res); err != nil {
 		resp := response.ErrorResponse(400, "invalid input", err.Error(), res)
@@ -120,8 +121,11 @@ func (a AdminHandler) ApproveApplication(ctx *gin.Context) {
 
 	var form domain.Form
 	copier.Copy(&form, &res)
+	ctxempId, _ := ctx.Get("userId")
 
-	if err := a.adminusecase.ApproveApplication(ctx, form); err != nil {
+	empId, _ := strconv.Atoi(ctxempId.(string))
+
+	if err := a.adminusecase.ApproveApplication(ctx, form, empId); err != nil {
 		resp := response.ErrorResponse(400, "error", err.Error(), res)
 		ctx.JSON(400, resp)
 		return
@@ -131,7 +135,7 @@ func (a AdminHandler) ApproveApplication(ctx *gin.Context) {
 	ctx.JSON(200, resp)
 }
 
-func (a AdminHandler) FormCorrection(ctx *gin.Context) {
+func (a *AdminHandler) FormCorrection(ctx *gin.Context) {
 	var res request.FormCorrection
 	if err := ctx.ShouldBindJSON(&res); err != nil {
 		resp := response.ErrorResponse(400, "invalid input", err.Error(), res)
@@ -150,4 +154,49 @@ func (a AdminHandler) FormCorrection(ctx *gin.Context) {
 
 	resp := response.SuccessResponse(200, "approved succesfully", nil)
 	ctx.JSON(200, resp)
+}
+
+func (a *AdminHandler) GetScheduleDuty(c *gin.Context) {
+
+	var data []response.Schedule
+	tempData, err := a.adminusecase.GetAllEmployees(c)
+	copier.Copy(&data, &tempData)
+
+	if err != nil {
+		c.JSON(204, gin.H{
+			"status":  204,
+			"message": "no details",
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status":    200,
+		"employees": data,
+	})
+
+}
+
+func (a *AdminHandler) ScheduleDuty(c *gin.Context) {
+	var req request.DutySchedule
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		resp := response.ErrorResponse(400, "invalid input", err.Error(), req)
+		c.JSON(400, resp)
+		return
+	}
+
+	var duty domain.Attendance
+
+	copier.Copy(&duty, &req)
+
+	if err := a.adminusecase.ScheduleDuty(c, duty); err != nil {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "error", err.Error(), nil)
+		c.JSON(500, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "dutyscheduled succesfully", duty.EmployeeID)
+	c.JSON(200, resp)
+
 }

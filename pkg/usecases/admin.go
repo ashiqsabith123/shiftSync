@@ -75,14 +75,14 @@ func (a *adminUseCase) Applications(ctx context.Context) ([]response.Form, error
 
 }
 
-func (a *adminUseCase) ApproveApplication(ctx context.Context, form domain.Form) error {
+func (a *adminUseCase) ApproveApplication(ctx context.Context, form domain.Form, admID int) error {
 	if err := a.adminRepo.FindFormByID(ctx, form.FormID); err != nil {
 		return err
 	}
 
 	empid := helper.CreateId()
 
-	a.adminRepo.ApproveApplication(ctx, form, empid)
+	a.adminRepo.ApproveApplication(ctx, form, empid, admID)
 
 	return nil
 }
@@ -93,6 +93,19 @@ func (a *adminUseCase) FormCorrection(ctx context.Context, form domain.Form) err
 	}
 
 	a.adminRepo.FormCorrection(ctx, form)
+
+	return nil
+}
+
+func (a *adminUseCase) GetAllEmployees(ctx context.Context) ([]response.AllEmployee, error) {
+	data, err := a.adminRepo.GetAllEmployees(ctx)
+	return data, err
+}
+
+func (a *adminUseCase) ScheduleDuty(ctx context.Context, duty domain.Attendance) error {
+	if err := a.adminRepo.ScheduleDuty(ctx, duty); err != nil {
+		return err
+	}
 
 	return nil
 }

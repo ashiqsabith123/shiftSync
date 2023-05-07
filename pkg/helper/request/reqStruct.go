@@ -1,8 +1,6 @@
 package request
 
 import (
-	"time"
-
 	"github.com/golang-jwt/jwt"
 )
 
@@ -21,17 +19,19 @@ type SignUp struct {
 }
 
 type Form struct {
-	Gender               string    `json:"gender" gorm:"type:char(1)"`
-	Marital_status       string    `json:"maritalstatus"  gorm:"type:char(1)"`
-	Date_of_birth        time.Time `json:"dateofbirth"`
-	P_address            string    `json:"paddress"`
-	C_address            string    `json:"caddress"`
-	Account_no           string    `json:"accno"`
-	Ifsc_code            string    `json:"ifsccode"`
-	Name_as_per_passbokk string    `json:"nameinpass"`
-	Pan_number           string    `json:"pannumber"`
-	Adhaar_no            string    `json:"adhaarno"`
-	Photo                string    `json:"photo"`
+	Gender               string `json:"gender" gorm:"type:char(1)"`
+	Marital_status       string `json:"maritalstatus"  gorm:"type:char(1)"`
+	Date_of_birth        string `json:"dateofbirth"`
+	P_address            string `json:"paddress"`
+	C_address            string `json:"caddress"`
+	Account_no           string `json:"accno"`
+	Ifsc_code            string `json:"ifsccode"`
+	Name_as_per_passbokk string `json:"nameinpass"`
+	Pan_number           string `json:"pannumber"`
+	Adhaar_no            string `json:"adhaarno"`
+	Designation          string `json:"designation"`
+	Department           string `json:"department"`
+	Photo                string `json:"photo"`
 }
 
 type OTPStruct struct {
@@ -55,4 +55,9 @@ type FormApprove struct {
 type FormCorrection struct {
 	EmployeeID int    `json:"empid"`
 	Correction string `json:"correction"`
+}
+
+type DutySchedule struct {
+	EmployeeID int    `json:"empid"`
+	Duty_type  string `json:"dutytype"`
 }

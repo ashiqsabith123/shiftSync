@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"shiftsync/pkg/domain"
 	"shiftsync/pkg/encrypt"
+	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
 	service "shiftsync/pkg/usecases/interfaces"
 
@@ -75,4 +76,45 @@ func (u *employeeUseCase) AddForm(r context.Context, form domain.Form) error {
 	}
 
 	return nil
+}
+
+func (u *employeeUseCase) FormStatus(ctx context.Context, empID int) string {
+
+	status := u.employeeRepo.FormStatus(ctx, empID)
+
+	switch status {
+
+	case "P":
+		return "Pending for verification"
+	case "C":
+		return "Admin requested for correction"
+	case "A":
+		return "Welcome to dashboard"
+
+	}
+	return ""
+}
+
+func (u *employeeUseCase) GetDutySchedules(ctx context.Context, id int) (response.Duty, error) {
+	duty, err := u.employeeRepo.GetDutySchedules(ctx, id)
+
+	if err == nil {
+		switch duty.Duty_type {
+		case "M":
+			duty.Duty_type = "Morning Duty"
+			duty.Time = "7:00 AM - 3:00 PM"
+			return duty, nil
+		case "E":
+			duty.Duty_type = "Evening duty"
+			duty.Time = "3 AM - 10:00 PM"
+			return duty, nil
+		case "N":
+			duty.Duty_type = "Night Duty"
+			duty.Time = "10:00 PM - 5:00 AM "
+			return duty, nil
+		}
+
+	}
+
+	return duty, err
 }

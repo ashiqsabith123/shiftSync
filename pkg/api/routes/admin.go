@@ -29,5 +29,12 @@ func AdminRoutes(api *gin.RouterGroup, adminHandler *handler.AdminHandler) {
 			application.POST("/approve", adminHandler.ApproveApplication)
 			application.PATCH("/correction", adminHandler.FormCorrection)
 		}
+
+		duty := api.Group("/schedule")
+		{
+			duty.GET("/", adminHandler.GetScheduleDuty)
+			duty.POST("/", adminHandler.ScheduleDuty)
+
+		}
 	}
 }

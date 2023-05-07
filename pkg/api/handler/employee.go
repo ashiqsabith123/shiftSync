@@ -187,9 +187,9 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 
 	var tempForm request.Form
 
-	value, ok := ctxt.Get("userId")
+	empID, ok := ctxt.Get("userId")
 
-	if !ok || value == "" {
+	if !ok || empID == "" {
 		resp := response.ErrorResponse(500, "Value not found", "", nil)
 		ctxt.JSON(http.StatusInternalServerError, resp)
 	}
@@ -204,7 +204,7 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 
 	var form domain.Form
 
-	tempid, _ := strconv.Atoi(value.(string))
+	tempid, _ := strconv.Atoi(empID.(string))
 
 	form.FormID = tempid
 	copier.Copy(&form, &tempForm)
@@ -219,5 +219,47 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 
 	resp := response.SuccessResponse(200, "Form submitted succesfully pending for verification", nil)
 	ctxt.JSON(200, resp)
+
+}
+
+func (u *EmployeeHandler) GetDashboard(ctx *gin.Context) {
+
+	tempID, ok := ctx.Get("userId")
+
+	if !ok || tempID == "" {
+		resp := response.ErrorResponse(500, "Value not found", "", nil)
+		ctx.JSON(http.StatusInternalServerError, resp)
+	}
+
+	empId, _ := strconv.Atoi(tempID.(string))
+
+	status := u.employeeUseCase.FormStatus(ctx, empId)
+
+	resp := response.SuccessResponse(200, status, nil)
+	ctx.JSON(200, resp)
+
+}
+
+func (e *EmployeeHandler) GetDuty(c *gin.Context) {
+
+	tempid, ok := c.Get("userId")
+	id, _ := strconv.Atoi(tempid.(string))
+
+	if !ok {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "employee id not found", "", nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	duty, err := e.employeeUseCase.GetDutySchedules(c, id)
+
+	if err != nil {
+		resp := response.ErrorResponse(404, "failed to get duty schedules", err.Error(), nil)
+		c.JSON(404, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "duty schedules", duty)
+	c.JSON(200, resp)
 
 }

@@ -21,6 +21,7 @@ func ConnectToDatbase(config config.Config) *gorm.DB {
 
 	if err := db.AutoMigrate(
 		domain.Employee{},
+		domain.Attendance{},
 		domain.Form{},
 		domain.Admin{},
 	); err != nil {
