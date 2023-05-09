@@ -34,7 +34,18 @@ func EmployeeRoutes(api *gin.RouterGroup, employeeHandler *handler.EmployeeHandl
 
 		api.GET("/dashboard", employeeHandler.GetDashboard)
 
-		api.GET("/duty", employeeHandler.GetDuty)
+		duty := api.Group("/duty")
+		{
+			duty.GET("/", employeeHandler.GetDuty)
+			duty.GET("/punchin", employeeHandler.PunchIn)
+			duty.POST("/punchin", employeeHandler.VerifyOtpPunchin)
+			duty.GET("/punchout", employeeHandler.PunchOut)
+		}
+
+		leave := api.Group("/leave")
+		{
+			leave.POST("/apply", employeeHandler.ApplyLeave)
+		}
 
 	}
 }

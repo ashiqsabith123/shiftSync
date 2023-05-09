@@ -24,6 +24,7 @@ func ConnectToDatbase(config config.Config) *gorm.DB {
 		domain.Attendance{},
 		domain.Form{},
 		domain.Admin{},
+		domain.Leave{},
 	); err != nil {
 		fmt.Println(err)
 	}

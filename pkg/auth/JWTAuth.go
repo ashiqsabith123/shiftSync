@@ -19,6 +19,8 @@ func GenerateTokens(id uint) (string, error) {
 		Id:        fmt.Sprint(id),
 	})
 
+	fmt.Println(expiryTime)
+
 	generatedTokens, err := token.SignedString([]byte(config.JwtConfig()))
 
 	return generatedTokens, err

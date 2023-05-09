@@ -12,6 +12,6 @@ type AdminUseCase interface {
 	Applications(ctx context.Context) ([]response.Form, error)
 	ApproveApplication(ctx context.Context, form domain.Form, empId int) error
 	FormCorrection(ctx context.Context, form domain.Form) error
-	GetAllEmployees(ctx context.Context) ([]response.AllEmployee, error)
+	GetAllEmployeesSchedules(ctx context.Context) ([]response.Schedule, error)
 	ScheduleDuty(ctx context.Context, duty domain.Attendance) error
 }

@@ -20,19 +20,17 @@ func AuthenticateAdmin(ctx *gin.Context) {
 
 func authtoken(ctxt *gin.Context, user string) {
 	token, err := ctxt.Cookie(user)
-	fmt.Println(token)
 
 	if err != nil || token == "" {
 		ctxt.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"status code ": 401,
-			"msg":          "Unauthorized User Please Login",
+			"msg":          "Unauthorized User Please Login No token found",
 			"err":          fmt.Sprint(err),
 		})
 		return
 	}
 
 	claims, err := auth.ValidateTokens(token)
-	fmt.Println(claims)
 
 	if err != nil {
 		ctxt.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{

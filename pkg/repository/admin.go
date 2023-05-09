@@ -67,7 +67,16 @@ func (a *adminDatabase) FormCorrection(ctx context.Context, form domain.Form) {
 
 func (a *adminDatabase) GetAllEmployees(ctx context.Context) ([]response.AllEmployee, error) {
 	var emp []response.AllEmployee
-	if err := a.DB.Raw("select forms.form_id as id, forms.employee_id as empid, employees.first_name || ' ' || employees.last_name as name, employees.email, employees.phone, forms.gender,forms.date_of_birth, forms.department,forms.designation from employees inner join forms on employees.id = forms.form_id where forms.status='A'").Scan(&emp).Error; err != nil {
+	if err := a.DB.Raw("select forms.form_id as id, forms.employee_id as empid, employees.first_name || ' ' || employees.last_name as name, employees.email, employees.phone, forms.gender,forms.date_of_birth, forms.department,forms.designation from employees inner join forms on employees.id = forms.form_id   where forms.status='A' ").Scan(&emp).Error; err != nil {
+		return emp, err
+	}
+
+	return emp, nil
+}
+
+func (a *adminDatabase) GetAllEmployeesSchedules(ctx context.Context) ([]response.Schedule, error) {
+	var emp []response.Schedule
+	if err := a.DB.Raw("SELECT forms.form_id AS id, employees.first_name || ' ' || employees.last_name AS name, employees.email, employees.phone, forms.designation, attendances.status FROM forms INNER JOIN employees ON employees.id = forms.form_id LEFT OUTER JOIN attendances ON forms.form_id = attendances.employee_id WHERE attendances.employee_id IS NULL OR attendances.status = 'C';").Scan(&emp).Error; err != nil {
 		return emp, err
 	}
 

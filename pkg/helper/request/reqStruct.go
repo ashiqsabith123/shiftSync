@@ -1,6 +1,8 @@
 package request
 
 import (
+	"time"
+
 	"github.com/golang-jwt/jwt"
 )
 
@@ -60,4 +62,17 @@ type FormCorrection struct {
 type DutySchedule struct {
 	EmployeeID int    `json:"empid"`
 	Duty_type  string `json:"dutytype"`
+}
+
+type PunchIn struct {
+	Id      int
+	Date    string
+	Time_in time.Time
+}
+
+type Leave struct {
+	Leave_type string `json:"leavetype"`
+	From       string `json:"fromdate"`
+	To         string `json:"todate"`
+	Reason     string `json:"reason"`
 }

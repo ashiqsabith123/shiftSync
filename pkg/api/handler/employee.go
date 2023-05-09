@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"shiftsync/pkg/auth"
 	"shiftsync/pkg/domain"
@@ -88,17 +87,14 @@ func (u *EmployeeHandler) VerifyOtp(ctxt *gin.Context) {
 
 	value, err := ctxt.Cookie("employee")
 	ctxt.SetCookie("employee", "", -1, "", "", false, true)
+
 	if err != nil {
 		resp := response.ErrorResponse(500, "unable to find details", err.Error(), nil)
 		ctxt.JSON(http.StatusInternalServerError, resp)
 		return
 	}
 
-	fmt.Println(value)
-
 	details, ver := auth.ValidateOtpTokens(value)
-	fmt.Println(details)
-	fmt.Println(ver)
 
 	if ver != nil {
 		resp := response.ErrorResponse(500, "unable to find details", err.Error(), nil)
@@ -173,7 +169,7 @@ func (u *EmployeeHandler) PostLogin(ctxt *gin.Context) {
 		return
 	}
 
-	ctxt.SetCookie("employee-cookie", token, 20*60, "/", "", false, true)
+	ctxt.SetCookie("employee-cookie", token, 10*60, "/", "", false, true)
 	resp := response.ErrorResponse(200, "succesfuly logged in", "", token)
 	ctxt.JSON(200, resp)
 }
@@ -194,8 +190,6 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 		ctxt.JSON(http.StatusInternalServerError, resp)
 	}
 
-	//fmt.Println(value, ok)
-
 	if err := ctxt.ShouldBindJSON(&tempForm); err != nil {
 		resp := response.ErrorResponse(400, "Invalid input", err.Error(), tempForm)
 		ctxt.JSON(400, resp)
@@ -208,8 +202,6 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 
 	form.FormID = tempid
 	copier.Copy(&form, &tempForm)
-
-	// if err:= u.
 
 	if err := u.employeeUseCase.AddForm(ctxt, form); err != nil {
 		resp := response.ErrorResponse(400, "Deatils", err.Error(), tempForm)
@@ -260,6 +252,126 @@ func (e *EmployeeHandler) GetDuty(c *gin.Context) {
 	}
 
 	resp := response.SuccessResponse(200, "duty schedules", duty)
+	c.JSON(200, resp)
+
+}
+
+func (e *EmployeeHandler) PunchIn(c *gin.Context) {
+
+	tempid, ok := c.Get("userId")
+	id, _ := strconv.Atoi(tempid.(string))
+
+	if !ok {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "employee id not found", "", nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	_, err := e.employeeUseCase.GetDutySchedules(c, id)
+
+	if err != nil {
+		resp := response.ErrorResponse(404, "failed to get duty schedules", err.Error(), nil)
+		c.JSON(404, resp)
+		return
+	}
+
+	status, err := e.employeeUseCase.PunchIn(c, id)
+
+	if err != nil {
+		resp := response.ErrorResponse(400, status, err.Error(), nil)
+		c.JSON(400, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "Otp send to your verified phone number", nil)
+	c.JSON(200, resp)
+
+}
+
+func (e *EmployeeHandler) VerifyOtpPunchin(c *gin.Context) {
+
+	var otp request.OTPStruct
+	if err := c.ShouldBindJSON(&otp); err != nil {
+		resp := response.ErrorResponse(400, "Invalid input", err.Error(), otp)
+		c.JSON(400, resp)
+		return
+	}
+
+	tempid, ok := c.Get("userId")
+	id, _ := strconv.Atoi(tempid.(string))
+
+	if !ok {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "employee id not found", "", nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	if err := e.employeeUseCase.VerifyOtpForPunchin(c, id, otp); err != nil {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "failed", err.Error(), nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "Punched succesfully", nil)
+	c.JSON(200, resp)
+
+}
+
+func (e *EmployeeHandler) PunchOut(c *gin.Context) {
+
+	tempid, ok := c.Get("userId")
+	id, _ := strconv.Atoi(tempid.(string))
+
+	if !ok {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "employee id not found", "", nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	punchOutErr := e.employeeUseCase.PunchOut(c, id)
+
+	if punchOutErr != nil {
+		resp := response.ErrorResponse(400, "error in punch out", punchOutErr.Error(), nil)
+		c.JSON(400, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "Punchout succesfully", nil)
+	c.JSON(200, resp)
+
+}
+
+func (e *EmployeeHandler) ApplyLeave(c *gin.Context) {
+	var reqLeave request.Leave
+
+	if err := c.ShouldBindJSON(&reqLeave); err != nil {
+		resp := response.ErrorResponse(400, "Invalid input", err.Error(), reqLeave)
+		c.JSON(400, resp)
+		return
+	}
+
+	tempid, ok := c.Get("userId")
+	id, _ := strconv.Atoi(tempid.(string))
+
+	if !ok {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "employee id not found", "", nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	var leave domain.Leave
+
+	leave.EmployeeID = uint(id)
+
+	copier.Copy(&leave, &reqLeave)
+
+	if err := e.employeeUseCase.ApplyLeave(c, leave); err != nil {
+		resp := response.ErrorResponse(400, "error while applying leave", err.Error(), nil)
+		c.JSON(400, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "succesfully applied leave", nil)
 	c.JSON(200, resp)
 
 }

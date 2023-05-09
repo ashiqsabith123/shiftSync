@@ -7,9 +7,12 @@ import (
 	"fmt"
 	"shiftsync/pkg/domain"
 	"shiftsync/pkg/encrypt"
+	"shiftsync/pkg/helper/request"
 	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
 	service "shiftsync/pkg/usecases/interfaces"
+	"shiftsync/pkg/verification"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -35,8 +38,6 @@ func (u *employeeUseCase) SignUp(cntxt context.Context, signup domain.Employee) 
 
 func (u *employeeUseCase) Login(r context.Context, login domain.Employee) (domain.Employee, error) {
 	employee, err := u.employeeRepo.FindEmployee(r, login)
-	fmt.Println(employee)
-	fmt.Println(err)
 
 	if err != nil {
 		//fmt.Println("Hello")
@@ -117,4 +118,67 @@ func (u *employeeUseCase) GetDutySchedules(ctx context.Context, id int) (respons
 	}
 
 	return duty, err
+}
+
+func (u *employeeUseCase) PunchIn(ctx context.Context, ID int) (string, error) {
+	var find domain.Employee
+
+	find.ID = uint(ID)
+
+	details, _ := u.employeeRepo.FindEmployee(ctx, find)
+
+	status, err := verification.SendOtp(details.Phone)
+
+	return status, err
+
+}
+
+func (u *employeeUseCase) VerifyOtpForPunchin(ctx context.Context, id int, otp request.OTPStruct) error {
+
+	var find domain.Employee
+
+	find.ID = uint(id)
+
+	details, _ := u.employeeRepo.FindEmployee(ctx, find)
+
+	if err := verification.ValidateOtp(details.Phone, otp.Code); err != nil {
+		return err
+	}
+
+	var punch domain.Attendance
+
+	punch.EmployeeID = details.ID
+	punch.Date = time.Now().Format("2006-01-02")
+	punch.Punch_in = time.Now().Format("15:04:05")
+
+	if err := u.employeeRepo.PunchIn(ctx, punch); err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (e *employeeUseCase) PunchOut(ctx context.Context, id int) error {
+
+	var duty domain.Attendance
+
+	duty.EmployeeID = uint(id)
+	duty.Punch_out = time.Now().Format("15:04:05")
+	if err := e.employeeRepo.PunchOut(ctx, duty); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (e *employeeUseCase) ApplyLeave(ctx context.Context, leave domain.Leave) error {
+
+	leave.Status = "R"
+
+	if err := e.employeeRepo.ApplyLeave(ctx, leave); err != nil {
+		return err
+	}
+
+	return nil
 }

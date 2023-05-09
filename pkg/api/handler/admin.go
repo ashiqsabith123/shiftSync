@@ -54,7 +54,7 @@ func (a *AdminHandler) PostSignin(ctxt *gin.Context) {
 		return
 	}
 
-	ctxt.SetCookie("admin-cookie", token, 20*60, "", "", false, true)
+	ctxt.SetCookie("admin-cookie", token, 10*60, "", "", false, true)
 	resp := response.ErrorResponse(200, "succesfuly logged in", "", token)
 	ctxt.JSON(200, resp)
 
@@ -158,9 +158,7 @@ func (a *AdminHandler) FormCorrection(ctx *gin.Context) {
 
 func (a *AdminHandler) GetScheduleDuty(c *gin.Context) {
 
-	var data []response.Schedule
-	tempData, err := a.adminusecase.GetAllEmployees(c)
-	copier.Copy(&data, &tempData)
+	tempData, err := a.adminusecase.GetAllEmployeesSchedules(c)
 
 	if err != nil {
 		c.JSON(204, gin.H{
@@ -172,7 +170,7 @@ func (a *AdminHandler) GetScheduleDuty(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"status":    200,
-		"employees": data,
+		"employees": tempData,
 	})
 
 }

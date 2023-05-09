@@ -1,9 +1,5 @@
 package domain
 
-import (
-	"time"
-)
-
 type Employee struct {
 	ID         uint   `json:"id" gorm:"primaryKey;unique"`
 	First_name string `json:"firstname"`
@@ -37,11 +33,20 @@ type Form struct {
 }
 
 type Attendance struct {
-	EmployeeID int       `json:"empid" gorm:"primaryKey;autoIncrement:false"`
-	Punch      Form      `gorm:"foreignKey:EmployeeID"`
-	Date       string    `json:"date"`
-	Punch_in   time.Time `json:"punchin"`
-	Punch_out  time.Time `json:"punchout"`
-	Duty_type  string    `json:"type" gorm:"type:char(1)"`
-	Status     string    `json:"status" gorm:"type:char(1)"`
+	EmployeeID uint   `json:"empid"`
+	Punch      Form   `gorm:"foreignKey:EmployeeID"`
+	Date       string `json:"date"`
+	Punch_in   string `json:"punchin"`
+	Punch_out  string `json:"punchout"`
+	Duty_type  string `json:"type" gorm:"type:char(1)"`
+	Status     string `json:"status" gorm:"type:char(1)"`
+}
+
+type Leave struct {
+	EmployeeID uint   `json:"empid"`
+	Leave_type string `json:"leavetype"`
+	From       string `json:"fromdate"`
+	To         string `json:"todate"`
+	Reason     string `json:"reason"`
+	Status     string `json:"status" gorm:"type:char(1)"`
 }

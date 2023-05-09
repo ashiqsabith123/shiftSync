@@ -3,6 +3,7 @@ package interfaces
 import (
 	"context"
 	"shiftsync/pkg/domain"
+	"shiftsync/pkg/helper/request"
 	"shiftsync/pkg/helper/response"
 )
 
@@ -13,4 +14,8 @@ type EmployeeUseCase interface {
 	AddForm(r context.Context, form domain.Form) error
 	FormStatus(ctx context.Context, empID int) string
 	GetDutySchedules(ctx context.Context, id int) (response.Duty, error)
+	PunchIn(ctx context.Context, ID int) (string, error)
+	VerifyOtpForPunchin(ctx context.Context, id int, otp request.OTPStruct) error
+	PunchOut(ctx context.Context, id int) error
+	ApplyLeave(ctx context.Context, leave domain.Leave) error
 }

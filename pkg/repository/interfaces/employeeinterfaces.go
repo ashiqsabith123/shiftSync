@@ -13,4 +13,7 @@ type EmployeeRepository interface {
 	CheckFormDetails(cntxt context.Context, form domain.Form) error
 	FormStatus(ctx context.Context, empID int) string
 	GetDutySchedules(ctx context.Context, id int) (response.Duty, error)
+	PunchIn(ctx context.Context, punchin domain.Attendance) error
+	PunchOut(ctx context.Context, punchout domain.Attendance) error
+	ApplyLeave(ctx context.Context, leave domain.Leave) error
 }

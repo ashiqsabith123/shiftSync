@@ -14,5 +14,6 @@ type AdminRepository interface {
 	FindFormByID(ctx context.Context, fID int) error
 	FormCorrection(ctx context.Context, form domain.Form)
 	GetAllEmployees(ctx context.Context) ([]response.AllEmployee, error)
+	GetAllEmployeesSchedules(ctx context.Context) ([]response.Schedule, error)
 	ScheduleDuty(ctx context.Context, duty domain.Attendance) error
 }

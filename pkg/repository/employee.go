@@ -27,6 +27,7 @@ func (e *employeeDatabase) AddEmployee(cntxt context.Context, signup domain.Empl
 }
 
 func (e *employeeDatabase) FindEmployee(cntxt context.Context, find domain.Employee) (domain.Employee, error) {
+
 	var emp domain.Employee
 
 	if err := e.DB.Where("id= ? OR email = ? OR phone = ? OR user_name = ?", find.ID, find.Email, find.Phone, find.User_name).First(&emp).Error; err != nil {
@@ -34,6 +35,7 @@ func (e *employeeDatabase) FindEmployee(cntxt context.Context, find domain.Emplo
 		return find, errors.New("no user found")
 	}
 
+	cntxt.Done()
 	return emp, nil
 }
 
@@ -75,4 +77,28 @@ func (e *employeeDatabase) GetDutySchedules(ctx context.Context, id int) (respon
 	copier.Copy(&schedule, &duty)
 
 	return schedule, nil
+}
+
+func (e *employeeDatabase) PunchIn(ctx context.Context, punchin domain.Attendance) error {
+	if err := e.DB.Raw("UPDATE attendances SET date = ?, punch_in = ?, status = 'W' WHERE employee_id = ?", punchin.Date, punchin.Punch_in, punchin.EmployeeID).Scan(&punchin).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (e *employeeDatabase) PunchOut(ctx context.Context, punchout domain.Attendance) error {
+	if err := e.DB.Raw("UPDATE attendances SET punch_out = ?, status = 'C' WHERE employee_id = ?", punchout.Punch_out, punchout.EmployeeID).Scan(&punchout).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (e *employeeDatabase) ApplyLeave(ctx context.Context, leave domain.Leave) error {
+	if err := e.DB.Create(&leave).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

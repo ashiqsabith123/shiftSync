@@ -97,8 +97,8 @@ func (a *adminUseCase) FormCorrection(ctx context.Context, form domain.Form) err
 	return nil
 }
 
-func (a *adminUseCase) GetAllEmployees(ctx context.Context) ([]response.AllEmployee, error) {
-	data, err := a.adminRepo.GetAllEmployees(ctx)
+func (a *adminUseCase) GetAllEmployeesSchedules(ctx context.Context) ([]response.Schedule, error) {
+	data, err := a.adminRepo.GetAllEmployeesSchedules(ctx)
 	return data, err
 }
 
