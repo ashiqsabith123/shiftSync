@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"shiftsync/pkg/domain"
 	"shiftsync/pkg/encrypt"
 	"shiftsync/pkg/helper/response"
@@ -101,4 +102,24 @@ func (e *employeeDatabase) ApplyLeave(ctx context.Context, leave domain.Leave) e
 	}
 
 	return nil
+}
+
+func (e *employeeDatabase) LeaveStatusHistory(ctx context.Context, id int) ([]response.LeaveHistory, error) {
+	var history []response.LeaveHistory
+	if err := e.DB.Raw("SELECT leave_type, leaves.to, leaves.from, status FROM leaves WHERE employee_id = ?", id).Scan(&history).Error; err != nil {
+
+		return []response.LeaveHistory{}, err
+	}
+
+	fmt.Println("his", history)
+	return history, nil
+}
+
+func (e *employeeDatabase) Attendance(ctx context.Context, id int) ([]response.Attendance, error) {
+	var attendance []response.Attendance
+	if err := e.DB.Raw("select date, punch_in , punch_out, duty_type from attendances where status = 'C' and employee_id = ?", id).Scan(&attendance).Error; err != nil {
+		return []response.Attendance{}, err
+	}
+
+	return attendance, nil
 }

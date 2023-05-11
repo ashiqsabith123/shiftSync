@@ -14,4 +14,7 @@ type AdminUseCase interface {
 	FormCorrection(ctx context.Context, form domain.Form) error
 	GetAllEmployeesSchedules(ctx context.Context) ([]response.Schedule, error)
 	ScheduleDuty(ctx context.Context, duty domain.Attendance) error
+	GetLeaveRequests(ctx context.Context) ([]response.LeaveRequests, error)
+	ApproveLeaveRequests(ctx context.Context, id int) error
+	DeclineLeaveRequests(ctx context.Context, id int) error
 }

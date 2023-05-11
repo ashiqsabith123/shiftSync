@@ -5,6 +5,9 @@ import (
 	"shiftsync/pkg/api/routes"
 
 	"github.com/gin-gonic/gin"
+
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type ServerHTTP struct {
@@ -18,6 +21,8 @@ func NewHTTPServer(employeeHandler *handler.EmployeeHandler, adminHandler *handl
 
 	// logger middleware
 	server.Use(gin.Logger())
+
+	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	routes.EmployeeRoutes(server.Group("/employee"), employeeHandler)
 	routes.AdminRoutes(server.Group("/admin"), adminHandler)

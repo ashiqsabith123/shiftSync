@@ -18,4 +18,6 @@ type EmployeeUseCase interface {
 	VerifyOtpForPunchin(ctx context.Context, id int, otp request.OTPStruct) error
 	PunchOut(ctx context.Context, id int) error
 	ApplyLeave(ctx context.Context, leave domain.Leave) error
+	GetLeaveStatusHistory(ctx context.Context, id int) ([]response.LeaveHistory, error)
+	Attendance(ctx context.Context, id int) ([]response.Attendance, error)
 }

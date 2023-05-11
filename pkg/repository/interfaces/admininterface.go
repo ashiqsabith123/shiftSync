@@ -3,6 +3,7 @@ package interfaces
 import (
 	"context"
 	"shiftsync/pkg/domain"
+	"shiftsync/pkg/helper/request"
 	"shiftsync/pkg/helper/response"
 )
 
@@ -16,4 +17,6 @@ type AdminRepository interface {
 	GetAllEmployees(ctx context.Context) ([]response.AllEmployee, error)
 	GetAllEmployeesSchedules(ctx context.Context) ([]response.Schedule, error)
 	ScheduleDuty(ctx context.Context, duty domain.Attendance) error
+	GetLeaveRequests(ctx context.Context) ([]response.LeaveRequests, error)
+	ChangeLeaveStatus(ctx context.Context, status request.LeaveStatus) error
 }

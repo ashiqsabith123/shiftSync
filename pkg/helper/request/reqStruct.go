@@ -76,3 +76,8 @@ type Leave struct {
 	To         string `json:"todate"`
 	Reason     string `json:"reason"`
 }
+
+type LeaveStatus struct {
+	Id     int    `json:"id"`
+	Status string `json:"status"`
+}

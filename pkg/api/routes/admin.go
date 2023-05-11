@@ -36,5 +36,13 @@ func AdminRoutes(api *gin.RouterGroup, adminHandler *handler.AdminHandler) {
 			duty.POST("/", adminHandler.ScheduleDuty)
 
 		}
+
+		leave := api.Group("/leave")
+		{
+			leave.GET("/request", adminHandler.GetAllLeaveRequets)
+			leave.PATCH("/approve", adminHandler.ApproveLeaveRequests)
+			leave.PATCH("/decline", adminHandler.DeclineLeaveRequests)
+
+		}
 	}
 }

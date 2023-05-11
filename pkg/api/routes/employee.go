@@ -45,7 +45,10 @@ func EmployeeRoutes(api *gin.RouterGroup, employeeHandler *handler.EmployeeHandl
 		leave := api.Group("/leave")
 		{
 			leave.POST("/apply", employeeHandler.ApplyLeave)
+			leave.GET("/status", employeeHandler.LeaveStatus)
 		}
+
+		api.GET("/attendance", employeeHandler.Attendance)
 
 	}
 }

@@ -16,4 +16,6 @@ type EmployeeRepository interface {
 	PunchIn(ctx context.Context, punchin domain.Attendance) error
 	PunchOut(ctx context.Context, punchout domain.Attendance) error
 	ApplyLeave(ctx context.Context, leave domain.Leave) error
+	LeaveStatusHistory(ctx context.Context, id int) ([]response.LeaveHistory, error)
+	Attendance(ctx context.Context, id int) ([]response.Attendance, error)
 }

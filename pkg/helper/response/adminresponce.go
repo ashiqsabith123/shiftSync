@@ -40,3 +40,12 @@ type Schedule struct {
 	Phone       int64  `json:"phone"`
 	Designation string `json:"designation"`
 }
+
+type LeaveRequests struct {
+	Id         int    `json:"id"`
+	Name       string `json:"name"`
+	From       string `json:"fromdate"`
+	To         string `json:"todate"`
+	Leave_type string `json:"leavetype"`
+	Reason     string `json:"reason"`
+}

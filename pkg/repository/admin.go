@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"shiftsync/pkg/domain"
+	"shiftsync/pkg/helper/request"
 	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
 
@@ -88,6 +89,23 @@ func (a *adminDatabase) ScheduleDuty(ctx context.Context, duty domain.Attendance
 	duty.Status = "S"
 
 	if err := a.DB.Create(&duty).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *adminDatabase) GetLeaveRequests(ctx context.Context) ([]response.LeaveRequests, error) {
+	var leaveRequests []response.LeaveRequests
+	if err := a.DB.Raw("SELECT employees.first_name || ' ' || employees.last_name AS name, forms.form_id as id, leaves.leave_type, leaves.from, leaves.to, leaves.reason FROM forms JOIN employees ON employees.id = forms.form_id JOIN leaves ON employees.id = leaves.employee_id WHERE leaves.status = 'R';").Scan(&leaveRequests).Error; err != nil {
+		return leaveRequests, err
+	}
+
+	return leaveRequests, nil
+}
+
+func (a *adminDatabase) ChangeLeaveStatus(ctx context.Context, status request.LeaveStatus) error {
+	if err := a.DB.Raw("update leaves set status = ? where employee_id = ?", status.Status, status.Id).Scan(&domain.Leave{}).Error; err != nil {
 		return err
 	}
 

@@ -341,6 +341,14 @@ func (e *EmployeeHandler) PunchOut(c *gin.Context) {
 
 }
 
+// @Summary ApplyLeave
+// @Description api for employees to apply leave
+// @Tags leave
+// @Produce json
+// @Param input body request.Leave{} true "input field"
+// @Success 200 {object} response.Response{} "successfully applied for leave"
+// @Failure 400 {object} response.Response{} "invalid input"
+
 func (e *EmployeeHandler) ApplyLeave(c *gin.Context) {
 	var reqLeave request.Leave
 
@@ -351,13 +359,13 @@ func (e *EmployeeHandler) ApplyLeave(c *gin.Context) {
 	}
 
 	tempid, ok := c.Get("userId")
-	id, _ := strconv.Atoi(tempid.(string))
 
 	if !ok {
 		resp := response.ErrorResponse(http.StatusInternalServerError, "employee id not found", "", nil)
 		c.JSON(http.StatusInternalServerError, resp)
 		return
 	}
+	id, _ := strconv.Atoi(tempid.(string))
 
 	var leave domain.Leave
 
@@ -373,5 +381,55 @@ func (e *EmployeeHandler) ApplyLeave(c *gin.Context) {
 
 	resp := response.SuccessResponse(200, "succesfully applied leave", nil)
 	c.JSON(200, resp)
+
+}
+
+func (e *EmployeeHandler) LeaveStatus(c *gin.Context) {
+	tempid, ok := c.Get("userId")
+	id, _ := strconv.Atoi(tempid.(string))
+
+	if !ok {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "employee id not found", "", nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	status, err := e.employeeUseCase.GetLeaveStatusHistory(c, id)
+
+	if err != nil {
+		resp := response.ErrorResponse(404, "failed to get leave history", err.Error(), nil)
+		c.JSON(404, resp)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status":    200,
+		"employees": status,
+	})
+
+}
+
+func (e *EmployeeHandler) Attendance(c *gin.Context) {
+	tempid, ok := c.Get("userId")
+	id, _ := strconv.Atoi(tempid.(string))
+
+	if !ok {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "employee id not found", "", nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	attendance, err := e.employeeUseCase.Attendance(c, id)
+
+	if err != nil {
+		resp := response.ErrorResponse(404, "failed to get attendance", err.Error(), nil)
+		c.JSON(404, resp)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status":    200,
+		"employees": attendance,
+	})
 
 }

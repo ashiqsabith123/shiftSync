@@ -6,6 +6,7 @@ import (
 	"shiftsync/pkg/domain"
 	"shiftsync/pkg/encrypt"
 	"shiftsync/pkg/helper"
+	"shiftsync/pkg/helper/request"
 	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
 	service "shiftsync/pkg/usecases/interfaces"
@@ -103,7 +104,44 @@ func (a *adminUseCase) GetAllEmployeesSchedules(ctx context.Context) ([]response
 }
 
 func (a *adminUseCase) ScheduleDuty(ctx context.Context, duty domain.Attendance) error {
+
 	if err := a.adminRepo.ScheduleDuty(ctx, duty); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *adminUseCase) GetLeaveRequests(ctx context.Context) ([]response.LeaveRequests, error) {
+	leaveRquests, err := a.adminRepo.GetLeaveRequests(ctx)
+
+	if err != nil {
+		return leaveRquests, err
+	}
+
+	return leaveRquests, nil
+}
+
+func (a *adminUseCase) ApproveLeaveRequests(ctx context.Context, id int) error {
+	var status request.LeaveStatus
+
+	status.Id = id
+	status.Status = "A"
+
+	if err := a.adminRepo.ChangeLeaveStatus(ctx, status); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *adminUseCase) DeclineLeaveRequests(ctx context.Context, id int) error {
+	var status request.LeaveStatus
+
+	status.Id = id
+	status.Status = "D"
+
+	if err := a.adminRepo.ChangeLeaveStatus(ctx, status); err != nil {
 		return err
 	}
 

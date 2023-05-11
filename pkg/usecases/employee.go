@@ -182,3 +182,67 @@ func (e *employeeUseCase) ApplyLeave(ctx context.Context, leave domain.Leave) er
 
 	return nil
 }
+
+func (e *employeeUseCase) GetLeaveStatusHistory(ctx context.Context, id int) ([]response.LeaveHistory, error) {
+	status, err := e.employeeRepo.LeaveStatusHistory(ctx, id)
+
+	if err != nil {
+		return status, err
+	}
+
+	for i, _ := range status {
+		switch status[i].Status {
+		case "A":
+			status[i].Status = "Approved"
+		case "P":
+			status[i].Status = "Pending"
+		case "D":
+			status[i].Status = "Approved"
+		}
+	}
+
+	fmt.Println("use", status)
+
+	return status, nil
+
+}
+
+func (e *employeeUseCase) Attendance(ctx context.Context, id int) ([]response.Attendance, error) {
+	attnedance, err := e.employeeRepo.Attendance(ctx, id)
+
+	if err != nil {
+		return []response.Attendance{}, err
+	}
+
+	for i, _ := range attnedance {
+		t1, _ := time.Parse("15:04:05", attnedance[i].Punch_in)
+		t2, _ := time.Parse("15:04:05", attnedance[i].Punch_out)
+
+		fmt.Println("aa", attnedance[i].Punch_in)
+
+		duration := t1.Sub(t2)
+
+		hours := int(duration.Hours())
+
+		attnedance[i].Total_hours = hours
+
+		if hours > 8 {
+			attnedance[i].Over_time = hours - 8
+		} else {
+			attnedance[i].Over_time = 0
+		}
+
+		switch attnedance[i].Duty_type {
+		case "M":
+			attnedance[i].Duty_type = "Morning Duty"
+
+		case "E":
+			attnedance[i].Duty_type = "Evening duty"
+
+		case "N":
+			attnedance[i].Duty_type = "Night Duty"
+
+		}
+	}
+	return attnedance, nil
+}

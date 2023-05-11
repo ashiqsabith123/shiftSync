@@ -198,3 +198,60 @@ func (a *AdminHandler) ScheduleDuty(c *gin.Context) {
 	c.JSON(200, resp)
 
 }
+
+func (a *AdminHandler) GetAllLeaveRequets(c *gin.Context) {
+	tempData, err := a.adminusecase.GetLeaveRequests(c)
+
+	if err != nil {
+		c.JSON(204, gin.H{
+			"status":  204,
+			"message": "no details",
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status":    200,
+		"employees": tempData,
+	})
+}
+
+func (a *AdminHandler) ApproveLeaveRequests(c *gin.Context) {
+
+	var res request.FormApprove
+	if err := c.ShouldBindJSON(&res); err != nil {
+		resp := response.ErrorResponse(400, "invalid input", err.Error(), res)
+		c.JSON(400, resp)
+		return
+	}
+
+	if err := a.adminusecase.ApproveLeaveRequests(c, res.FormID); err != nil {
+		resp := response.ErrorResponse(400, "failed to approve request", err.Error(), res)
+		c.JSON(400, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "request approved succesfully", "")
+	c.JSON(200, resp)
+
+}
+
+func (a *AdminHandler) DeclineLeaveRequests(c *gin.Context) {
+
+	var res request.FormApprove
+	if err := c.ShouldBindJSON(&res); err != nil {
+		resp := response.ErrorResponse(400, "invalid input", err.Error(), res)
+		c.JSON(400, resp)
+		return
+	}
+
+	if err := a.adminusecase.DeclineLeaveRequests(c, res.FormID); err != nil {
+		resp := response.ErrorResponse(400, "failed to approve request", err.Error(), res)
+		c.JSON(400, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "request declined succesfully", "")
+	c.JSON(200, resp)
+
+}
