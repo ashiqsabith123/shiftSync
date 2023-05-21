@@ -44,5 +44,11 @@ func AdminRoutes(api *gin.RouterGroup, adminHandler *handler.AdminHandler) {
 			leave.PATCH("/decline", adminHandler.DeclineLeaveRequests)
 
 		}
+
+		salary := api.Group("salary")
+		{
+			salary.POST("/add-details", adminHandler.AddSalaryDetails)
+			salary.PATCH("/edit-details", adminHandler.EditSalaryDetails)
+		}
 	}
 }

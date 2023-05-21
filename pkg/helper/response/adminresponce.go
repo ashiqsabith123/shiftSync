@@ -49,3 +49,18 @@ type LeaveRequests struct {
 	Leave_type string `json:"leavetype"`
 	Reason     string `json:"reason"`
 }
+
+type SalaryDetails struct {
+	EmployeeID     uint   `json:"empid"`
+	Grade          string `json:"grade"`
+	Base_salary    int    `json:"basesalary"`
+	D_allowance    int    `json:"dallowance"`
+	Sp_allowance   int    `json:"spallowance"`
+	M_allowance    int    `json:"mallowance"`
+	Tax            int    `json:"tax"`
+	Provident_fund int    `json:"provident"`
+}
+
+type Forgot struct {
+	Phone int64
+}

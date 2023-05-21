@@ -22,7 +22,7 @@ func InitializeAPI(config2 config.Config) *http.ServerHTTP {
 	employeeRepository := repository.NewEmployeeRepository(gormDB)
 	employeeUseCase := usecases.NewEmployeeUseCase(employeeRepository)
 	employeeHandler := handler.NewEmployeeHandler(employeeUseCase)
-	adminRepository := repository.NewAdminRepository(gormDB)
+	adminRepository := repository.NewAdminRepository(gormDB, employeeRepository)
 	adminUseCase := usecases.NewAdminUseCase(adminRepository)
 	adminHandler := handler.NewAdminHandler(adminUseCase)
 	serverHTTP := http.NewHTTPServer(employeeHandler, adminHandler)

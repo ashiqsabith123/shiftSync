@@ -18,8 +18,8 @@ type adminUseCase struct {
 	adminRepo repo.AdminRepository
 }
 
-func NewAdminUseCase(rep repo.AdminRepository) service.AdminUseCase {
-	return &adminUseCase{adminRepo: rep}
+func NewAdminUseCase(adRep repo.AdminRepository) service.AdminUseCase {
+	return &adminUseCase{adminRepo: adRep}
 }
 
 func (a *adminUseCase) SignUp(ctx context.Context, admin domain.Admin) error {
@@ -142,6 +142,23 @@ func (a *adminUseCase) DeclineLeaveRequests(ctx context.Context, id int) error {
 	status.Status = "D"
 
 	if err := a.adminRepo.ChangeLeaveStatus(ctx, status); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *adminUseCase) AddSalaryDetails(ctx context.Context, salaryDetails domain.Salary) error {
+
+	if err := a.adminRepo.AddSalaryDetails(ctx, salaryDetails); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *adminUseCase) EditSalaryDetails(ctx context.Context, editDetails domain.Salary) error {
+	if err := a.adminRepo.EditSalaryDetails(ctx, editDetails); err != nil {
 		return err
 	}
 

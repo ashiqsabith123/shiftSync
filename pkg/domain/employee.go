@@ -50,3 +50,18 @@ type Leave struct {
 	Reason     string `json:"reason"`
 	Status     string `json:"status" gorm:"type:char(1)"`
 }
+
+type Salary struct {
+	EmployeeID     uint     `json:"empid" gorm:"primaryKey;autoIncrement:false"`
+	Salary         Employee `gorm:"foreignKey:EmployeeID"`
+	Grade          string   `json:"grade"`
+	Base_salary    int      `json:"basesalary"`
+	D_allowance    int      `json:"dallowance"`
+	Sp_allowance   int      `json:"spallowance"`
+	M_allowance    int      `json:"mallowance"`
+	Over_time      int      `json:"overtime"`
+	Tax            int      `json:"tax"`
+	Provident_fund int      `json:"provident"`
+	Gross_salary   int      `json:"grosssalary"`
+	Net_salary     int      `json:"netsalary"`
+}

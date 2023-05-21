@@ -9,6 +9,7 @@ import (
 	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
 
+	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 )
 
@@ -16,7 +17,8 @@ type adminDatabase struct {
 	DB *gorm.DB
 }
 
-func NewAdminRepository(DB *gorm.DB) repo.AdminRepository {
+func NewAdminRepository(DB *gorm.DB, repo repo.EmployeeRepository) repo.AdminRepository {
+
 	return &adminDatabase{DB: DB}
 }
 
@@ -109,5 +111,25 @@ func (a *adminDatabase) ChangeLeaveStatus(ctx context.Context, status request.Le
 		return err
 	}
 
+	return nil
+}
+
+func (a *adminDatabase) AddSalaryDetails(ctx context.Context, salaryDetails domain.Salary) error {
+	if err := a.DB.Create(&salaryDetails).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *adminDatabase) EditSalaryDetails(ctx context.Context, editDetails domain.Salary) error {
+	var salaryDetails domain.Salary
+	if err := a.DB.Where("employee_id = ?", editDetails.EmployeeID).First(&salaryDetails).Error; err != nil {
+		return err
+	}
+
+	copier.Copy(&salaryDetails, &editDetails)
+
+	a.DB.Save(&salaryDetails)
 	return nil
 }

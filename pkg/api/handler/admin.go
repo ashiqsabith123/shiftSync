@@ -255,3 +255,51 @@ func (a *AdminHandler) DeclineLeaveRequests(c *gin.Context) {
 	c.JSON(200, resp)
 
 }
+
+func (a *AdminHandler) AddSalaryDetails(c *gin.Context) {
+	var salarydetails response.SalaryDetails
+
+	if err := c.ShouldBindJSON(&salarydetails); err != nil {
+		resp := response.ErrorResponse(400, "invalid input", err.Error(), salarydetails)
+		c.JSON(400, resp)
+		return
+	}
+
+	var salaryDetails domain.Salary
+
+	copier.Copy(&salaryDetails, &salarydetails)
+
+	if err := a.adminusecase.AddSalaryDetails(c, salaryDetails); err != nil {
+		resp := response.ErrorResponse(400, "failed to add salary details", err.Error(), "")
+		c.JSON(400, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "salary details added succesfully", "")
+	c.JSON(200, resp)
+
+}
+
+func (a *AdminHandler) EditSalaryDetails(c *gin.Context) {
+	var salarydetails response.SalaryDetails
+
+	if err := c.ShouldBindJSON(&salarydetails); err != nil {
+		resp := response.ErrorResponse(400, "invalid input", err.Error(), salarydetails)
+		c.JSON(400, resp)
+		return
+	}
+
+	var salaryDetails domain.Salary
+
+	copier.Copy(&salaryDetails, &salarydetails)
+
+	if err := a.adminusecase.EditSalaryDetails(c, salaryDetails); err != nil {
+		resp := response.ErrorResponse(400, "failed to edit salary details", err.Error(), "")
+		c.JSON(400, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, "salary details edited succesfully", "")
+	c.JSON(200, resp)
+
+}

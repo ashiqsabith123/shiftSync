@@ -17,4 +17,6 @@ type AdminUseCase interface {
 	GetLeaveRequests(ctx context.Context) ([]response.LeaveRequests, error)
 	ApproveLeaveRequests(ctx context.Context, id int) error
 	DeclineLeaveRequests(ctx context.Context, id int) error
+	AddSalaryDetails(ctx context.Context, salaryDetails domain.Salary) error
+	EditSalaryDetails(ctx context.Context, editDetails domain.Salary) error
 }

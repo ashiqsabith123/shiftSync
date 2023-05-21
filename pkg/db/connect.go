@@ -10,11 +10,14 @@ import (
 	"gorm.io/gorm"
 )
 
+var db *gorm.DB
+var dberr error
+
 func ConnectToDatbase(config config.Config) *gorm.DB {
 	connstr := fmt.Sprintf("host=%s user=%s dbname=%s port=%s password=%s", config.Db.DbHost, config.Db.DbUser, config.Db.DbName, config.Db.DbPort, config.Db.DbPaswword)
-	db, err := gorm.Open(postgres.Open(connstr), &gorm.Config{})
+	db, dberr = gorm.Open(postgres.Open(connstr), &gorm.Config{})
 
-	if err != nil {
+	if dberr != nil {
 		log.Fatal("Failed to connect database")
 		return nil
 	}
@@ -25,11 +28,16 @@ func ConnectToDatbase(config config.Config) *gorm.DB {
 		domain.Form{},
 		domain.Admin{},
 		domain.Leave{},
+		domain.Salary{},
 	); err != nil {
 		fmt.Println(err)
 	}
 
 	fmt.Println("Connected succesfully....!")
 
+	return db
+}
+
+func GetDatabaseInstance() *gorm.DB {
 	return db
 }

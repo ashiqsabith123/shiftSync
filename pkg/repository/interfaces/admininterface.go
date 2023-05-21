@@ -19,4 +19,6 @@ type AdminRepository interface {
 	ScheduleDuty(ctx context.Context, duty domain.Attendance) error
 	GetLeaveRequests(ctx context.Context) ([]response.LeaveRequests, error)
 	ChangeLeaveStatus(ctx context.Context, status request.LeaveStatus) error
+	AddSalaryDetails(ctx context.Context, salaryDetails domain.Salary) error
+	EditSalaryDetails(ctx context.Context, editDetails domain.Salary) error
 }

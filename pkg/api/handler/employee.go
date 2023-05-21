@@ -341,11 +341,13 @@ func (e *EmployeeHandler) PunchOut(c *gin.Context) {
 
 }
 
-// @Summary ApplyLeave
-// @Description api for employees to apply leave
-// @Tags leave
+// ApplyLeave godoc
+// @summary ApplyLeave
+// @description api for employees to apply leave
+// @tags leave
 // @Produce json
 // @Param input body request.Leave{} true "input field"
+// @Router /leave/apply [post]
 // @Success 200 {object} response.Response{} "successfully applied for leave"
 // @Failure 400 {object} response.Response{} "invalid input"
 
