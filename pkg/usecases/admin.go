@@ -10,6 +10,7 @@ import (
 	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
 	service "shiftsync/pkg/usecases/interfaces"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -103,7 +104,7 @@ func (a *adminUseCase) GetAllEmployeesSchedules(ctx context.Context) ([]response
 	return data, err
 }
 
-func (a *adminUseCase) ScheduleDuty(ctx context.Context, duty domain.Attendance) error {
+func (a *adminUseCase) ScheduleDuty(ctx context.Context, duty domain.Duty) error {
 
 	if err := a.adminRepo.ScheduleDuty(ctx, duty); err != nil {
 		return err
@@ -163,4 +164,53 @@ func (a *adminUseCase) EditSalaryDetails(ctx context.Context, editDetails domain
 	}
 
 	return nil
+}
+
+func (a *adminUseCase) CalculateSalary(ctx context.Context, id int) error {
+	currentMonth := time.Now().Local().Format("2006-01-02")
+
+	var totalAmount float32
+
+	hours, calulateError := a.adminRepo.CalculateTotalWorkingHours(ctx, id, currentMonth)
+	if calulateError != nil {
+		return calulateError
+	}
+
+	grade, gradeError := a.adminRepo.GetGradeOfTheEmployee(ctx, id)
+	if gradeError != nil {
+		return gradeError
+	}
+
+	switch grade {
+	case "A":
+		totalAmount = hours * 150.0
+	case "B":
+		totalAmount = hours * 125.0
+	case "C":
+		totalAmount = hours * 100.0
+	}
+
+	allowance, allowanceError := a.adminRepo.AddAllAlowances(ctx, id)
+	if allowanceError != nil {
+		return allowanceError
+	}
+
+	deductions, deductionError := a.adminRepo.CaculateDeductions(ctx, id)
+	if deductionError != nil {
+		return deductionError
+	}
+
+	grossSalary := totalAmount + allowance
+	netSalary := grossSalary - deductions
+
+	if err := a.adminRepo.UpdateFullSalary(ctx, id, grossSalary, netSalary); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *adminUseCase) FindEmployeeById(ctx context.Context, id int) response.EmployeeDetails {
+	details := a.adminRepo.FindEmployeeById(ctx, id)
+	return details
 }

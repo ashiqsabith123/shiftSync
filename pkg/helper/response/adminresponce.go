@@ -63,4 +63,11 @@ type SalaryDetails struct {
 
 type Forgot struct {
 	Phone int64
+	Name  string
+}
+
+type EmployeeDetails struct {
+	Name  string
+	Email string
+	Phone string
 }

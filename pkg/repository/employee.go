@@ -68,7 +68,7 @@ func (e *employeeDatabase) FormStatus(ctx context.Context, empID int) string {
 }
 
 func (e *employeeDatabase) GetDutySchedules(ctx context.Context, id int) (response.Duty, error) {
-	var duty domain.Attendance
+	var duty domain.Duty
 	var schedule response.Duty
 
 	if err := e.DB.Where("employee_id = ? AND status='S'", id).First(&duty).Error; err != nil {
@@ -81,15 +81,25 @@ func (e *employeeDatabase) GetDutySchedules(ctx context.Context, id int) (respon
 }
 
 func (e *employeeDatabase) PunchIn(ctx context.Context, punchin domain.Attendance) error {
-	if err := e.DB.Raw("UPDATE attendances SET date = ?, punch_in = ?, status = 'W' WHERE employee_id = ?", punchin.Date, punchin.Punch_in, punchin.EmployeeID).Scan(&punchin).Error; err != nil {
+
+	if err := e.DB.Create(&punchin).Error; err != nil {
 		return err
 	}
 
+	if err := e.DB.Exec("UPDATE duties SET status = 'W' WHERE employee_id = ?", punchin.EmployeeID).Error; err != nil {
+		return err
+	}
 	return nil
 }
 
 func (e *employeeDatabase) PunchOut(ctx context.Context, punchout domain.Attendance) error {
-	if err := e.DB.Raw("UPDATE attendances SET punch_out = ?, status = 'C' WHERE employee_id = ?", punchout.Punch_out, punchout.EmployeeID).Scan(&punchout).Error; err != nil {
+	//var temp domain.Attendance
+
+	if err := e.DB.Exec("UPDATE attendances SET punch_out = ? WHERE employee_id = ? AND created_at = (SELECT created_at FROM attendances WHERE employee_id = ? ORDER BY created_at DESC LIMIT 1)", punchout.Punch_out, punchout.EmployeeID, punchout.EmployeeID).Error; err != nil {
+		return err
+	}
+
+	if err := e.DB.Exec("UPDATE duties SET status = 'C' WHERE employee_id = ?", punchout.EmployeeID).Error; err != nil {
 		return err
 	}
 

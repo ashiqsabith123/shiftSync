@@ -13,10 +13,12 @@ type AdminUseCase interface {
 	ApproveApplication(ctx context.Context, form domain.Form, empId int) error
 	FormCorrection(ctx context.Context, form domain.Form) error
 	GetAllEmployeesSchedules(ctx context.Context) ([]response.Schedule, error)
-	ScheduleDuty(ctx context.Context, duty domain.Attendance) error
+	ScheduleDuty(ctx context.Context, duty domain.Duty) error
 	GetLeaveRequests(ctx context.Context) ([]response.LeaveRequests, error)
 	ApproveLeaveRequests(ctx context.Context, id int) error
 	DeclineLeaveRequests(ctx context.Context, id int) error
 	AddSalaryDetails(ctx context.Context, salaryDetails domain.Salary) error
 	EditSalaryDetails(ctx context.Context, editDetails domain.Salary) error
+	CalculateSalary(ctx context.Context, id int) error
+	FindEmployeeById(ctx context.Context, id int) response.EmployeeDetails
 }

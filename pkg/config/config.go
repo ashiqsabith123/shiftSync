@@ -26,11 +26,17 @@ type TwilioConfig struct {
 	Auth_token  string `mapstructure:"authtoken"`
 }
 
+type RazorpayConfig struct {
+	Key    string `mapstructure:"key"`
+	Secret string `mapstructure:"secret"`
+}
+
 type Config struct {
-	Db     DBConfig     `mapstructure:"db"`
-	JWT    JWTConfig    `mapstructure:"jwt"`
-	Twilio TwilioConfig `mapstructure:"twilio"`
-	Crypto CryptoConfig `mapstructure:"crypto"`
+	Db       DBConfig       `mapstructure:"db"`
+	JWT      JWTConfig      `mapstructure:"jwt"`
+	Twilio   TwilioConfig   `mapstructure:"twilio"`
+	Crypto   CryptoConfig   `mapstructure:"crypto"`
+	Razorpay RazorpayConfig `mapstructure:"razorpay"`
 }
 
 var config Config
@@ -58,4 +64,8 @@ func JwtConfig() string {
 
 func GetCryptoSecret() string {
 	return config.Crypto.Secret
+}
+
+func GeyRazorpayKey() (string, string) {
+	return config.Razorpay.Key, config.Razorpay.Secret
 }

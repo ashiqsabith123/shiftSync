@@ -79,14 +79,14 @@ func (a *adminDatabase) GetAllEmployees(ctx context.Context) ([]response.AllEmpl
 
 func (a *adminDatabase) GetAllEmployeesSchedules(ctx context.Context) ([]response.Schedule, error) {
 	var emp []response.Schedule
-	if err := a.DB.Raw("SELECT forms.form_id AS id, employees.first_name || ' ' || employees.last_name AS name, employees.email, employees.phone, forms.designation, attendances.status FROM forms INNER JOIN employees ON employees.id = forms.form_id LEFT OUTER JOIN attendances ON forms.form_id = attendances.employee_id WHERE attendances.employee_id IS NULL OR attendances.status = 'C';").Scan(&emp).Error; err != nil {
+	if err := a.DB.Raw("SELECT forms.form_id AS id, employees.first_name || ' ' || employees.last_name AS name, employees.email, employees.phone, forms.designation, duties.status FROM forms INNER JOIN employees ON employees.id = forms.form_id LEFT OUTER JOIN duties ON forms.form_id = duties.employee_id WHERE duties.employee_id IS NULL OR duties.status = 'C';").Scan(&emp).Error; err != nil {
 		return emp, err
 	}
 
 	return emp, nil
 }
 
-func (a *adminDatabase) ScheduleDuty(ctx context.Context, duty domain.Attendance) error {
+func (a *adminDatabase) ScheduleDuty(ctx context.Context, duty domain.Duty) error {
 
 	duty.Status = "S"
 
@@ -132,4 +132,56 @@ func (a *adminDatabase) EditSalaryDetails(ctx context.Context, editDetails domai
 
 	a.DB.Save(&salaryDetails)
 	return nil
+}
+
+func (e *adminDatabase) CalculateTotalWorkingHours(ctx context.Context, id int, month string) (float32, error) {
+	var hour float32
+	if err := e.DB.Raw("SELECT CAST(SUM(EXTRACT(epoch FROM (TO_TIMESTAMP(punch_out, 'HH24:MI:SS') - TO_TIMESTAMP(punch_in, 'HH24:MI:SS')))) AS FLOAT) / 3600 AS hours FROM attendances WHERE employee_id = ? AND date_trunc('month', TO_DATE(date, 'YYYY-MM-DD')) = date_trunc('month', TO_DATE(?, 'YYYY-MM-DD'));", id, month).Scan(&hour).Error; err != nil {
+		return 0, err
+	}
+
+	return hour, nil
+}
+
+func (e *adminDatabase) GetGradeOfTheEmployee(ctx context.Context, id int) (string, error) {
+	var grade string
+	if err := e.DB.Raw("SELECT grade FROM salaries 	WHERE employee_id = ?", id).Scan(&grade).Error; err != nil {
+		return "", err
+	}
+
+	return grade, nil
+}
+
+func (e *adminDatabase) AddAllAlowances(ctx context.Context, id int) (float32, error) {
+	var allowance float32
+	if err := e.DB.Raw("SELECT (d_allowance + sp_allowance + m_allowance) AS allowance FROM salaries WHERE employee_id = ?", id).Scan(&allowance).Error; err != nil {
+		return 0, err
+	}
+
+	return allowance, nil
+}
+
+func (a *adminDatabase) CaculateDeductions(ctx context.Context, id int) (float32, error) {
+	var deductions float32
+	if err := a.DB.Raw("SELECT (tax + provident_fund ) AS deductions FROM salaries WHERE employee_id = ?", id).Scan(&deductions).Error; err != nil {
+		return 0, err
+	}
+
+	return deductions, nil
+}
+
+func (a *adminDatabase) UpdateFullSalary(ctx context.Context, id int, gross, net float32) error {
+	if err := a.DB.Exec("UPDATE salaries SET gross_salary = ? ,net_salary =? WHERE employee_id = ?", gross, net, id).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *adminDatabase) FindEmployeeById(ctx context.Context, id int) response.EmployeeDetails {
+	var details response.EmployeeDetails
+	if err := a.DB.Raw("SELECT first_name || ' ' || last_name AS name, phone, email FROM employees WHERE id = ?", id).Scan(&details).Error; err != nil {
+		fmt.Println(err)
+	}
+
+	return details
 }

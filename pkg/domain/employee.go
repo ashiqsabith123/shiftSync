@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 type Employee struct {
 	ID         uint   `json:"id" gorm:"primaryKey;unique"`
 	First_name string `json:"firstname"`
@@ -38,8 +40,7 @@ type Attendance struct {
 	Date       string `json:"date"`
 	Punch_in   string `json:"punchin"`
 	Punch_out  string `json:"punchout"`
-	Duty_type  string `json:"type" gorm:"type:char(1)"`
-	Status     string `json:"status" gorm:"type:char(1)"`
+	CreatedAt  time.Time
 }
 
 type Leave struct {
@@ -64,4 +65,10 @@ type Salary struct {
 	Provident_fund int      `json:"provident"`
 	Gross_salary   int      `json:"grosssalary"`
 	Net_salary     int      `json:"netsalary"`
+}
+
+type Razorpay struct {
+	EmployeeID uint   `json:"empid"`
+	Razor      Form   `gorm:"foreignKey:EmployeeID"`
+	ContactID  string `json:"contactid"`
 }

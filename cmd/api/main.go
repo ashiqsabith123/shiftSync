@@ -12,7 +12,7 @@ func main() {
 	config, err := config.LoadConfig()
 	verification.InitTwilio(config)
 	server := di.InitializeAPI(config)
-	go notification.SendNotification()
+	go notification.SendNotification(config)
 	server.Start()
 	fmt.Println(err, config)
 }

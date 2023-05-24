@@ -49,6 +49,8 @@ func AdminRoutes(api *gin.RouterGroup, adminHandler *handler.AdminHandler) {
 		{
 			salary.POST("/add-details", adminHandler.AddSalaryDetails)
 			salary.PATCH("/edit-details", adminHandler.EditSalaryDetails)
+			salary.GET("/calculate", adminHandler.Calculate)
 		}
+
 	}
 }

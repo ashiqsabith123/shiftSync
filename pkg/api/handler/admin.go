@@ -7,6 +7,7 @@ import (
 	"shiftsync/pkg/helper/request"
 	"shiftsync/pkg/helper/response"
 	service "shiftsync/pkg/usecases/interfaces"
+	"shiftsync/razorpay"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -131,6 +132,14 @@ func (a *AdminHandler) ApproveApplication(ctx *gin.Context) {
 		return
 	}
 
+	details := a.adminusecase.FindEmployeeById(ctx, form.FormID)
+
+	if err := razorpay.CreateContact(ctx, details); err != nil {
+		resp := response.ErrorResponse(400, "error", err.Error(), res)
+		ctx.JSON(400, resp)
+		return
+	}
+
 	resp := response.SuccessResponse(200, "approved succesfully", nil)
 	ctx.JSON(200, resp)
 }
@@ -184,7 +193,7 @@ func (a *AdminHandler) ScheduleDuty(c *gin.Context) {
 		return
 	}
 
-	var duty domain.Attendance
+	var duty domain.Duty
 
 	copier.Copy(&duty, &req)
 
@@ -302,4 +311,8 @@ func (a *AdminHandler) EditSalaryDetails(c *gin.Context) {
 	resp := response.SuccessResponse(200, "salary details edited succesfully", "")
 	c.JSON(200, resp)
 
+}
+
+func (a *AdminHandler) Calculate(c *gin.Context) {
+	a.adminusecase.CalculateSalary(c, 5)
 }
