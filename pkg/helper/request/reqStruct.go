@@ -32,7 +32,6 @@ type Form struct {
 	Pan_number           string `json:"pannumber"`
 	Adhaar_no            string `json:"adhaarno"`
 	Designation          string `json:"designation"`
-	Department           string `json:"department"`
 	Photo                string `json:"photo"`
 }
 

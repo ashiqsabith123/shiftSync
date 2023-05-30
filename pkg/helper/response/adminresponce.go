@@ -59,6 +59,7 @@ type SalaryDetails struct {
 	M_allowance    int    `json:"mallowance"`
 	Tax            int    `json:"tax"`
 	Provident_fund int    `json:"provident"`
+	Bonus          int    `json:"bonus"`
 }
 
 type Forgot struct {
@@ -67,7 +68,28 @@ type Forgot struct {
 }
 
 type EmployeeDetails struct {
+	Id    uint
 	Name  string
 	Email string
 	Phone string
+}
+
+type AccountDetails struct {
+	Id         int
+	Name       string
+	Account_no string
+	Ifsc_code  string
+	Contact_id string
+}
+
+type AccDetails struct {
+	ID           int
+	Account_no   string
+	Contact_id   string
+	Reference_id string
+	Amount       float64
+}
+
+type CreditSalaryId struct {
+	ID int `json:"empid"`
 }

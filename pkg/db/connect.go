@@ -30,6 +30,8 @@ func ConnectToDatbase(config config.Config) *gorm.DB {
 		domain.Leave{},
 		domain.Salary{},
 		domain.Duty{},
+		domain.Razorpay{},
+		domain.Transaction{},
 	); err != nil {
 		fmt.Println(err)
 	}

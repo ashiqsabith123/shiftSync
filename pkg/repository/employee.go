@@ -114,6 +114,15 @@ func (e *employeeDatabase) ApplyLeave(ctx context.Context, leave domain.Leave) e
 	return nil
 }
 
+func (e *employeeDatabase) CheckLeaveApplied(ctx context.Context, check domain.Leave) (response.LeaveAppiled, error) {
+	var applied response.LeaveAppiled
+	if err := e.DB.Raw("SELECT leaves.from, leaves.to FROM leaves WHERE employee_id = ? AND status = 'A' OR status='R' ORDER BY created_at DESC LIMIT 1;", check.EmployeeID).Scan(&applied).Error; err != nil {
+		return applied, err
+	}
+
+	return applied, nil
+}
+
 func (e *employeeDatabase) LeaveStatusHistory(ctx context.Context, id int) ([]response.LeaveHistory, error) {
 	var history []response.LeaveHistory
 	if err := e.DB.Raw("SELECT leave_type, leaves.to, leaves.from, status FROM leaves WHERE employee_id = ?", id).Scan(&history).Error; err != nil {
@@ -127,9 +136,47 @@ func (e *employeeDatabase) LeaveStatusHistory(ctx context.Context, id int) ([]re
 
 func (e *employeeDatabase) Attendance(ctx context.Context, id int) ([]response.Attendance, error) {
 	var attendance []response.Attendance
-	if err := e.DB.Raw("select date, punch_in , punch_out, duty_type from attendances where status = 'C' and employee_id = ?", id).Scan(&attendance).Error; err != nil {
+	if err := e.DB.Raw("select attendances.date, attendances.punch_in , attendances.punch_out, duties.duty_type from attendances inner join duties on attendances.employee_id = duties.employee_id where duties.status = 'C' and duties.employee_id = ?;", id).Scan(&attendance).Error; err != nil {
 		return []response.Attendance{}, err
 	}
 
 	return attendance, nil
+}
+
+func (e *employeeDatabase) GetCountOfLeaveTaken(ctx context.Context, reqCount response.LeaveCount) (int, error) {
+	var count int
+
+	if err := e.DB.Raw("SELECT SUM(DATE_PART('day', leaves.to::timestamp - leaves.from::timestamp)) AS count FROM leaves WHERE employee_id = ?  AND status = 'A' AND EXTRACT(YEAR FROM to_date(leaves.from, 'DD-MM-YYYY')) =?;", reqCount.Id, reqCount.Date).Scan(&count).Error; err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (e *employeeDatabase) GetSalaryDetails(ctx context.Context, id int) (response.Salarydetails, error) {
+	var details response.Salarydetails
+	if err := e.DB.Raw("SELECT * FROM salaries WHERE employee_id = ?", id).Scan(&details).Error; err != nil {
+		return details, err
+	}
+
+	return details, nil
+}
+
+func (e *employeeDatabase) GetSalaryHistory(ctx context.Context, id int) ([]response.SalaryHistory, error) {
+	var salaryHistory []response.SalaryHistory
+
+	if err := e.DB.Raw("SELECT refrence_id, date, d_allowance + sp_allowance + m_allowance AS allowance, tax + provident_fund AS deductions, gross_salary, net_salary FROM salaries INNER JOIN transactions ON transactions.employee_id = salaries.employee_id WHERE salaries.employee_id = ?;", id).Scan(&salaryHistory).Error; err != nil {
+		return salaryHistory, err
+	}
+	return salaryHistory, nil
+
+}
+
+func (e *employeeDatabase) GetDataForSalarySlip(ctx context.Context, id int) (response.SalarySlip, error) {
+	var data response.SalarySlip
+	if err := e.DB.Raw("select forms.employee_id, employees.first_name || ' ' || employees.last_name as name,forms.designation,forms.account_no,salaries.grade,salaries.duties,salaries.leave_count,salaries.base_salary,salaries.d_allowance,salaries.sp_allowance,salaries.m_allowance,salaries.leave_pay,salaries.over_time,salaries.provident_fund,salaries.tax,salaries.provident_fund + salaries.tax as deductions, salaries.gross_salary, salaries.net_salary from forms JOIN employees ON forms.form_id = employees.id JOIN salaries ON forms.form_id = salaries.employee_id where forms.form_id = ?;", id).Scan(&data).Error; err != nil {
+		return data, err
+	}
+
+	return data, nil
 }

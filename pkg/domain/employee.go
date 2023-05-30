@@ -30,7 +30,6 @@ type Form struct {
 	Status               string   `json:"status" gorm:"type:char(1)"`
 	Correction           string   `json:"correction"`
 	Designation          string   `json:"designation"`
-	Department           string   `json:"department"`
 	Approved_by          int      `json:"approved"`
 }
 
@@ -44,11 +43,13 @@ type Attendance struct {
 }
 
 type Leave struct {
-	EmployeeID uint   `json:"empid"`
+	EmployeeID uint   `json:"empid" `
 	Leave_type string `json:"leavetype"`
 	From       string `json:"fromdate"`
 	To         string `json:"todate"`
 	Reason     string `json:"reason"`
+	Mode       string `json:"mode" gorm:"type:char(1)"`
+	CreatedAt  time.Time
 	Status     string `json:"status" gorm:"type:char(1)"`
 }
 
@@ -57,18 +58,29 @@ type Salary struct {
 	Salary         Employee `gorm:"foreignKey:EmployeeID"`
 	Grade          string   `json:"grade"`
 	Base_salary    int      `json:"basesalary"`
+	Bonus          int      `json:"bonus"`
+	Leave_pay      int      `json:"leave_pay"`
 	D_allowance    int      `json:"dallowance"`
 	Sp_allowance   int      `json:"spallowance"`
 	M_allowance    int      `json:"mallowance"`
 	Over_time      int      `json:"overtime"`
 	Tax            int      `json:"tax"`
 	Provident_fund int      `json:"provident"`
+	Duties         int      `json:"duties"`
+	Leave_count    int      `json:"leave-count"`
 	Gross_salary   int      `json:"grosssalary"`
 	Net_salary     int      `json:"netsalary"`
 }
 
 type Razorpay struct {
-	EmployeeID uint   `json:"empid"`
-	Razor      Form   `gorm:"foreignKey:EmployeeID"`
-	ContactID  string `json:"contactid"`
+	Id         int    `json:"empid"`
+	Razor      Form   `gorm:"foreignKey:Id"`
+	Contact_id string `json:"contactid"`
+}
+
+type Transaction struct {
+	Employee_Id int       `json:"empid" gorm:"autoIncrement:false"`
+	Date        time.Time `json:"time"`
+	Refrence_id string    `json:"refrenceid"`
+	Amount      int       `json:"amout"`
 }

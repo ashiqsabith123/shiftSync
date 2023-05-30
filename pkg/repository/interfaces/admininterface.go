@@ -21,10 +21,6 @@ type AdminRepository interface {
 	ChangeLeaveStatus(ctx context.Context, status request.LeaveStatus) error
 	AddSalaryDetails(ctx context.Context, salaryDetails domain.Salary) error
 	EditSalaryDetails(ctx context.Context, editDetails domain.Salary) error
-	CalculateTotalWorkingHours(ctx context.Context, id int, month string) (float32, error)
-	GetGradeOfTheEmployee(ctx context.Context, id int) (string, error)
-	AddAllAlowances(ctx context.Context, id int) (float32, error)
-	CaculateDeductions(ctx context.Context, id int) (float32, error)
-	UpdateFullSalary(ctx context.Context, id int, gross, net float32) error
 	FindEmployeeById(ctx context.Context, id int) response.EmployeeDetails
+	FetchAccountDetailsById(ctx context.Context, id int) response.AccountDetails
 }

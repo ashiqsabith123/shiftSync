@@ -26,13 +26,16 @@ func EmployeeRoutes(api *gin.RouterGroup, employeeHandler *handler.EmployeeHandl
 
 	api.Use(middleware.AuthenticateUser)
 	{
+
+		api.GET("/dashboard", employeeHandler.GetDashboard)
+		api.GET("/attendance", employeeHandler.Attendance)
+		api.GET("/logout", employeeHandler.Logout)
+
 		form := api.Group("/form")
 		{
 			form.GET("/", employeeHandler.GetForm)
 			form.POST("/", employeeHandler.PostForm)
 		}
-
-		api.GET("/dashboard", employeeHandler.GetDashboard)
 
 		duty := api.Group("/duty")
 		{
@@ -48,7 +51,12 @@ func EmployeeRoutes(api *gin.RouterGroup, employeeHandler *handler.EmployeeHandl
 			leave.GET("/status", employeeHandler.LeaveStatus)
 		}
 
-		api.GET("/attendance", employeeHandler.Attendance)
+		salary := api.Group("/salary")
+		{
+			salary.GET("/history", employeeHandler.TransactionHistory)
+			salary.GET("/details", employeeHandler.SalaryDetails)
+			salary.GET("/download-slip", employeeHandler.SalarySlip)
+		}
 
 	}
 }

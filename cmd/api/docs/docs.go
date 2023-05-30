@@ -15,7 +15,144 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/attendance": {
+            "get": {
+                "description": "api for get employees attendances",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "attendances"
+                ],
+                "summary": "access attendance of employees",
+                "operationId": "Attendance",
+                "responses": {
+                    "200": {
+                        "description": "successfully fetched attendance",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "failed to get attendance",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "employee id not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/leave/apply": {
+            "post": {
+                "description": "api for employees to apply leave",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "leave"
+                ],
+                "summary": "ApplyLeave",
+                "operationId": "Applyleave",
+                "parameters": [
+                    {
+                        "description": "input field",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Leave"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully applied for leave",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/leave/statis": {
+            "get": {
+                "description": "api for employees to get leaave status/history",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "status"
+                ],
+                "summary": "access leave status history",
+                "operationId": "LeaveStatus",
+                "responses": {
+                    "200": {
+                        "description": "successfully fetched leave status",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "failed to get leave history",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "femployee id not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "request.Leave": {
+            "type": "object",
+            "properties": {
+                "fromdate": {
+                    "type": "string"
+                },
+                "leavetype": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "todate": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "errors": {},
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it

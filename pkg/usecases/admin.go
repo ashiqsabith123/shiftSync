@@ -10,20 +10,19 @@ import (
 	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
 	service "shiftsync/pkg/usecases/interfaces"
-	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-type adminUseCase struct {
+type AdminUseCase struct {
 	adminRepo repo.AdminRepository
 }
 
 func NewAdminUseCase(adRep repo.AdminRepository) service.AdminUseCase {
-	return &adminUseCase{adminRepo: adRep}
+	return &AdminUseCase{adminRepo: adRep}
 }
 
-func (a *adminUseCase) SignUp(ctx context.Context, admin domain.Admin) error {
+func (a *AdminUseCase) SignUp(ctx context.Context, admin domain.Admin) error {
 	_, err := a.adminRepo.FindAdmin(ctx, admin)
 	if err == nil {
 		return errors.New("admin already exist")
@@ -44,7 +43,7 @@ func (a *adminUseCase) SignUp(ctx context.Context, admin domain.Admin) error {
 	return nil
 }
 
-func (a *adminUseCase) SignIn(ctx context.Context, details domain.Admin) (domain.Admin, error) {
+func (a *AdminUseCase) SignIn(ctx context.Context, details domain.Admin) (domain.Admin, error) {
 	admin, err := a.adminRepo.FindAdmin(ctx, details)
 	if err != nil {
 		return details, errors.New("invalid credentials " + err.Error())
@@ -57,7 +56,7 @@ func (a *adminUseCase) SignIn(ctx context.Context, details domain.Admin) (domain
 	return admin, nil
 }
 
-func (a *adminUseCase) Applications(ctx context.Context) ([]response.Form, error) {
+func (a *AdminUseCase) Applications(ctx context.Context) ([]response.Form, error) {
 	forms, err := a.adminRepo.GetAllForms(ctx)
 
 	for i := 0; i < len(forms); i++ {
@@ -77,7 +76,7 @@ func (a *adminUseCase) Applications(ctx context.Context) ([]response.Form, error
 
 }
 
-func (a *adminUseCase) ApproveApplication(ctx context.Context, form domain.Form, admID int) error {
+func (a *AdminUseCase) ApproveApplication(ctx context.Context, form domain.Form, admID int) error {
 	if err := a.adminRepo.FindFormByID(ctx, form.FormID); err != nil {
 		return err
 	}
@@ -89,7 +88,7 @@ func (a *adminUseCase) ApproveApplication(ctx context.Context, form domain.Form,
 	return nil
 }
 
-func (a *adminUseCase) FormCorrection(ctx context.Context, form domain.Form) error {
+func (a *AdminUseCase) FormCorrection(ctx context.Context, form domain.Form) error {
 	if err := a.adminRepo.FindFormByID(ctx, form.Employee_id); err != nil {
 		return err
 	}
@@ -99,12 +98,12 @@ func (a *adminUseCase) FormCorrection(ctx context.Context, form domain.Form) err
 	return nil
 }
 
-func (a *adminUseCase) GetAllEmployeesSchedules(ctx context.Context) ([]response.Schedule, error) {
+func (a *AdminUseCase) GetAllEmployeesSchedules(ctx context.Context) ([]response.Schedule, error) {
 	data, err := a.adminRepo.GetAllEmployeesSchedules(ctx)
 	return data, err
 }
 
-func (a *adminUseCase) ScheduleDuty(ctx context.Context, duty domain.Duty) error {
+func (a *AdminUseCase) ScheduleDuty(ctx context.Context, duty domain.Duty) error {
 
 	if err := a.adminRepo.ScheduleDuty(ctx, duty); err != nil {
 		return err
@@ -113,7 +112,7 @@ func (a *adminUseCase) ScheduleDuty(ctx context.Context, duty domain.Duty) error
 	return nil
 }
 
-func (a *adminUseCase) GetLeaveRequests(ctx context.Context) ([]response.LeaveRequests, error) {
+func (a *AdminUseCase) GetLeaveRequests(ctx context.Context) ([]response.LeaveRequests, error) {
 	leaveRquests, err := a.adminRepo.GetLeaveRequests(ctx)
 
 	if err != nil {
@@ -123,7 +122,7 @@ func (a *adminUseCase) GetLeaveRequests(ctx context.Context) ([]response.LeaveRe
 	return leaveRquests, nil
 }
 
-func (a *adminUseCase) ApproveLeaveRequests(ctx context.Context, id int) error {
+func (a *AdminUseCase) ApproveLeaveRequests(ctx context.Context, id int) error {
 	var status request.LeaveStatus
 
 	status.Id = id
@@ -136,7 +135,7 @@ func (a *adminUseCase) ApproveLeaveRequests(ctx context.Context, id int) error {
 	return nil
 }
 
-func (a *adminUseCase) DeclineLeaveRequests(ctx context.Context, id int) error {
+func (a *AdminUseCase) DeclineLeaveRequests(ctx context.Context, id int) error {
 	var status request.LeaveStatus
 
 	status.Id = id
@@ -149,7 +148,7 @@ func (a *adminUseCase) DeclineLeaveRequests(ctx context.Context, id int) error {
 	return nil
 }
 
-func (a *adminUseCase) AddSalaryDetails(ctx context.Context, salaryDetails domain.Salary) error {
+func (a *AdminUseCase) AddSalaryDetails(ctx context.Context, salaryDetails domain.Salary) error {
 
 	if err := a.adminRepo.AddSalaryDetails(ctx, salaryDetails); err != nil {
 		return err
@@ -158,7 +157,7 @@ func (a *adminUseCase) AddSalaryDetails(ctx context.Context, salaryDetails domai
 	return nil
 }
 
-func (a *adminUseCase) EditSalaryDetails(ctx context.Context, editDetails domain.Salary) error {
+func (a *AdminUseCase) EditSalaryDetails(ctx context.Context, editDetails domain.Salary) error {
 	if err := a.adminRepo.EditSalaryDetails(ctx, editDetails); err != nil {
 		return err
 	}
@@ -166,51 +165,16 @@ func (a *adminUseCase) EditSalaryDetails(ctx context.Context, editDetails domain
 	return nil
 }
 
-func (a *adminUseCase) CalculateSalary(ctx context.Context, id int) error {
-	currentMonth := time.Now().Local().Format("2006-01-02")
-
-	var totalAmount float32
-
-	hours, calulateError := a.adminRepo.CalculateTotalWorkingHours(ctx, id, currentMonth)
-	if calulateError != nil {
-		return calulateError
-	}
-
-	grade, gradeError := a.adminRepo.GetGradeOfTheEmployee(ctx, id)
-	if gradeError != nil {
-		return gradeError
-	}
-
-	switch grade {
-	case "A":
-		totalAmount = hours * 150.0
-	case "B":
-		totalAmount = hours * 125.0
-	case "C":
-		totalAmount = hours * 100.0
-	}
-
-	allowance, allowanceError := a.adminRepo.AddAllAlowances(ctx, id)
-	if allowanceError != nil {
-		return allowanceError
-	}
-
-	deductions, deductionError := a.adminRepo.CaculateDeductions(ctx, id)
-	if deductionError != nil {
-		return deductionError
-	}
-
-	grossSalary := totalAmount + allowance
-	netSalary := grossSalary - deductions
-
-	if err := a.adminRepo.UpdateFullSalary(ctx, id, grossSalary, netSalary); err != nil {
-		return err
-	}
-
-	return nil
+func (a *AdminUseCase) FindEmployeeById(ctx context.Context, id int) response.EmployeeDetails {
+	details := a.adminRepo.FindEmployeeById(ctx, id)
+	return details
 }
 
-func (a *adminUseCase) FindEmployeeById(ctx context.Context, id int) response.EmployeeDetails {
-	details := a.adminRepo.FindEmployeeById(ctx, id)
+func (a *AdminUseCase) FetchAccountDetailsById(ctx context.Context, id int) response.AccountDetails {
+	details := a.adminRepo.FetchAccountDetailsById(ctx, id)
+
+	details.Account_no = string(encrypt.Decrypt(helper.Decode(details.Account_no)))
+	details.Ifsc_code = string(encrypt.Decrypt(helper.Decode(details.Ifsc_code)))
+
 	return details
 }

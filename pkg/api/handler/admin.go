@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"shiftsync/pkg/auth"
 	"shiftsync/pkg/domain"
@@ -59,6 +60,12 @@ func (a *AdminHandler) PostSignin(ctxt *gin.Context) {
 	resp := response.ErrorResponse(200, "succesfuly logged in", "", token)
 	ctxt.JSON(200, resp)
 
+}
+
+func (u *AdminHandler) Logout(ctx *gin.Context) {
+	ctx.SetCookie("admin-cookie", "", -1, "", "", false, true)
+	response := response.SuccessResponse(200, "successfully logged out", nil)
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (a *AdminHandler) GetSignUp(ctxt *gin.Context) {
@@ -134,10 +141,23 @@ func (a *AdminHandler) ApproveApplication(ctx *gin.Context) {
 
 	details := a.adminusecase.FindEmployeeById(ctx, form.FormID)
 
-	if err := razorpay.CreateContact(ctx, details); err != nil {
-		resp := response.ErrorResponse(400, "error", err.Error(), res)
+	contactId, razroErr := razorpay.CreateContact(details)
+
+	if razroErr != nil {
+		resp := response.ErrorResponse(400, "error", razroErr.Error(), res)
 		ctx.JSON(400, resp)
 		return
+	}
+
+	accDetails := a.adminusecase.FetchAccountDetailsById(ctx, form.FormID)
+
+	accDetails.Id = form.FormID
+	accDetails.Name = details.Name
+	accDetails.Contact_id = contactId
+	fmt.Println(accDetails)
+	if err := razorpay.CreateFundAccount(ctx, accDetails); err != nil {
+		resp := response.ErrorResponse(400, "error", err.Error(), res)
+		ctx.JSON(400, resp)
 	}
 
 	resp := response.SuccessResponse(200, "approved succesfully", nil)
@@ -313,6 +333,20 @@ func (a *AdminHandler) EditSalaryDetails(c *gin.Context) {
 
 }
 
-func (a *AdminHandler) Calculate(c *gin.Context) {
-	a.adminusecase.CalculateSalary(c, 5)
-}
+// func (a *AdminHandler) Calculate(c *gin.Context) {
+// 	var res response.CreditSalaryId
+// 	if err := c.ShouldBindJSON(&res); err != nil {
+// 		resp := response.ErrorResponse(400, "invalid input", err.Error(), res)
+// 		c.JSON(400, resp)
+// 		return
+// 	}
+
+// 	if err := a.adminusecase.CreditSalary(); err != nil {
+// 		resp := response.ErrorResponse(400, "failed to Credit salary", err.Error(), res)
+// 		c.JSON(400, resp)
+// 		return
+// 	}
+
+// 	resp := response.SuccessResponse(200, "salary credited succesfully", "")
+// 	c.JSON(200, resp)
+// }

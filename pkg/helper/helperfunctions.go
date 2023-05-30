@@ -3,8 +3,12 @@ package helper
 import (
 	"encoding/base64"
 	"log"
+	"math/big"
 	"math/rand"
 	"time"
+
+	ra "crypto/rand"
+	"fmt"
 )
 
 func Decode(info string) []byte {
@@ -26,4 +30,11 @@ func CreateId() int {
 	randomInt := randomGenerator.Intn(100000)
 
 	return randomInt
+}
+
+func GenerateTransactionID() string {
+	randomID, _ := ra.Int(ra.Reader, big.NewInt(1e8-1)) // Generate a random number between 0 and 99999999 (8 digits)
+	transactionID := fmt.Sprintf("%08d", randomID)
+
+	return transactionID
 }

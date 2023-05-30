@@ -1,4 +1,94 @@
+definitions:
+  request.Leave:
+    properties:
+      fromdate:
+        type: string
+      leavetype:
+        type: string
+      reason:
+        type: string
+      todate:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      data: {}
+      errors: {}
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
 info:
   contact: {}
-paths: {}
+paths:
+  /attendance:
+    get:
+      description: api for get employees attendances
+      operationId: Attendance
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: successfully fetched attendance
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: failed to get attendance
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: employee id not found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: access attendance of employees
+      tags:
+      - attendances
+  /leave/apply:
+    post:
+      description: api for employees to apply leave
+      operationId: Applyleave
+      parameters:
+      - description: input field
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.Leave'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: successfully applied for leave
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: invalid input
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: ApplyLeave
+      tags:
+      - leave
+  /leave/statis:
+    get:
+      description: api for employees to get leaave status/history
+      operationId: LeaveStatus
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: successfully fetched leave status
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: failed to get leave history
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: femployee id not found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: access leave status history
+      tags:
+      - status
 swagger: "2.0"

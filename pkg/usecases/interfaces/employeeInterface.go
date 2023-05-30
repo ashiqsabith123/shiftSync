@@ -17,7 +17,10 @@ type EmployeeUseCase interface {
 	PunchIn(ctx context.Context, ID int) (string, error)
 	VerifyOtpForPunchin(ctx context.Context, id int, otp request.OTPStruct) error
 	PunchOut(ctx context.Context, id int) error
-	ApplyLeave(ctx context.Context, leave domain.Leave) error
+	ApplyLeave(ctx context.Context, leave domain.Leave) (string, error)
 	GetLeaveStatusHistory(ctx context.Context, id int) ([]response.LeaveHistory, error)
 	Attendance(ctx context.Context, id int) ([]response.Attendance, error)
+	GetSalaryHistory(ctx context.Context, id int) ([]response.Salaryhistory, error)
+	GetSalaryDetails(ctx context.Context, id int) (response.Salarydetails, error)
+	GetDataForSalarySlip(ctx context.Context, id int) ([]byte, error)
 }

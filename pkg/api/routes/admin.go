@@ -23,6 +23,7 @@ func AdminRoutes(api *gin.RouterGroup, adminHandler *handler.AdminHandler) {
 
 	api.Use(middleware.AuthenticateAdmin)
 	{
+		api.GET("/logout", adminHandler.Logout)
 		application := api.Group("/application")
 		{
 			application.GET("/", adminHandler.ViewApplications)
@@ -49,7 +50,7 @@ func AdminRoutes(api *gin.RouterGroup, adminHandler *handler.AdminHandler) {
 		{
 			salary.POST("/add-details", adminHandler.AddSalaryDetails)
 			salary.PATCH("/edit-details", adminHandler.EditSalaryDetails)
-			salary.GET("/calculate", adminHandler.Calculate)
+
 		}
 
 	}

@@ -174,6 +174,12 @@ func (u *EmployeeHandler) PostLogin(ctxt *gin.Context) {
 	ctxt.JSON(200, resp)
 }
 
+func (u *EmployeeHandler) Logout(ctx *gin.Context) {
+	ctx.SetCookie("employee-cookie", "", -1, "", "", false, true)
+	response := response.SuccessResponse(200, "successfully logged out", nil)
+	ctx.JSON(http.StatusOK, response)
+}
+
 func (u *EmployeeHandler) GetForm(ctxt *gin.Context) {
 	resp := response.SuccessResponse(200, "Fill the form", request.Form{})
 	ctxt.JSON(200, resp)
@@ -343,6 +349,7 @@ func (e *EmployeeHandler) PunchOut(c *gin.Context) {
 
 // ApplyLeave godoc
 // @summary ApplyLeave
+// @id Applyleave
 // @description api for employees to apply leave
 // @tags leave
 // @Produce json
@@ -350,7 +357,6 @@ func (e *EmployeeHandler) PunchOut(c *gin.Context) {
 // @Router /leave/apply [post]
 // @Success 200 {object} response.Response{} "successfully applied for leave"
 // @Failure 400 {object} response.Response{} "invalid input"
-
 func (e *EmployeeHandler) ApplyLeave(c *gin.Context) {
 	var reqLeave request.Leave
 
@@ -375,17 +381,29 @@ func (e *EmployeeHandler) ApplyLeave(c *gin.Context) {
 
 	copier.Copy(&leave, &reqLeave)
 
-	if err := e.employeeUseCase.ApplyLeave(c, leave); err != nil {
-		resp := response.ErrorResponse(400, "error while applying leave", err.Error(), nil)
+	responce, leaveErr := e.employeeUseCase.ApplyLeave(c, leave)
+
+	if leaveErr != nil {
+		resp := response.ErrorResponse(400, "error while applying leave", leaveErr.Error(), nil)
 		c.JSON(400, resp)
 		return
 	}
 
-	resp := response.SuccessResponse(200, "succesfully applied leave", nil)
+	resp := response.SuccessResponse(200, "succesfully applied leave", responce)
 	c.JSON(200, resp)
 
 }
 
+// Leave status/history godoc
+// @summary access leave status history
+// @id LeaveStatus
+// @description api for employees to get leaave status/history
+// @tags status
+// @Produce json
+// @Router /leave/statis [get]
+// @Success 200 {object} response.Response{} "successfully fetched leave status"
+// @Failure 404 {object} response.Response{} "failed to get leave history"
+// @Failure 500 {object} response.Response{} "femployee id not found"
 func (e *EmployeeHandler) LeaveStatus(c *gin.Context) {
 	tempid, ok := c.Get("userId")
 	id, _ := strconv.Atoi(tempid.(string))
@@ -405,12 +423,22 @@ func (e *EmployeeHandler) LeaveStatus(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"status":    200,
-		"employees": status,
+		"status":               200,
+		"Leave Status/History": status,
 	})
 
 }
 
+// Employee attendance godoc
+// @summary access attendance of employees
+// @id Attendance
+// @description api for get employees attendances
+// @tags attendances
+// @Produce json
+// @Router /attendance [get]
+// @Success 200 {object} response.Response{} "successfully fetched attendance"
+// @Failure 404 {object} response.Response{} "failed to get attendance"
+// @Failure 500 {object} response.Response{} "employee id not found"
 func (e *EmployeeHandler) Attendance(c *gin.Context) {
 	tempid, ok := c.Get("userId")
 	id, _ := strconv.Atoi(tempid.(string))
@@ -430,8 +458,81 @@ func (e *EmployeeHandler) Attendance(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"status":    200,
-		"employees": attendance,
+		"status":     200,
+		"Attendance": attendance,
 	})
 
+}
+
+func (e *EmployeeHandler) TransactionHistory(c *gin.Context) {
+	tempid, ok := c.Get("userId")
+	id, _ := strconv.Atoi(tempid.(string))
+
+	if !ok {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "employee id not found", "", nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	history, err := e.employeeUseCase.GetSalaryHistory(c, id)
+
+	if err != nil {
+		resp := response.ErrorResponse(404, "failed to get attendance", err.Error(), nil)
+		c.JSON(404, resp)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status":         200,
+		"Salary History": history,
+	})
+
+}
+
+func (u *EmployeeHandler) SalaryDetails(c *gin.Context) {
+	tempid, ok := c.Get("userId")
+	id, _ := strconv.Atoi(tempid.(string))
+
+	if !ok {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "employee id not found", "", nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	details, err := u.employeeUseCase.GetSalaryDetails(c, id)
+
+	if err != nil {
+		resp := response.ErrorResponse(404, "failed to get attendance", err.Error(), nil)
+		c.JSON(404, resp)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status":         200,
+		"Salary Details": details,
+	})
+
+}
+
+func (u *EmployeeHandler) SalarySlip(c *gin.Context) {
+	tempid, ok := c.Get("userId")
+	id, _ := strconv.Atoi(tempid.(string))
+
+	if !ok {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "employee id not found", "", nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+	salarySlip, err := u.employeeUseCase.GetDataForSalarySlip(c, id)
+	if err != nil {
+		resp := response.ErrorResponse(http.StatusInternalServerError, "error while creating pdf", err.Error(), nil)
+		c.JSON(http.StatusInternalServerError, resp)
+		return
+	}
+
+	c.Header("Content-Type", "application/pdf")
+	c.Header("Content-Disposition", "attachment; filename=file.pdf")
+
+	// Send the PDF data as the response
+	c.Data(http.StatusOK, "application/pdf", salarySlip)
 }

@@ -19,6 +19,6 @@ type AdminUseCase interface {
 	DeclineLeaveRequests(ctx context.Context, id int) error
 	AddSalaryDetails(ctx context.Context, salaryDetails domain.Salary) error
 	EditSalaryDetails(ctx context.Context, editDetails domain.Salary) error
-	CalculateSalary(ctx context.Context, id int) error
 	FindEmployeeById(ctx context.Context, id int) response.EmployeeDetails
+	FetchAccountDetailsById(ctx context.Context, id int) response.AccountDetails
 }

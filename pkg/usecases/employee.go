@@ -5,15 +5,20 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"shiftsync/pdf"
 	"shiftsync/pkg/domain"
 	"shiftsync/pkg/encrypt"
+	"shiftsync/pkg/helper"
 	"shiftsync/pkg/helper/request"
 	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
 	service "shiftsync/pkg/usecases/interfaces"
 	"shiftsync/pkg/verification"
+	"strconv"
 	"time"
 
+	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -172,15 +177,67 @@ func (e *employeeUseCase) PunchOut(ctx context.Context, id int) error {
 	return nil
 }
 
-func (e *employeeUseCase) ApplyLeave(ctx context.Context, leave domain.Leave) error {
+func (e *employeeUseCase) ApplyLeave(ctx context.Context, leave domain.Leave) (string, error) {
+
+	var count response.LeaveCount
+
+	count.Date = time.Now().Year()
+	count.Id = int(leave.EmployeeID)
+
+	checkCount, countErr := e.employeeRepo.GetCountOfLeaveTaken(ctx, count)
+	if countErr != nil {
+		return "", countErr
+	}
+
+	if checkCount >= 100 {
+		return "", errors.New("no leaves available")
+	}
+
+	date1, _ := time.Parse("02-01-2006", leave.From)
+	date2, _ := time.Parse("02-01-2006", leave.To)
+
+	duration := date2.Sub(date1)
+	days := int(duration.Hours() / 24)
+
+	if days > (100 - checkCount) {
+		return "", errors.New("you to date exceeds the limit of leaves")
+	}
+
+	checkApplied, checkErr := e.employeeRepo.CheckLeaveApplied(ctx, leave)
+	if checkErr != nil {
+		return "", checkErr
+	}
+
+	if checkApplied.From != "" {
+		oldDate1, _ := time.Parse("02-01-2006", checkApplied.From)
+		oldDate2, _ := time.Parse("02-01-2006", checkApplied.To)
+
+		newDate1, _ := time.Parse("02-01-2006", leave.From)
+		newDate2, _ := time.Parse("02-01-2006", leave.To)
+
+		fmt.Println("old", oldDate1.Unix())
+		fmt.Println("new", newDate1.Unix())
+
+		if (newDate1.Unix() >= oldDate1.Unix() && newDate1.Unix() <= oldDate2.Unix()) ||
+			(newDate2.Unix() >= oldDate1.Unix() && newDate2.Unix() <= oldDate2.Unix()) {
+			return "", errors.New("you already applied leave on these dates")
+		}
+	}
+
+	if checkCount > 50 {
+		leave.Mode = "U"
+	} else {
+		leave.Mode = "P"
+	}
 
 	leave.Status = "R"
 
 	if err := e.employeeRepo.ApplyLeave(ctx, leave); err != nil {
-		return err
+		return "", err
 	}
+	str := strconv.Itoa(100 - checkCount)
 
-	return nil
+	return "available leaves:" + str, nil
 }
 
 func (e *employeeUseCase) GetLeaveStatusHistory(ctx context.Context, id int) ([]response.LeaveHistory, error) {
@@ -214,14 +271,12 @@ func (e *employeeUseCase) Attendance(ctx context.Context, id int) ([]response.At
 		return []response.Attendance{}, err
 	}
 
-	for i, _ := range attnedance {
+	for i := range attnedance {
 		t1, _ := time.Parse("15:04:05", attnedance[i].Punch_in)
 		t2, _ := time.Parse("15:04:05", attnedance[i].Punch_out)
 
-		fmt.Println("aa", attnedance[i].Punch_in)
-
 		duration := t1.Sub(t2)
-
+		fmt.Println(duration)
 		hours := int(duration.Hours())
 
 		attnedance[i].Total_hours = hours
@@ -245,4 +300,61 @@ func (e *employeeUseCase) Attendance(ctx context.Context, id int) ([]response.At
 		}
 	}
 	return attnedance, nil
+}
+
+func (e *employeeUseCase) GetSalaryHistory(ctx context.Context, id int) ([]response.Salaryhistory, error) {
+	var history []response.Salaryhistory
+
+	History, err := e.employeeRepo.GetSalaryHistory(ctx, id)
+
+	if err != nil {
+		return history, err
+	}
+
+	copier.Copy(&history, &History)
+
+	fmt.Println(history)
+
+	for i := range History {
+
+		history[i].Date = History[i].Date.Format("02-01-2006")
+
+		history[i].Time = History[i].Date.Format("15:04:05")
+
+	}
+
+	return history, nil
+}
+
+func (e *employeeUseCase) GetSalaryDetails(ctx context.Context, id int) (response.Salarydetails, error) {
+	details, err := e.employeeRepo.GetSalaryDetails(ctx, id)
+
+	if err != nil {
+		return details, err
+	}
+
+	return details, nil
+}
+
+func (e *employeeUseCase) GetDataForSalarySlip(ctx context.Context, id int) ([]byte, error) {
+
+	data, getDataErr := e.employeeRepo.GetDataForSalarySlip(ctx, id)
+	if getDataErr != nil {
+		return nil, getDataErr
+	}
+
+	data.Account_no = string(encrypt.Decrypt(helper.Decode(data.Account_no)))
+
+	pdfError := pdf.CreatePdf(data)
+	if pdfError != nil {
+		return nil, pdfError
+	}
+
+	pdfData, pdfPathErr := ioutil.ReadFile("pdf/generated/salary_slip" + data.Employee_id + ".pdf")
+	if pdfPathErr != nil {
+		return nil, pdfPathErr
+	}
+
+	return pdfData, nil
+
 }

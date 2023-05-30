@@ -18,4 +18,9 @@ type EmployeeRepository interface {
 	ApplyLeave(ctx context.Context, leave domain.Leave) error
 	LeaveStatusHistory(ctx context.Context, id int) ([]response.LeaveHistory, error)
 	Attendance(ctx context.Context, id int) ([]response.Attendance, error)
+	CheckLeaveApplied(ctx context.Context, check domain.Leave) (response.LeaveAppiled, error)
+	GetCountOfLeaveTaken(ctx context.Context, reqCount response.LeaveCount) (int, error)
+	GetSalaryHistory(ctx context.Context, id int) ([]response.SalaryHistory, error)
+	GetSalaryDetails(ctx context.Context, id int) (response.Salarydetails, error)
+	GetDataForSalarySlip(ctx context.Context, id int) (response.SalarySlip, error)
 }
