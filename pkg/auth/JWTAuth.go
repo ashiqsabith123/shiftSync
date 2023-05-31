@@ -11,9 +11,8 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-var expiryTime = time.Now().Add(10 * time.Minute).Unix()
-
 func GenerateTokens(id uint) (string, error) {
+	var expiryTime = time.Now().Add(10 * time.Minute).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: expiryTime,
 		Id:        fmt.Sprint(id),
@@ -28,7 +27,7 @@ func GenerateTokens(id uint) (string, error) {
 }
 
 func GenerateTokenForOtp(val domain.Employee) (string, error) {
-
+	var expiryTime = time.Now().Add(10 * time.Minute).Unix()
 	claims := request.OtpCookieStruct{
 		First_name: val.First_name,
 		Last_name:  val.Last_name,
