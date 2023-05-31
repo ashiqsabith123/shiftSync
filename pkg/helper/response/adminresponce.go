@@ -16,7 +16,6 @@ type Form struct {
 	Name_as_per_passbokk string `json:"nameaspass"`
 	Pan_number           string `json:"pannumber"`
 	Designation          string `json:"designation"`
-	Department           string `json:"department"`
 	Adhaar_no            string `json:"adhaarnumber"`
 	Photo                string `json:"photo"`
 }
