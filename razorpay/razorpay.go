@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -111,20 +112,34 @@ func CreateFundAccount(c *gin.Context, details response.AccountDetails) error {
 		return decodeErr
 	}
 
-	var razro domain.Razorpay
+	if res.StatusCode >= 200 && res.StatusCode < 300 {
+		var razro domain.Razorpay
 
-	fmt.Println(result)
+		fmt.Println(result)
 
-	razro.Id = details.Id
-	razro.Contact_id = result["id"].(string)
+		razro.Id = details.Id
+		razro.Contact_id = result["id"].(string)
 
-	if err := db.GetDatabaseInstance().Create(&razro).Error; err != nil {
-		log.Fatal(err)
+		if err := db.GetDatabaseInstance().Create(&razro).Error; err != nil {
+			log.Fatal(err)
+		}
+
+		resp := response.SuccessResponse(http.StatusCreated, "Successfully Account Created", nil)
+		c.JSON(http.StatusCreated, resp)
+		return nil
+	} else if res.StatusCode >= 400 && res.StatusCode < 500 {
+
+		err, ok := result["error"].(map[string]interface{})
+		if ok {
+
+			return errors.New(err["description"].(string))
+		}
+
+		return errors.New("error")
 	}
 
-	resp := response.SuccessResponse(http.StatusCreated, "Successfully Account Created", nil)
-	c.JSON(http.StatusCreated, resp)
 	return nil
+
 }
 
 func CreatePayouts(details response.AccDetails) error {

@@ -133,12 +133,6 @@ func (a *AdminHandler) ApproveApplication(ctx *gin.Context) {
 
 	empId, _ := strconv.Atoi(ctxempId.(string))
 
-	if err := a.adminusecase.ApproveApplication(ctx, form, empId); err != nil {
-		resp := response.ErrorResponse(400, "error", err.Error(), res)
-		ctx.JSON(400, resp)
-		return
-	}
-
 	details := a.adminusecase.FindEmployeeById(ctx, form.FormID)
 
 	contactId, razroErr := razorpay.CreateContact(details)
@@ -158,6 +152,13 @@ func (a *AdminHandler) ApproveApplication(ctx *gin.Context) {
 	if err := razorpay.CreateFundAccount(ctx, accDetails); err != nil {
 		resp := response.ErrorResponse(400, "error", err.Error(), res)
 		ctx.JSON(400, resp)
+		return
+	}
+
+	if err := a.adminusecase.ApproveApplication(ctx, form, empId); err != nil {
+		resp := response.ErrorResponse(400, "error", err.Error(), res)
+		ctx.JSON(400, resp)
+		return
 	}
 
 	resp := response.SuccessResponse(200, "approved succesfully", nil)
