@@ -173,6 +173,7 @@ func (a *AdminHandler) FormCorrection(ctx *gin.Context) {
 	}
 
 	var form domain.Form
+
 	copier.Copy(&form, &res)
 
 	if err := a.adminusecase.FormCorrection(ctx, form); err != nil {
@@ -181,7 +182,7 @@ func (a *AdminHandler) FormCorrection(ctx *gin.Context) {
 		return
 	}
 
-	resp := response.SuccessResponse(200, "approved succesfully", nil)
+	resp := response.SuccessResponse(200, "succesfull send for correction", nil)
 	ctx.JSON(200, resp)
 }
 

@@ -64,7 +64,7 @@ func (a *adminDatabase) ApproveApplication(ctx context.Context, form domain.Form
 }
 
 func (a *adminDatabase) FormCorrection(ctx context.Context, form domain.Form) {
-	err := a.DB.Raw("UPDATE forms SET correction = ? WHERE form_id = ?", form.Correction, form.FormID).Scan(&form).Error
+	err := a.DB.Raw("UPDATE forms SET correction = ? , status = 'C' WHERE form_id = ?", form.Correction, form.FormID).Scan(&form).Error
 	fmt.Println(err)
 }
 

@@ -54,7 +54,7 @@ type FormApprove struct {
 }
 
 type FormCorrection struct {
-	EmployeeID int    `json:"empid"`
+	FormID     int    `json:"empid"`
 	Correction string `json:"correction"`
 }
 

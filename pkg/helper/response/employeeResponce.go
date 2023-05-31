@@ -88,3 +88,8 @@ type SalarySlip struct {
 	Net_salary     string
 	Deductions     string
 }
+
+type FormStatus struct {
+	Status     string
+	Correction string
+}

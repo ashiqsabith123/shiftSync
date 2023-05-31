@@ -89,7 +89,7 @@ func (a *AdminUseCase) ApproveApplication(ctx context.Context, form domain.Form,
 }
 
 func (a *AdminUseCase) FormCorrection(ctx context.Context, form domain.Form) error {
-	if err := a.adminRepo.FindFormByID(ctx, form.Employee_id); err != nil {
+	if err := a.adminRepo.FindFormByID(ctx, form.FormID); err != nil {
 		return err
 	}
 

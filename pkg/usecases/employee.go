@@ -63,42 +63,50 @@ func (u *employeeUseCase) SignUpOtp(r context.Context, find domain.Employee) err
 	return err
 }
 
-func (u *employeeUseCase) AddForm(r context.Context, form domain.Form) error {
-
-	if err := u.employeeRepo.CheckFormDetails(r, form); err != nil {
-		return err
-	}
+func (u *employeeUseCase) AddForm(ctx context.Context, form domain.Form) error {
 
 	form.Account_no = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Account_no)))
-	fmt.Println([]byte(base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Pan_number)))))
 	form.Pan_number = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Pan_number)))
 	form.Adhaar_no = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Adhaar_no)))
 	form.Ifsc_code = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Ifsc_code)))
 	form.Name_as_per_passbokk = base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Name_as_per_passbokk)))
 	form.Status = "P"
 
-	if err := u.employeeRepo.AddForm(r, form); err != nil {
-		return err
+	details, ok := u.employeeRepo.CheckFormDetails(ctx, form)
+
+	if ok && details.Status == "A" || details.Status == "P" {
+		return errors.New("details already found")
+	} else if ok && details.Status == "C" {
+		if err := u.employeeRepo.FormCorrection(ctx, form); err != nil {
+			return err
+		}
+	} else {
+		if err := u.employeeRepo.AddForm(ctx, form); err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (u *employeeUseCase) FormStatus(ctx context.Context, empID int) string {
+func (u *employeeUseCase) FormStatus(ctx context.Context, empID int) (response.FormStatus, error) {
 
-	status := u.employeeRepo.FormStatus(ctx, empID)
+	status, err := u.employeeRepo.FormStatus(ctx, empID)
+	if err != nil {
+		return status, err
+	}
 
-	switch status {
+	switch status.Status {
 
 	case "P":
-		return "Pending for verification"
+		status.Status = "Pending for verification"
 	case "C":
-		return "Admin requested for correction"
+		status.Status = "Admin requested for correction"
 	case "A":
-		return "Welcome to dashboard"
+		status.Status = "Welcome to dashboard"
 
 	}
-	return ""
+	return status, err
 }
 
 func (u *employeeUseCase) GetDutySchedules(ctx context.Context, id int) (response.Duty, error) {
@@ -341,6 +349,10 @@ func (e *employeeUseCase) GetDataForSalarySlip(ctx context.Context, id int) ([]b
 	data, getDataErr := e.employeeRepo.GetDataForSalarySlip(ctx, id)
 	if getDataErr != nil {
 		return nil, getDataErr
+	}
+
+	if data.Base_salary == "" {
+		return nil, errors.New("you salary details not found contact admin")
 	}
 
 	data.Account_no = string(encrypt.Decrypt(helper.Decode(data.Account_no)))

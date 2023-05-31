@@ -40,13 +40,16 @@ func (e *employeeDatabase) FindEmployee(cntxt context.Context, find domain.Emplo
 	return emp, nil
 }
 
-func (e *employeeDatabase) CheckFormDetails(cntxt context.Context, form domain.Form) error {
-	if err := e.DB.Where("form_id = ? OR account_no = ? OR pan_number = ? OR adhaar_no = ?", form.FormID, base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Account_no))), base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Pan_number))), base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Adhaar_no)))).First(&domain.Form{}).Error; err != nil {
+func (e *employeeDatabase) CheckFormDetails(cntxt context.Context, form domain.Form) (domain.Form, bool) {
 
-		return nil
+	fmt.Println("b", form)
+	var details domain.Form
+	if err := e.DB.Where("form_id = ? OR account_no = ? OR pan_number = ? OR adhaar_no = ? ", form.FormID, base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Account_no))), base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Pan_number))), base64.StdEncoding.EncodeToString(encrypt.Encrypt([]byte(form.Adhaar_no)))).First(&details).Error; err != nil {
+
+		return details, false
 	}
 
-	return errors.New("details alredy found")
+	return details, true
 }
 
 func (e *employeeDatabase) AddForm(cntxt context.Context, form domain.Form) error {
@@ -58,13 +61,25 @@ func (e *employeeDatabase) AddForm(cntxt context.Context, form domain.Form) erro
 	return nil
 }
 
-func (e *employeeDatabase) FormStatus(ctx context.Context, empID int) string {
-	var status string
-	if err := e.DB.Raw("select status from forms where form_id =? ", empID).Scan(&status).Error; err != nil {
-		return "Error"
+func (e *employeeDatabase) FormCorrection(ctx context.Context, form domain.Form) error {
+	var formDetails domain.Form
+	if err := e.DB.Where("form_id = ?", form.FormID).First(&formDetails).Error; err != nil {
+		return err
 	}
 
-	return status
+	copier.Copy(&formDetails, &form)
+
+	e.DB.Save(&formDetails)
+	return nil
+}
+
+func (e *employeeDatabase) FormStatus(ctx context.Context, empID int) (response.FormStatus, error) {
+	var status response.FormStatus
+	if err := e.DB.Raw("select status, correction from forms where form_id =? ", empID).Scan(&status).Error; err != nil {
+		return status, err
+	}
+
+	return status, nil
 }
 
 func (e *employeeDatabase) GetDutySchedules(ctx context.Context, id int) (response.Duty, error) {

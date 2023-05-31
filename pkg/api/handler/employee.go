@@ -231,9 +231,15 @@ func (u *EmployeeHandler) GetDashboard(ctx *gin.Context) {
 
 	empId, _ := strconv.Atoi(tempID.(string))
 
-	status := u.employeeUseCase.FormStatus(ctx, empId)
+	status, err := u.employeeUseCase.FormStatus(ctx, empId)
 
-	resp := response.SuccessResponse(200, status, nil)
+	if err != nil {
+		resp := response.ErrorResponse(400, "Error", err.Error(), "")
+		ctx.JSON(400, resp)
+		return
+	}
+
+	resp := response.SuccessResponse(200, status.Status, status.Correction)
 	ctx.JSON(200, resp)
 
 }

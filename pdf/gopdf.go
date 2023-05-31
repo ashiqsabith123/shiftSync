@@ -60,8 +60,8 @@ func CreatePdf(data response.SalarySlip) error {
 
 	// Define table headers
 	headers := []string{"Earnings", "Amount"}
-	rows := []string{"Basic Pay", "DA", "SPA", "Leave Pay", "MA", "Over Time"}
-	datas := []string{data.Base_salary, data.D_allowance, data.Sp_allowance, data.Leave_pay, data.M_allowance, data.Over_time}
+	rows := []string{"Basic Pay", "DA", "SPA", "Leave Pay", "MA"}
+	datas := []string{data.Base_salary, data.D_allowance, data.Sp_allowance, data.Leave_pay, data.M_allowance}
 
 	columnWidths := []float64{60, 60}
 
@@ -83,7 +83,7 @@ func CreatePdf(data response.SalarySlip) error {
 	}
 
 	pdf.SetFontSize(16)
-	pdf.Text(120, 188, "Earnings: "+data.Gross_salary)
+	pdf.Text(120, 178, "Earnings: "+data.Gross_salary)
 
 	dheaders := []string{"Deductions", "Amount"}
 	drows := []string{"Professional Tax", "Provident Fund"}
