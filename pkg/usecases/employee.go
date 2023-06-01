@@ -337,8 +337,8 @@ func (e *employeeUseCase) GetSalaryHistory(ctx context.Context, id int) ([]respo
 func (e *employeeUseCase) GetSalaryDetails(ctx context.Context, id int) (response.Salarydetails, error) {
 	details, err := e.employeeRepo.GetSalaryDetails(ctx, id)
 
-	if err != nil {
-		return details, err
+	if err != nil || details.Grade == "" {
+		return details, errors.Join(err, errors.New("your salary detatils not added yet contact admin"))
 	}
 
 	return details, nil
