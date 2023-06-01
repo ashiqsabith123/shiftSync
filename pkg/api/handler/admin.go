@@ -277,7 +277,7 @@ func (a *AdminHandler) DeclineLeaveRequests(c *gin.Context) {
 	}
 
 	if err := a.adminusecase.DeclineLeaveRequests(c, res.FormID); err != nil {
-		resp := response.ErrorResponse(400, "failed to approve request", err.Error(), res)
+		resp := response.ErrorResponse(400, "failed to decline request", err.Error(), res)
 		c.JSON(400, resp)
 		return
 	}

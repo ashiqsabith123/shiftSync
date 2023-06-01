@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"shiftsync/pkg/auth"
 	"shiftsync/pkg/domain"
@@ -340,6 +341,14 @@ func (e *EmployeeHandler) PunchOut(c *gin.Context) {
 		return
 	}
 
+	_, err := e.employeeUseCase.GetDutySchedules(c, id)
+
+	if err != nil {
+		resp := response.ErrorResponse(404, "failed to get duty schedules", err.Error(), nil)
+		c.JSON(404, resp)
+		return
+	}
+
 	punchOutErr := e.employeeUseCase.PunchOut(c, id)
 
 	if punchOutErr != nil {
@@ -420,17 +429,19 @@ func (e *EmployeeHandler) LeaveStatus(c *gin.Context) {
 		return
 	}
 
-	status, err := e.employeeUseCase.GetLeaveStatusHistory(c, id)
+	leaveHistory, err := e.employeeUseCase.GetLeaveStatusHistory(c, id)
 
-	if err != nil {
-		resp := response.ErrorResponse(404, "failed to get leave history", err.Error(), nil)
+	fmt.Println(len(leaveHistory))
+
+	if err != nil || len(leaveHistory) == 0 {
+		resp := response.ErrorResponse(404, "no leave history found", "", nil)
 		c.JSON(404, resp)
 		return
 	}
 
 	c.JSON(200, gin.H{
 		"status":               200,
-		"Leave Status/History": status,
+		"Leave Status/History": leaveHistory,
 	})
 
 }
@@ -508,7 +519,7 @@ func (u *EmployeeHandler) SalaryDetails(c *gin.Context) {
 	details, err := u.employeeUseCase.GetSalaryDetails(c, id)
 
 	if err != nil {
-		resp := response.ErrorResponse(404, "failed to get attendance", err.Error(), nil)
+		resp := response.ErrorResponse(404, "failed to get salary details", err.Error(), nil)
 		c.JSON(404, resp)
 		return
 	}

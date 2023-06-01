@@ -130,7 +130,7 @@ func (u *employeeUseCase) GetDutySchedules(ctx context.Context, id int) (respons
 
 	}
 
-	return duty, err
+	return duty, errors.New("duty not found")
 }
 
 func (u *employeeUseCase) PunchIn(ctx context.Context, ID int) (string, error) {
@@ -243,6 +243,7 @@ func (e *employeeUseCase) ApplyLeave(ctx context.Context, leave domain.Leave) (s
 	if err := e.employeeRepo.ApplyLeave(ctx, leave); err != nil {
 		return "", err
 	}
+	fmt.Println("check", checkCount)
 	str := strconv.Itoa(100 - checkCount - days)
 
 	return "available leaves:" + str, nil
@@ -262,7 +263,9 @@ func (e *employeeUseCase) GetLeaveStatusHistory(ctx context.Context, id int) ([]
 		case "P":
 			status[i].Status = "Pending"
 		case "D":
-			status[i].Status = "Approved"
+			status[i].Status = "Declined"
+		case "R":
+			status[i].Status = "Pending"
 		}
 	}
 
@@ -345,6 +348,11 @@ func (e *employeeUseCase) GetSalaryDetails(ctx context.Context, id int) (respons
 }
 
 func (e *employeeUseCase) GetDataForSalarySlip(ctx context.Context, id int) ([]byte, error) {
+	history, historyErr := e.employeeRepo.GetSalaryHistory(ctx, id)
+
+	if historyErr != nil || len(history) == 0 {
+		return nil, errors.Join(historyErr, errors.New("no transactions found"))
+	}
 
 	data, getDataErr := e.employeeRepo.GetDataForSalarySlip(ctx, id)
 	if getDataErr != nil {

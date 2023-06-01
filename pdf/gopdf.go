@@ -28,9 +28,10 @@ func CreatePdf(data response.SalarySlip) error {
 	pdf.SetLineWidth(.6)
 	pdf.Rect(8, 8, pageWidth, pageHeight, "D")
 
-	pdf.AddUTF8Font("Josefin", "", "pdf/fonts/Kanit-Regular.ttf")
+	//pdf.AddUTF8Font("Josefin", "", "pdf/fonts/Kanit-Regular.ttf")
+	//pdf.SetFont("Helvetica", "", 12)
 
-	pdf.SetFont("Josefin", "", 20)
+	pdf.SetFont("Helvetica", "", 20)
 	pdf.Text(pageWidth/2-4, 19, "shiftSync")
 
 	pdf.SetFontSize(10)
@@ -56,7 +57,7 @@ func CreatePdf(data response.SalarySlip) error {
 
 	pdf.SetFillColor(170, 186, 217) // Set cell fill color
 	// Set text color
-	pdf.SetFont("Josefin", "", 13) // Set font style and size
+	pdf.SetFont("Helvetica", "", 13) // Set font style and size
 
 	// Define table headers
 	headers := []string{"Earnings", "Amount"}
@@ -92,7 +93,7 @@ func CreatePdf(data response.SalarySlip) error {
 	pdf.SetXY(46.5, 197)
 	pdf.SetFillColor(170, 186, 217)
 
-	pdf.SetFont("Josefin", "", 13)
+	pdf.SetFont("Helvetica", "", 13)
 	for i, header := range dheaders {
 		pdf.CellFormat(columnWidths[i], 7, header, "1B", 0, "C", true, 0, "")
 	}
@@ -112,8 +113,8 @@ func CreatePdf(data response.SalarySlip) error {
 	pdf.SetFontSize(16)
 	pdf.Text(115, 230, "Deductions: "+data.Deductions)
 
-	pdf.SetFont("Josefin", "", 16)
-	pdf.Text(140, pageHeight-22, "Total: "+data.Net_salary+" \u20B9")
+	pdf.SetFont("Helvetica", "", 16)
+	pdf.Text(140, pageHeight-22, "Total: "+data.Net_salary+" Rs")
 
 	pdf.SetFontSize(16)
 	pdf.Text(130, 250, "Earnings - Deductions ")

@@ -131,7 +131,7 @@ func (e *employeeDatabase) ApplyLeave(ctx context.Context, leave domain.Leave) e
 
 func (e *employeeDatabase) CheckLeaveApplied(ctx context.Context, check domain.Leave) (response.LeaveAppiled, error) {
 	var applied response.LeaveAppiled
-	if err := e.DB.Raw("SELECT leaves.from, leaves.to FROM leaves WHERE employee_id = ? AND status = 'A' OR status='R' ORDER BY created_at DESC LIMIT 1;", check.EmployeeID).Scan(&applied).Error; err != nil {
+	if err := e.DB.Raw("SELECT leaves.from, leaves.to FROM leaves WHERE employee_id = ? AND status = 'A' OR status='R' OR status = 'D' ORDER BY created_at DESC LIMIT 1;", check.EmployeeID).Scan(&applied).Error; err != nil {
 		return applied, err
 	}
 
