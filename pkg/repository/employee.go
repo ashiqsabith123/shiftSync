@@ -161,7 +161,7 @@ func (e *employeeDatabase) Attendance(ctx context.Context, id int) ([]response.A
 func (e *employeeDatabase) GetCountOfLeaveTaken(ctx context.Context, reqCount response.LeaveCount) (int, error) {
 	var count int
 
-	if err := e.DB.Raw("SELECT CAST(SUM(DATE_PART('day', leaves.to::timestamp - leaves.from::timestamp)) AS INTEGER) AS count FROM leaves WHERE employee_id = ? AND status = 'A' AND EXTRACT(YEAR FROM to_date(leaves.from, 'DD-MM-YYYY')) = ?;", reqCount.Id, reqCount.Date).Scan(&count).Error; err != nil {
+	if err := e.DB.Raw("SELECT COALESCE(CAST(SUM(DATE_PART('day', leaves.to::timestamp - leaves.from::timestamp)) AS INTEGER), 0) AS count FROM leaves WHERE employee_id = ? AND status = 'A' AND EXTRACT(YEAR FROM to_date(leaves.from, 'DD-MM-YYYY')) = ?;", reqCount.Id, reqCount.Date).Scan(&count).Error; err != nil {
 		return 0, err
 	}
 
