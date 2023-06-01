@@ -9,7 +9,6 @@ import (
 	"shiftsync/pkg/encrypt"
 	"shiftsync/pkg/helper/response"
 	repo "shiftsync/pkg/repository/interfaces"
-	"strconv"
 
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
@@ -160,15 +159,13 @@ func (e *employeeDatabase) Attendance(ctx context.Context, id int) ([]response.A
 }
 
 func (e *employeeDatabase) GetCountOfLeaveTaken(ctx context.Context, reqCount response.LeaveCount) (int, error) {
-	var count string
+	var count int
 
-	if err := e.DB.Raw("SELECT SUM(DATE_PART('day', leaves.to::timestamp - leaves.from::timestamp)) AS count FROM leaves WHERE employee_id = ?  AND status = 'A' AND EXTRACT(YEAR FROM to_date(leaves.from, 'DD-MM-YYYY')) =?;", reqCount.Id, reqCount.Date).Scan(&count).Error; err != nil {
+	if err := e.DB.Raw("SELECT SUM(DATE_PART('day', leaves.to::timestamp - leaves.from::timestamp)) AS count::integer FROM leaves WHERE employee_id = ?  AND status = 'A' AND EXTRACT(YEAR FROM to_date(leaves.from, 'DD-MM-YYYY')) =?;", reqCount.Id, reqCount.Date).Scan(&count).Error; err != nil {
 		return 0, err
 	}
 
-	totalCount, _ := strconv.Atoi(count)
-
-	return totalCount, nil
+	return count, nil
 }
 
 func (e *employeeDatabase) GetSalaryDetails(ctx context.Context, id int) (response.Salarydetails, error) {
