@@ -243,7 +243,7 @@ func (e *employeeUseCase) ApplyLeave(ctx context.Context, leave domain.Leave) (s
 	if err := e.employeeRepo.ApplyLeave(ctx, leave); err != nil {
 		return "", err
 	}
-	str := strconv.Itoa(100 - checkCount)
+	str := strconv.Itoa(100 - checkCount - days)
 
 	return "available leaves:" + str, nil
 }
