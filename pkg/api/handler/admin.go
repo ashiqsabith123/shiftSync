@@ -233,17 +233,17 @@ func (a *AdminHandler) ScheduleDuty(c *gin.Context) {
 func (a *AdminHandler) GetAllLeaveRequets(c *gin.Context) {
 	tempData, err := a.adminusecase.GetLeaveRequests(c)
 
-	if err != nil {
+	if err != nil || len(tempData) == 0 {
 		c.JSON(204, gin.H{
 			"status":  204,
-			"message": "no details",
+			"message": "no leave requests found",
 		})
 		return
 	}
 
 	c.JSON(200, gin.H{
-		"status":    200,
-		"employees": tempData,
+		"status":         200,
+		"Leave Requests": tempData,
 	})
 }
 

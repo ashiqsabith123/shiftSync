@@ -156,7 +156,11 @@ func (a *AdminUseCase) DeclineLeaveRequests(ctx context.Context, id int) error {
 }
 
 func (a *AdminUseCase) AddSalaryDetails(ctx context.Context, salaryDetails domain.Salary) error {
+	findEmployee := a.adminRepo.FindEmployeeById(ctx, int(salaryDetails.EmployeeID))
 
+	if findEmployee.Name == "" {
+		return errors.New("employee not found")
+	}
 	if err := a.adminRepo.AddSalaryDetails(ctx, salaryDetails); err != nil {
 		return err
 	}
