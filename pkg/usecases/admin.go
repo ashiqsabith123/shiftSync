@@ -106,6 +106,12 @@ func (a *AdminUseCase) GetAllEmployeesSchedules(ctx context.Context) ([]response
 
 func (a *AdminUseCase) ScheduleDuty(ctx context.Context, duty domain.Duty) error {
 
+	findEmployee := a.adminRepo.FindEmployeeById(ctx, int(duty.EmployeeID))
+
+	if findEmployee.Name == "" {
+		return errors.New("employee not found")
+	}
+
 	if err := a.adminRepo.ScheduleDuty(ctx, duty); err != nil {
 		return err
 	}

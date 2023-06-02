@@ -101,7 +101,7 @@ func (a *AdminHandler) PostSignup(ctxt *gin.Context) {
 func (a *AdminHandler) ViewApplications(ctx *gin.Context) {
 	forms, err := a.adminusecase.Applications(ctx)
 
-	if err != nil {
+	if err != nil || len(forms) == 0 {
 		ctx.JSON(204, gin.H{
 			"status":  204,
 			"message": "no new forms found",
@@ -191,10 +191,10 @@ func (a *AdminHandler) GetScheduleDuty(c *gin.Context) {
 
 	tempData, err := a.adminusecase.GetAllEmployeesSchedules(c)
 
-	if err != nil {
+	if err != nil || len(tempData) == 0 {
 		c.JSON(204, gin.H{
 			"status":  204,
-			"message": "no details",
+			"message": "no employees found",
 		})
 		return
 	}
