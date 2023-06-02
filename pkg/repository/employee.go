@@ -95,6 +95,19 @@ func (e *employeeDatabase) GetDutySchedules(ctx context.Context, id int) (respon
 	return schedule, nil
 }
 
+func (e *employeeDatabase) GetDuty(ctx context.Context, id int) (response.Duty, error) {
+	var duty domain.Duty
+	var schedule response.Duty
+
+	if err := e.DB.Where("employee_id = ? AND status='W'", id).First(&duty).Error; err != nil {
+		return schedule, err
+	}
+
+	copier.Copy(&schedule, &duty)
+
+	return schedule, nil
+}
+
 func (e *employeeDatabase) PunchIn(ctx context.Context, punchin domain.Attendance) error {
 
 	if err := e.DB.Create(&punchin).Error; err != nil {

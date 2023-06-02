@@ -174,6 +174,12 @@ func (u *employeeUseCase) VerifyOtpForPunchin(ctx context.Context, id int, otp r
 
 func (e *employeeUseCase) PunchOut(ctx context.Context, id int) error {
 
+	resp, err := e.employeeRepo.GetDuty(ctx, id)
+
+	if err != nil || resp.Duty_type == "" {
+		return errors.New("no duty assigned")
+	}
+
 	var duty domain.Attendance
 
 	duty.EmployeeID = uint(id)

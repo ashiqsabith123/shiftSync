@@ -24,4 +24,5 @@ type EmployeeRepository interface {
 	GetSalaryHistory(ctx context.Context, id int) ([]response.SalaryHistory, error)
 	GetSalaryDetails(ctx context.Context, id int) (response.Salarydetails, error)
 	GetDataForSalarySlip(ctx context.Context, id int) (response.SalarySlip, error)
+	GetDuty(ctx context.Context, id int) (response.Duty, error)
 }

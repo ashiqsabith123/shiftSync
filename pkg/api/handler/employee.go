@@ -349,14 +349,6 @@ func (e *EmployeeHandler) PunchOut(c *gin.Context) {
 		return
 	}
 
-	_, err := e.employeeUseCase.GetDutySchedules(c, id)
-
-	if err != nil {
-		resp := response.ErrorResponse(404, "failed to get duty schedules", err.Error(), nil)
-		c.JSON(404, resp)
-		return
-	}
-
 	punchOutErr := e.employeeUseCase.PunchOut(c, id)
 
 	if punchOutErr != nil {
