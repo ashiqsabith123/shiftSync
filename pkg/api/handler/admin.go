@@ -338,10 +338,10 @@ func (a *AdminHandler) EditSalaryDetails(c *gin.Context) {
 func (a *AdminHandler) GetAllTransactions(c *gin.Context) {
 	tempData, err := a.adminusecase.GetAllTransactions(c)
 
-	if err != nil {
+	if err != nil || len(tempData) == 0 {
 		c.JSON(204, gin.H{
 			"status":  204,
-			"message": "no details",
+			"message": "no transactions found",
 		})
 		return
 	}
@@ -355,7 +355,7 @@ func (a *AdminHandler) GetAllTransactions(c *gin.Context) {
 func (a *AdminHandler) SalaryNotAdded(c *gin.Context) {
 	tempData, err := a.adminusecase.GetEmployeeSalaryNotAdded(c)
 
-	if err != nil {
+	if err != nil || len(tempData) == 0 {
 		c.JSON(204, gin.H{
 			"status":  204,
 			"message": "no employees to add salaray details",
@@ -372,7 +372,7 @@ func (a *AdminHandler) SalaryNotAdded(c *gin.Context) {
 func (a *AdminHandler) GetAllEmployees(c *gin.Context) {
 	tempData, err := a.adminusecase.GetAllEmployees(c)
 
-	if err != nil {
+	if err != nil || len(tempData) == 0 {
 		c.JSON(204, gin.H{
 			"status":  204,
 			"message": "no employees found",
