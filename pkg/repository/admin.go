@@ -70,7 +70,7 @@ func (a *adminDatabase) FormCorrection(ctx context.Context, form domain.Form) {
 
 func (a *adminDatabase) GetAllEmployees(ctx context.Context) ([]response.AllEmployee, error) {
 	var emp []response.AllEmployee
-	if err := a.DB.Raw("select forms.form_id as id, forms.employee_id as empid, employees.first_name || ' ' || employees.last_name as name, employees.email, employees.phone, forms.gender,forms.date_of_birth,forms.designation from employees inner join forms on employees.id = forms.form_id   where forms.status='A' ").Scan(&emp).Error; err != nil {
+	if err := a.DB.Raw("select forms.form_id as id, forms.employee_id as empid, employees.first_name || ' ' || employees.last_name as name, employees.email, employees.phone, forms.gender,forms.date_of_birth,forms.designation from employees inner join forms on employees.id = forms.form_id where forms.status='A' ").Scan(&emp).Error; err != nil {
 		return emp, err
 	}
 

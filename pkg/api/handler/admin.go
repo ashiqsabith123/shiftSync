@@ -339,8 +339,8 @@ func (a *AdminHandler) GetAllTransactions(c *gin.Context) {
 	tempData, err := a.adminusecase.GetAllTransactions(c)
 
 	if err != nil || len(tempData) == 0 {
-		c.JSON(204, gin.H{
-			"status":  204,
+		c.JSON(202, gin.H{
+			"status":  202,
 			"message": "no transactions found",
 		})
 		return
@@ -356,8 +356,8 @@ func (a *AdminHandler) SalaryNotAdded(c *gin.Context) {
 	tempData, err := a.adminusecase.GetEmployeeSalaryNotAdded(c)
 
 	if err != nil || len(tempData) == 0 {
-		c.JSON(204, gin.H{
-			"status":  204,
+		c.JSON(202, gin.H{
+			"status":  202,
 			"message": "no employees to add salaray details",
 		})
 		return
@@ -373,8 +373,8 @@ func (a *AdminHandler) GetAllEmployees(c *gin.Context) {
 	tempData, err := a.adminusecase.GetAllEmployees(c)
 
 	if err != nil || len(tempData) == 0 {
-		c.JSON(204, gin.H{
-			"status":  204,
+		c.JSON(202, gin.H{
+			"status":  202,
 			"message": "no employees found",
 		})
 		return
