@@ -3,6 +3,7 @@ package usecases
 import (
 	"context"
 	"errors"
+	"fmt"
 	"shiftsync/pkg/domain"
 	"shiftsync/pkg/encrypt"
 	"shiftsync/pkg/helper"
@@ -177,4 +178,19 @@ func (a *AdminUseCase) FetchAccountDetailsById(ctx context.Context, id int) resp
 	details.Ifsc_code = string(encrypt.Decrypt(helper.Decode(details.Ifsc_code)))
 
 	return details
+}
+
+func (a *AdminUseCase) GetAllTransactions(ctx context.Context) ([]response.AllTransactions, error) {
+	transactions, traErr := a.adminRepo.GetAllTransactions(ctx)
+
+	if traErr != nil {
+		return transactions, traErr
+	}
+
+	for i := range transactions {
+		transactions[i].Account_no = string(encrypt.Decrypt(helper.Decode(transactions[i].Account_no)))
+		fmt.Println(transactions[i].Date)
+	}
+
+	return transactions, nil
 }

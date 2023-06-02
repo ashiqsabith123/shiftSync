@@ -335,20 +335,19 @@ func (a *AdminHandler) EditSalaryDetails(c *gin.Context) {
 
 }
 
-// func (a *AdminHandler) Calculate(c *gin.Context) {
-// 	var res response.CreditSalaryId
-// 	if err := c.ShouldBindJSON(&res); err != nil {
-// 		resp := response.ErrorResponse(400, "invalid input", err.Error(), res)
-// 		c.JSON(400, resp)
-// 		return
-// 	}
+func (a *AdminHandler) GetAllTransactions(c *gin.Context) {
+	tempData, err := a.adminusecase.GetAllTransactions(c)
 
-// 	if err := a.adminusecase.CreditSalary(); err != nil {
-// 		resp := response.ErrorResponse(400, "failed to Credit salary", err.Error(), res)
-// 		c.JSON(400, resp)
-// 		return
-// 	}
+	if err != nil {
+		c.JSON(204, gin.H{
+			"status":  204,
+			"message": "no details",
+		})
+		return
+	}
 
-// 	resp := response.SuccessResponse(200, "salary credited succesfully", "")
-// 	c.JSON(200, resp)
-// }
+	c.JSON(200, gin.H{
+		"status":       200,
+		"Transactions": tempData,
+	})
+}

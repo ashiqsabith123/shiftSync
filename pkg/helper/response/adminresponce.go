@@ -92,3 +92,11 @@ type AccDetails struct {
 type CreditSalaryId struct {
 	ID int `json:"empid"`
 }
+
+type AllTransactions struct {
+	Name        string
+	Date        string
+	Account_no  string
+	Refrence_id int
+	Amount      int
+}

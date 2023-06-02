@@ -23,4 +23,5 @@ type AdminRepository interface {
 	EditSalaryDetails(ctx context.Context, editDetails domain.Salary) error
 	FindEmployeeById(ctx context.Context, id int) response.EmployeeDetails
 	FetchAccountDetailsById(ctx context.Context, id int) response.AccountDetails
+	GetAllTransactions(ctx context.Context) ([]response.AllTransactions, error)
 }

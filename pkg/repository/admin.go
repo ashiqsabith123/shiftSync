@@ -151,3 +151,12 @@ func (a *adminDatabase) FetchAccountDetailsById(ctx context.Context, id int) res
 	fmt.Println(details)
 	return details
 }
+
+func (a *adminDatabase) GetAllTransactions(ctx context.Context) ([]response.AllTransactions, error) {
+	var transactions []response.AllTransactions
+	if err := a.DB.Raw("SELECT employees.first_name || ' ' || employees.last_name AS name, DATE(transactions.date) AS date, transactions.refrence_id,transactions.amount,forms.account_no FROM employees JOIN transactions ON employees.id = transactions.employee_id inner join forms on employees.id = forms.form_id;").Scan(&transactions).Error; err != nil {
+		return transactions, err
+	}
+
+	return transactions, nil
+}
