@@ -194,3 +194,23 @@ func (a *AdminUseCase) GetAllTransactions(ctx context.Context) ([]response.AllTr
 
 	return transactions, nil
 }
+
+func (a *AdminUseCase) GetEmployeeSalaryNotAdded(ctx context.Context) ([]response.EmployeeSal, error) {
+	details, err := a.adminRepo.GetEmployeeSalaryNotAdded(ctx)
+
+	if err != nil {
+		return details, err
+	}
+
+	return details, nil
+}
+
+func (a *AdminUseCase) GetAllEmployees(ctx context.Context) ([]response.AllEmployee, error) {
+	employees, err := a.adminRepo.GetAllEmployees(ctx)
+
+	if err != nil || len(employees) == 0 {
+		return employees, errors.Join(err, errors.New("no employees found"))
+	}
+
+	return employees, nil
+}

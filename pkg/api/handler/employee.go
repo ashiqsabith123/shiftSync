@@ -26,6 +26,14 @@ func NewEmployeeHandler(userUseCase service.EmployeeUseCase) *EmployeeHandler {
 }
 
 // -------------------Sign Up-----------------------------//
+// GetSignup godoc
+// @summary For Getting Signup Page
+// @id Signup
+// @description api for employees to signup
+// @tags SignUp
+// @Produce json
+// @Router /employee/signup [get]
+// @Success 200 {object} request.SignUp{} "successfully get signup page"
 func (u *EmployeeHandler) GetSignUp(ctxt *gin.Context) {
 
 	resp := response.SuccessResponse(200, "Welcome to signup page", request.SignUp{})

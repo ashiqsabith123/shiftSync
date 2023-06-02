@@ -22,10 +22,10 @@ func NewHTTPServer(employeeHandler *handler.EmployeeHandler, adminHandler *handl
 	// logger middleware
 	server.Use(gin.Logger())
 
-	//server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	url := ginSwagger.URL("localhost:8081/cmd/api/docs/swagger.json") // The url pointing to API definition
-	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, url))
+	// The url pointing to API definition
+	//server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	routes.EmployeeRoutes(server.Group("/employee"), employeeHandler)
 	routes.AdminRoutes(server.Group("/admin"), adminHandler)

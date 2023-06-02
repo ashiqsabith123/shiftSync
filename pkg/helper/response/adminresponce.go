@@ -28,7 +28,6 @@ type AllEmployee struct {
 	Phone         int64  `json:"phone"`
 	Gender        string `json:"gender"`
 	Date_of_birth string `json:"dateofbirth"`
-	Department    string `json:"department"`
 	Designation   string `json:"designation"`
 }
 
@@ -99,4 +98,10 @@ type AllTransactions struct {
 	Account_no  string
 	Refrence_id int
 	Amount      int
+}
+
+type EmployeeSal struct {
+	Employee_id string `json:"Id"`
+	Name        string `json:"Name"`
+	Designation string `json:"Designation"`
 }

@@ -10,6 +10,21 @@ definitions:
       todate:
         type: string
     type: object
+  request.SignUp:
+    properties:
+      email:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      password:
+        type: string
+      phone:
+        type: integer
+      username:
+        type: string
+    type: object
   response.Response:
     properties:
       data: {}
@@ -44,6 +59,20 @@ paths:
       summary: access attendance of employees
       tags:
       - attendances
+  /employee/signup:
+    get:
+      description: api for employees to signup
+      operationId: Signup
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: successfully get signup page
+          schema:
+            $ref: '#/definitions/request.SignUp'
+      summary: For Getting Signup Page
+      tags:
+      - SignUp
   /leave/apply:
     post:
       description: api for employees to apply leave

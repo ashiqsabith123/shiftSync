@@ -70,7 +70,7 @@ func (a *adminDatabase) FormCorrection(ctx context.Context, form domain.Form) {
 
 func (a *adminDatabase) GetAllEmployees(ctx context.Context) ([]response.AllEmployee, error) {
 	var emp []response.AllEmployee
-	if err := a.DB.Raw("select forms.form_id as id, forms.employee_id as empid, employees.first_name || ' ' || employees.last_name as name, employees.email, employees.phone, forms.gender,forms.date_of_birth, forms.department,forms.designation from employees inner join forms on employees.id = forms.form_id   where forms.status='A' ").Scan(&emp).Error; err != nil {
+	if err := a.DB.Raw("select forms.form_id as id, forms.employee_id as empid, employees.first_name || ' ' || employees.last_name as name, employees.email, employees.phone, forms.gender,forms.date_of_birth,forms.designation from employees inner join forms on employees.id = forms.form_id   where forms.status='A' ").Scan(&emp).Error; err != nil {
 		return emp, err
 	}
 
@@ -159,4 +159,13 @@ func (a *adminDatabase) GetAllTransactions(ctx context.Context) ([]response.AllT
 	}
 
 	return transactions, nil
+}
+
+func (a *adminDatabase) GetEmployeeSalaryNotAdded(ctx context.Context) ([]response.EmployeeSal, error) {
+	var details []response.EmployeeSal
+	if err := a.DB.Raw("SELECT e.first_name || ' ' || e.last_name AS name,f.designation,f.form_id as employee_id FROM employees e INNER JOIN forms f on f.form_id = e.id LEFT JOIN salaries s ON e.id = s.employee_id WHERE s.employee_id IS NULL;").Scan(&details).Error; err != nil {
+		return details, err
+	}
+
+	return details, nil
 }

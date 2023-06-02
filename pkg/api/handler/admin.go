@@ -351,3 +351,37 @@ func (a *AdminHandler) GetAllTransactions(c *gin.Context) {
 		"Transactions": tempData,
 	})
 }
+
+func (a *AdminHandler) SalaryNotAdded(c *gin.Context) {
+	tempData, err := a.adminusecase.GetEmployeeSalaryNotAdded(c)
+
+	if err != nil {
+		c.JSON(204, gin.H{
+			"status":  204,
+			"message": "no employees to add salaray details",
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status":    200,
+		"Employees": tempData,
+	})
+}
+
+func (a *AdminHandler) GetAllEmployees(c *gin.Context) {
+	tempData, err := a.adminusecase.GetAllEmployees(c)
+
+	if err != nil {
+		c.JSON(204, gin.H{
+			"status":  204,
+			"message": "no employees found",
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status":    200,
+		"Employees": tempData,
+	})
+}

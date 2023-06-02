@@ -37,6 +37,27 @@
                 }
             }
         },
+        "/employee/signup": {
+            "get": {
+                "description": "api for employees to signup",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SignUp"
+                ],
+                "summary": "For Getting Signup Page",
+                "operationId": "Signup",
+                "responses": {
+                    "200": {
+                        "description": "successfully get signup page",
+                        "schema": {
+                            "$ref": "#/definitions/request.SignUp"
+                        }
+                    }
+                }
+            }
+        },
         "/leave/apply": {
             "post": {
                 "description": "api for employees to apply leave",
@@ -123,6 +144,29 @@
                     "type": "string"
                 },
                 "todate": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.SignUp": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "firstname": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "integer"
+                },
+                "username": {
                     "type": "string"
                 }
             }

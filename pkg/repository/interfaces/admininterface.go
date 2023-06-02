@@ -24,4 +24,5 @@ type AdminRepository interface {
 	FindEmployeeById(ctx context.Context, id int) response.EmployeeDetails
 	FetchAccountDetailsById(ctx context.Context, id int) response.AccountDetails
 	GetAllTransactions(ctx context.Context) ([]response.AllTransactions, error)
+	GetEmployeeSalaryNotAdded(ctx context.Context) ([]response.EmployeeSal, error)
 }
