@@ -26,11 +26,12 @@ func NewEmployeeHandler(userUseCase service.EmployeeUseCase) *EmployeeHandler {
 }
 
 // -------------------Sign Up-----------------------------//
-// GetSignup godoc
+//
+// Sign Up Page godoc
 // @summary For Getting Signup Page
 // @id Signup
 // @description api for employees to signup
-// @tags SignUp
+// @tags Employee
 // @Produce json
 // @Router /employee/signup [get]
 // @Success 200 {object} request.SignUp{} "successfully get signup page"
@@ -362,16 +363,17 @@ func (e *EmployeeHandler) PunchOut(c *gin.Context) {
 
 }
 
-// ApplyLeave godoc
-// @summary ApplyLeave
-// @id Applyleave
-// @description api for employees to apply leave
-// @tags leave
+// Apply Leave godoc
+// @id Apply leave
+// @description Api for employees to apply leave
+// @tags Employee
 // @Produce json
-// @Param input body request.Leave{} true "input field"
-// @Router /leave/apply [post]
+// @Param input body request.Leave{} true "Leave request details"
+// @Router /employee/leave/apply [post]
 // @Success 200 {object} response.Response{} "successfully applied for leave"
 // @Failure 400 {object} response.Response{} "invalid input"
+// @Failure 500 {object} response.Response{} "employee id not found"
+// @Failure 422 {object} response.Response{} "error while applying leave"
 func (e *EmployeeHandler) ApplyLeave(c *gin.Context) {
 	var reqLeave request.Leave
 
@@ -399,8 +401,8 @@ func (e *EmployeeHandler) ApplyLeave(c *gin.Context) {
 	responce, leaveErr := e.employeeUseCase.ApplyLeave(c, leave)
 
 	if leaveErr != nil {
-		resp := response.ErrorResponse(400, "error while applying leave", leaveErr.Error(), nil)
-		c.JSON(400, resp)
+		resp := response.ErrorResponse(422, "error while applying leave", leaveErr.Error(), nil)
+		c.JSON(422, resp)
 		return
 	}
 
@@ -410,15 +412,14 @@ func (e *EmployeeHandler) ApplyLeave(c *gin.Context) {
 }
 
 // Leave status/history godoc
-// @summary access leave status history
-// @id LeaveStatus
-// @description api for employees to get leaave status/history
-// @tags status
+// @id Leave status
+// @description Api for employees to get leaave status/history
+// @tags Employee
 // @Produce json
-// @Router /leave/statis [get]
-// @Success 200 {object} response.Response{} "successfully fetched leave status"
-// @Failure 404 {object} response.Response{} "failed to get leave history"
-// @Failure 500 {object} response.Response{} "femployee id not found"
+// @Router /employee/leave/status  [get]
+// @Success 200 {object} response.Response{} "successfully fetched leave status/history"
+// @Failure 404 {object} response.Response{} "no leave history found"
+// @Failure 500 {object} response.Response{} "employee id not found"
 func (e *EmployeeHandler) LeaveStatus(c *gin.Context) {
 	tempid, ok := c.Get("userId")
 	id, _ := strconv.Atoi(tempid.(string))
@@ -450,7 +451,7 @@ func (e *EmployeeHandler) LeaveStatus(c *gin.Context) {
 // @summary access attendance of employees
 // @id Attendance
 // @description api for get employees attendances
-// @tags attendances
+// @tags Employee
 // @Produce json
 // @Router /attendance [get]
 // @Success 200 {object} response.Response{} "successfully fetched attendance"

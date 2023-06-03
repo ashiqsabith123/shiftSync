@@ -58,27 +58,13 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: access attendance of employees
       tags:
-      - attendances
-  /employee/signup:
-    get:
-      description: api for employees to signup
-      operationId: Signup
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: successfully get signup page
-          schema:
-            $ref: '#/definitions/request.SignUp'
-      summary: For Getting Signup Page
-      tags:
-      - SignUp
-  /leave/apply:
+      - Employee
+  /employee/leave/apply:
     post:
-      description: api for employees to apply leave
-      operationId: Applyleave
+      description: Api for employees to apply leave
+      operationId: Apply leave
       parameters:
-      - description: input field
+      - description: Leave request details
         in: body
         name: input
         required: true
@@ -95,29 +81,49 @@ paths:
           description: invalid input
           schema:
             $ref: '#/definitions/response.Response'
-      summary: ApplyLeave
+        "422":
+          description: error while applying leave
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: employee id not found
+          schema:
+            $ref: '#/definitions/response.Response'
       tags:
-      - leave
-  /leave/statis:
+      - Employee
+  /employee/leave/status:
     get:
-      description: api for employees to get leaave status/history
-      operationId: LeaveStatus
+      description: Api for employees to get leaave status/history
+      operationId: Leave status
       produces:
       - application/json
       responses:
         "200":
-          description: successfully fetched leave status
+          description: successfully fetched leave status/history
           schema:
             $ref: '#/definitions/response.Response'
         "404":
-          description: failed to get leave history
+          description: no leave history found
           schema:
             $ref: '#/definitions/response.Response'
         "500":
-          description: femployee id not found
+          description: employee id not found
           schema:
             $ref: '#/definitions/response.Response'
-      summary: access leave status history
       tags:
-      - status
+      - Employee
+  /employee/signup:
+    get:
+      description: api for employees to signup
+      operationId: Signup
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: successfully get signup page
+          schema:
+            $ref: '#/definitions/request.SignUp'
+      summary: For Getting Signup Page
+      tags:
+      - Employee
 swagger: "2.0"

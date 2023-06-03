@@ -11,7 +11,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "attendances"
+                    "Employee"
                 ],
                 "summary": "access attendance of employees",
                 "operationId": "Attendance",
@@ -37,41 +37,19 @@
                 }
             }
         },
-        "/employee/signup": {
-            "get": {
-                "description": "api for employees to signup",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "SignUp"
-                ],
-                "summary": "For Getting Signup Page",
-                "operationId": "Signup",
-                "responses": {
-                    "200": {
-                        "description": "successfully get signup page",
-                        "schema": {
-                            "$ref": "#/definitions/request.SignUp"
-                        }
-                    }
-                }
-            }
-        },
-        "/leave/apply": {
+        "/employee/leave/apply": {
             "post": {
-                "description": "api for employees to apply leave",
+                "description": "Api for employees to apply leave",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "leave"
+                    "Employee"
                 ],
-                "summary": "ApplyLeave",
-                "operationId": "Applyleave",
+                "operationId": "Apply leave",
                 "parameters": [
                     {
-                        "description": "input field",
+                        "description": "Leave request details",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -92,38 +70,70 @@
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
-                    }
-                }
-            }
-        },
-        "/leave/statis": {
-            "get": {
-                "description": "api for employees to get leaave status/history",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "status"
-                ],
-                "summary": "access leave status history",
-                "operationId": "LeaveStatus",
-                "responses": {
-                    "200": {
-                        "description": "successfully fetched leave status",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
                     },
-                    "404": {
-                        "description": "failed to get leave history",
+                    "422": {
+                        "description": "error while applying leave",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
                     },
                     "500": {
-                        "description": "femployee id not found",
+                        "description": "employee id not found",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/leave/status": {
+            "get": {
+                "description": "Api for employees to get leaave status/history",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "operationId": "Leave status",
+                "responses": {
+                    "200": {
+                        "description": "successfully fetched leave status/history",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "no leave history found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "employee id not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/signup": {
+            "get": {
+                "description": "api for employees to signup",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "summary": "For Getting Signup Page",
+                "operationId": "Signup",
+                "responses": {
+                    "200": {
+                        "description": "successfully get signup page",
+                        "schema": {
+                            "$ref": "#/definitions/request.SignUp"
                         }
                     }
                 }
