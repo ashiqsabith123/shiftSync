@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"shiftsync/pdf"
 	"shiftsync/pkg/domain"
 	"shiftsync/pkg/encrypt"
@@ -294,7 +295,7 @@ func (e *employeeUseCase) Attendance(ctx context.Context, id int) ([]response.At
 
 		duration := t1.Sub(t2)
 		fmt.Println(duration)
-		hours := int(duration.Hours())
+		hours := int(math.Abs(duration.Hours()))
 
 		attnedance[i].Total_hours = hours
 
@@ -376,7 +377,7 @@ func (e *employeeUseCase) GetDataForSalarySlip(ctx context.Context, id int) ([]b
 		return nil, pdfError
 	}
 
-	pdfData, pdfPathErr := ioutil.ReadFile("pdf/generated/salary_slip" + data.Employee_id + ".pdf")
+	pdfData, pdfPathErr := ioutil.ReadFile("/home/ubuntu/shiftSync/pdf/generated/salary_slip" + data.Employee_id + ".pdf")
 	if pdfPathErr != nil {
 		return nil, pdfPathErr
 	}
