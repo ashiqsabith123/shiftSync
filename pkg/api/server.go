@@ -1,6 +1,7 @@
 package http
 
 import (
+	_ "shiftsync/cmd/api/docs"
 	"shiftsync/pkg/api/handler"
 	"shiftsync/pkg/api/routes"
 
