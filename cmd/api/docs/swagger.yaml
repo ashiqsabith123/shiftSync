@@ -1,4 +1,21 @@
 definitions:
+  domain.Employee:
+    properties:
+      email:
+        type: string
+      firstname:
+        type: string
+      id:
+        type: integer
+      lastname:
+        type: string
+      password:
+        type: string
+      phone:
+        type: integer
+      username:
+        type: string
+    type: object
   request.Leave:
     properties:
       fromdate:
@@ -8,6 +25,18 @@ definitions:
       reason:
         type: string
       todate:
+        type: string
+    type: object
+  request.LoginStruct:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  request.OTPStruct:
+    properties:
+      otp:
         type: string
     type: object
   request.SignUp:
@@ -37,6 +66,41 @@ definitions:
 info:
   contact: {}
 paths:
+  /admin/signin:
+    get:
+      description: api for admin to signin
+      operationId: Admin Sign In
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Welcome to sign in page
+          schema:
+            $ref: '#/definitions/request.LoginStruct'
+      summary: Api for get admin signin page
+      tags:
+      - Admin -Sign in
+    post:
+      description: api for admin to signin
+      operationId: Admin Sign In
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succesfuly logged in
+          schema:
+            $ref: '#/definitions/request.LoginStruct'
+        "400":
+          description: Username and password is mandatory
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Unable to login
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for post admin signin details
+      tags:
+      - Admin -Sign in
   /attendance:
     get:
       description: api for get employees attendances
@@ -90,7 +154,7 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       tags:
-      - Employee
+      - Employee -Apply leave
   /employee/leave/status:
     get:
       description: Api for employees to get leaave status/history
@@ -112,6 +176,41 @@ paths:
             $ref: '#/definitions/response.Response'
       tags:
       - Employee
+  /employee/signin:
+    get:
+      description: api for employees to signin
+      operationId: Sign In
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Welcome to sign in page
+          schema:
+            $ref: '#/definitions/request.LoginStruct'
+      summary: Api for get signin page
+      tags:
+      - Employee -Sign in
+    post:
+      description: api for employees to signin
+      operationId: Sign In
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succesfuly logged in
+          schema:
+            $ref: '#/definitions/request.LoginStruct'
+        "400":
+          description: Username and password is mandatory
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Unable to login
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for post signin details
+      tags:
+      - Employee -Sign in
   /employee/signup:
     get:
       description: api for employees to signup
@@ -120,10 +219,67 @@ paths:
       - application/json
       responses:
         "200":
-          description: successfully get signup page
+          description: Welcome to signup page
           schema:
             $ref: '#/definitions/request.SignUp'
-      summary: For Getting Signup Page
+      summary: Api for get signup page
       tags:
-      - Employee
+      - Employee -Sign up
+    post:
+      description: api for employees to signup
+      operationId: Signup
+      parameters:
+      - description: Sign up details
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Employee'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Otp senEmployeed succesfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: User already exist
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: unable to signup
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for post signup details
+      tags:
+      - Employee -Sign up
+  /employee/signup/verify-otp:
+    post:
+      description: api for employees to verify otp
+      operationId: Verify otp
+      parameters:
+      - description: Otp
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.OTPStruct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully Account Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Invalid otp
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Unable to find details
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for post otp
+      tags:
+      - Employee -Sign up
 swagger: "2.0"

@@ -23,11 +23,29 @@ func NewAdminHandler(usecase service.AdminUseCase) *AdminHandler {
 	return &AdminHandler{adminusecase: usecase}
 }
 
+// Sign In Page godoc
+// @summary Api for get admin signin page
+// @id Admin Sign In
+// @description api for admin to signin
+// @tags Admin -Sign in
+// @Produce json
+// @Router /admin/signin [get]
+// @Success 200 {object} request.LoginStruct{} "Welcome to sign in page"
 func (a *AdminHandler) GetSignin(ctxt *gin.Context) {
 	resp := response.SuccessResponse(200, "welcome to signin", request.LoginStruct{})
 	ctxt.JSON(200, resp)
 }
 
+// Sign In Page godoc
+// @summary Api for post admin signin details
+// @id Admin Sign In
+// @description api for admin to signin
+// @tags Admin -Sign in
+// @Produce json
+// @Router /admin/signin [post]
+// @Success 200 {object} request.LoginStruct{} "Succesfuly logged in"
+// @Failure 400 {object} response.Response{} "Username and password is mandatory"
+// @Failure 500 {object} response.Response{} "Unable to login"
 func (a *AdminHandler) PostSignin(ctxt *gin.Context) {
 	var adm request.LoginStruct
 	if err := ctxt.ShouldBindJSON(&adm); err != nil {

@@ -25,16 +25,14 @@ func NewEmployeeHandler(userUseCase service.EmployeeUseCase) *EmployeeHandler {
 	return &EmployeeHandler{employeeUseCase: userUseCase}
 }
 
-// -------------------Sign Up-----------------------------//
-//
 // Sign Up Page godoc
-// @summary For Getting Signup Page
+// @summary Api for get signup page
 // @id Signup
 // @description api for employees to signup
-// @tags Employee
+// @tags Employee -Sign up
 // @Produce json
 // @Router /employee/signup [get]
-// @Success 200 {object} request.SignUp{} "successfully get signup page"
+// @Success 200 {object} request.SignUp{} "Welcome to signup page"
 func (u *EmployeeHandler) GetSignUp(ctxt *gin.Context) {
 
 	resp := response.SuccessResponse(200, "Welcome to signup page", request.SignUp{})
@@ -42,6 +40,17 @@ func (u *EmployeeHandler) GetSignUp(ctxt *gin.Context) {
 	ctxt.JSON(200, resp)
 }
 
+// Sign Up Page godoc
+// @summary Api for post signup details
+// @id Signup
+// @description api for employees to signup
+// @tags Employee -Sign up
+// @Produce json
+// @Param input body domain.Employee{} true "Sign up details"
+// @Router /employee/signup [post]
+// @Success 200 {object} response.Response{} "Otp senEmployeed succesfully"
+// @Failure 400 {object} response.Response{} "User already exist"
+// @Failure 500 {object} response.Response{} "unable to signup"
 func (u *EmployeeHandler) PostSignup(ctxt *gin.Context) {
 
 	var signup domain.Employee
@@ -83,6 +92,17 @@ func (u *EmployeeHandler) PostSignup(ctxt *gin.Context) {
 
 }
 
+// Veify otp godoc
+// @summary Api for post otp
+// @id Verify otp
+// @description api for employees to verify otp
+// @tags Employee -Sign up
+// @Produce json
+// @Param input body request.OTPStruct{} true "Otp"
+// @Router /employee/signup/verify-otp [post]
+// @Success 200 {object} response.Response{} "Successfully Account Created"
+// @Failure 400 {object} response.Response{} "Invalid otp"
+// @Failure 500 {object} response.Response{} "Unable to find details""
 func (u *EmployeeHandler) VerifyOtp(ctxt *gin.Context) {
 
 	var otp request.OTPStruct
@@ -134,15 +154,29 @@ func (u *EmployeeHandler) VerifyOtp(ctxt *gin.Context) {
 
 }
 
-//---------------------------------------------------------//
-
-// -------------------Sign In-----------------------------//
-
+// Sign In Page godoc
+// @summary Api for get signin page
+// @id Sign In
+// @description api for employees to signin
+// @tags Employee -Sign in
+// @Produce json
+// @Router /employee/signin [get]
+// @Success 200 {object} request.LoginStruct{} "Welcome to sign in page"
 func (u *EmployeeHandler) GetLogin(ctxt *gin.Context) {
-	resp := response.SuccessResponse(200, "Welcome to login page", request.LoginStruct{})
+	resp := response.SuccessResponse(200, "Welcome to sign in page", request.LoginStruct{})
 	ctxt.JSON(200, resp)
 }
 
+// Sign In Page godoc
+// @summary Api for post signin details
+// @id Sign In
+// @description api for employees to signin
+// @tags Employee -Sign in
+// @Produce json
+// @Router /employee/signin [post]
+// @Success 200 {object} request.LoginStruct{} "Succesfuly logged in"
+// @Failure 400 {object} response.Response{} "Username and password is mandatory"
+// @Failure 500 {object} response.Response{} "Unable to login"
 func (u *EmployeeHandler) PostLogin(ctxt *gin.Context) {
 	var values request.LoginStruct
 
@@ -366,7 +400,7 @@ func (e *EmployeeHandler) PunchOut(c *gin.Context) {
 // Apply Leave godoc
 // @id Apply leave
 // @description Api for employees to apply leave
-// @tags Employee
+// @tags Employee -Apply leave
 // @Produce json
 // @Param input body request.Leave{} true "Leave request details"
 // @Router /employee/leave/apply [post]

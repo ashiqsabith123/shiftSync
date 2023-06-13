@@ -1,0 +1,2 @@
+make swag
+make run

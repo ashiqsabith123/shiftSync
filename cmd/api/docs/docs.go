@@ -16,6 +16,58 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/signin": {
+            "get": {
+                "description": "api for admin to signin",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin -Sign in"
+                ],
+                "summary": "Api for get admin signin page",
+                "operationId": "Admin Sign In",
+                "responses": {
+                    "200": {
+                        "description": "Welcome to sign in page",
+                        "schema": {
+                            "$ref": "#/definitions/request.LoginStruct"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "api for admin to signin",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin -Sign in"
+                ],
+                "summary": "Api for post admin signin details",
+                "operationId": "Admin Sign In",
+                "responses": {
+                    "200": {
+                        "description": "Succesfuly logged in",
+                        "schema": {
+                            "$ref": "#/definitions/request.LoginStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Username and password is mandatory",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Unable to login",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/attendance": {
             "get": {
                 "description": "api for get employees attendances",
@@ -56,7 +108,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Employee"
+                    "Employee -Apply leave"
                 ],
                 "operationId": "Apply leave",
                 "parameters": [
@@ -130,6 +182,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/employee/signin": {
+            "get": {
+                "description": "api for employees to signin",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee -Sign in"
+                ],
+                "summary": "Api for get signin page",
+                "operationId": "Sign In",
+                "responses": {
+                    "200": {
+                        "description": "Welcome to sign in page",
+                        "schema": {
+                            "$ref": "#/definitions/request.LoginStruct"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "api for employees to signin",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee -Sign in"
+                ],
+                "summary": "Api for post signin details",
+                "operationId": "Sign In",
+                "responses": {
+                    "200": {
+                        "description": "Succesfuly logged in",
+                        "schema": {
+                            "$ref": "#/definitions/request.LoginStruct"
+                        }
+                    },
+                    "400": {
+                        "description": "Username and password is mandatory",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Unable to login",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/employee/signup": {
             "get": {
                 "description": "api for employees to signup",
@@ -137,15 +241,101 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Employee"
+                    "Employee -Sign up"
                 ],
-                "summary": "For Getting Signup Page",
+                "summary": "Api for get signup page",
                 "operationId": "Signup",
                 "responses": {
                     "200": {
-                        "description": "successfully get signup page",
+                        "description": "Welcome to signup page",
                         "schema": {
                             "$ref": "#/definitions/request.SignUp"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "api for employees to signup",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee -Sign up"
+                ],
+                "summary": "Api for post signup details",
+                "operationId": "Signup",
+                "parameters": [
+                    {
+                        "description": "Sign up details",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Employee"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Otp senEmployeed succesfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "User already exist",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "unable to signup",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/signup/verify-otp": {
+            "post": {
+                "description": "api for employees to verify otp",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee -Sign up"
+                ],
+                "summary": "Api for post otp",
+                "operationId": "Verify otp",
+                "parameters": [
+                    {
+                        "description": "Otp",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.OTPStruct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Account Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid otp",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Unable to find details",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -153,6 +343,32 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.Employee": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "firstname": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "request.Leave": {
             "type": "object",
             "properties": {
@@ -166,6 +382,25 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "todate": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.LoginStruct": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.OTPStruct": {
+            "type": "object",
+            "properties": {
+                "otp": {
                     "type": "string"
                 }
             }
