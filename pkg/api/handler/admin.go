@@ -75,7 +75,7 @@ func (a *AdminHandler) PostSignin(ctxt *gin.Context) {
 	}
 
 	ctxt.SetCookie("admin-cookie", token, 10*60, "", "", false, true)
-	resp := response.SuccessResponse(200, "succesfuly logged in", "", token)
+	resp := response.SuccessResponse(200, "succesfuly logged in", token)
 	ctxt.JSON(200, resp)
 
 }
