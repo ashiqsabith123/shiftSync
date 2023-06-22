@@ -12,7 +12,7 @@ import (
 )
 
 func GenerateTokens(id uint) (string, error) {
-	var expiryTime = time.Now().Add(10 * time.Minute).Unix()
+	var expiryTime = time.Now().Add(720 * time.Hour).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: expiryTime,
 		Id:        fmt.Sprint(id),

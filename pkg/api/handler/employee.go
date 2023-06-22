@@ -213,7 +213,7 @@ func (u *EmployeeHandler) PostLogin(ctxt *gin.Context) {
 		return
 	}
 
-	ctxt.SetCookie("employee-cookie", token, 10*60, "/", "", false, true)
+	ctxt.SetCookie("employee-cookie", token, 30*24*60, "/", "", false, true)
 	resp := response.SuccessResponse(200, "succesfuly logged in", token)
 	ctxt.JSON(200, resp)
 }
