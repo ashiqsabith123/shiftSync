@@ -22,8 +22,10 @@ func NewEmployeeRepository(DB *gorm.DB) repo.EmployeeRepository {
 	return &employeeDatabase{DB: DB}
 }
 
-func (e *employeeDatabase) AddEmployee(cntxt context.Context, signup domain.Employee) error {
-	err := e.DB.Create(&signup).Error
+func (e *employeeDatabase) AddEmployee(cntxt context.Context, emp domain.Employee) error {
+	//err := e.DB.Create(&emp).Error
+
+	err := e.DB.Raw("INSERT INTO employees (first_name, last_name, email, user_name, pass_word, phone) VALUES (?, ?, ?, ?, ?, ?)", emp.First_name, emp.Last_name, emp.Email, emp.User_name, emp.Pass_word, emp.Phone).Error
 	return err
 }
 
