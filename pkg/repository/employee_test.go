@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"shiftsync/pkg/domain"
 	"testing"
@@ -17,7 +18,7 @@ func TestAddEmployee(t *testing.T) {
 	if assert.NoError(t, err) {
 		log.Println("Mock sql created succesfully")
 	}
-	//defer mockDB.Close()
+	defer mockDB.Close()
 
 	db, err := gorm.Open(postgres.New(postgres.Config{Conn: mockDB}), &gorm.Config{})
 	if assert.NoError(t, err) {
@@ -34,7 +35,14 @@ func TestAddEmployee(t *testing.T) {
 		Phone:      8606863748,
 	}
 
-	mock.ExpectExec("INSERT INTO employees (first_name, last_name, email,phone,user_name, pass_word)VALUES ($1, $2, $3, $4, $5, $6);").
+	query := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return tx.Create(&emp)
+
+	})
+	fmt.Println(query)
+	mock.ExpectBegin()
+
+	mock.ExpectExec(query).
 		WithArgs(emp.First_name, emp.Last_name, emp.Email, emp.Phone, emp.User_name, emp.Pass_word).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
