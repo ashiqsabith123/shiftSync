@@ -23,9 +23,14 @@ func NewEmployeeRepository(DB *gorm.DB) repo.EmployeeRepository {
 }
 
 func (e *employeeDatabase) AddEmployee(cntxt context.Context, emp domain.Employee) error {
-	err := e.DB.Create(&emp).Error
 
-	//err := e.DB.Raw("INSERT INTO employees (first_name, last_name, email, user_name, pass_word, phone) VALUES (?, ?, ?, ?, ?, ?)", emp.First_name, emp.Last_name, emp.Email, emp.User_name, emp.Pass_word, emp.Phone).Error
+	
+
+	// if err := e.DB.Create(&emp).Error; err != nil {
+	// 	return errors.Join(errors.New("error from here"), err)
+	// }
+
+	err := e.DB.Raw("INSERT INTO employees (first_name, last_name, email, user_name, pass_word, phone) VALUES (?, ?, ?, ?, ?, ?) RETURNING	", emp.First_name, emp.Last_name, emp.Email, emp.User_name, emp.Pass_word, emp.Phone).Error
 	return err
 }
 

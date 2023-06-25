@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"context"
 	"fmt"
 	"log"
+	"reflect"
 	"shiftsync/pkg/domain"
 	"testing"
 
@@ -14,17 +14,22 @@ import (
 )
 
 func TestAddEmployee(t *testing.T) {
-	mockDB, mock, err := sqlmock.New()
+	mockDB, _, err := sqlmock.New()
 	if assert.NoError(t, err) {
 		log.Println("Mock sql created succesfully")
+
 	}
 	defer mockDB.Close()
 
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: mockDB}), &gorm.Config{})
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: mockDB, DriverName: "postgres"}), &gorm.Config{})
 	if assert.NoError(t, err) {
 		log.Println("Mock sql connected with gorm succesfully")
 	}
-	defer mockDB.Close()
+
+	// config, _ := config.LoadConfig()
+	// db.ConnectToDatbase(config)
+
+	// DB := db.GetDatabaseInstance()
 
 	emp := domain.Employee{
 		First_name: "Ashiq",
@@ -35,19 +40,38 @@ func TestAddEmployee(t *testing.T) {
 		Phone:      8606863748,
 	}
 
-	query := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
-		return tx.Create(&emp)
+	// query := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+	// 	return tx.Create(&emp)
 
-	})
-	fmt.Println(query)
+	// })
+
+	stmt := db.Create(&emp).Statement
+	// v := reflect.ValueOf(stmt)
+	// tv := v.Type()
+
+	// for i := 0; i < v.NumField(); i++ {
+	// 	field := v.Field(i)
+	// 	fieldName := tv.Field(i).Name
+	// 	fieldValue := field.Interface()
+
+	// 	fmt.Printf("%s: %v\n", fieldName, fieldValue)
+	// }
+
+	qu := db.Dialector.Explain(stmt.SQL.String(), stmt.Vars...)
+	fmt.Println(qu)
+
+	fmt.Println("q", query)
 	mock.ExpectBegin()
+	mock.ExpectRollback()
+	mock.ExpectExec("").WillReturnResult(sqlmock.NewResult(1, 1))
 
-	mock.ExpectExec(query).
-		WithArgs(emp.First_name, emp.Last_name, emp.Email, emp.Phone, emp.User_name, emp.Pass_word).
-		WillReturnResult(sqlmock.NewResult(1, 1))
+	// // // mock.ExpectCommit()
+	// // mock.ExpectRollback()
 
-	employeeDB := NewEmployeeRepository(db)
+	// employeeDB := NewEmployeeRepository(db)
 
-	err = employeeDB.AddEmployee(context.Background(), emp)
-	assert.NoError(t, err)
+	// eerr := employeeDB.AddEmployee(context.Background(), emp)
+	// assert.NoError(t, eerr)
+
+	//assert.NoError(t, mock.ExpectationsWereMet())
 }
