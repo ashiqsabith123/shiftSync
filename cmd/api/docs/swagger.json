@@ -56,22 +56,25 @@
                 }
             }
         },
-        "/attendance": {
+        "/employee/attendance": {
             "get": {
                 "description": "api for get employees attendances",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Employee"
+                    "Employee - Attendance"
                 ],
-                "summary": "access attendance of employees",
+                "summary": "Api for fetch attendance details of an employee",
                 "operationId": "Attendance",
                 "responses": {
                     "200": {
                         "description": "successfully fetched attendance",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.Attendance"
+                            }
                         }
                     },
                     "404": {
@@ -89,6 +92,239 @@
                 }
             }
         },
+        "/employee/dashboard": {
+            "get": {
+                "description": "api for get employee dashboard",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee - Dashboard"
+                ],
+                "summary": "Api for get dashboard",
+                "operationId": "Dashboard",
+                "responses": {
+                    "200": {
+                        "description": "Succesfully get dashboard",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Eror while getting dashboard",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Employee id not found in cookie",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/duty": {
+            "get": {
+                "description": "Api for employees to get duty schedule",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee - Punching"
+                ],
+                "summary": "Api for employees to get duty",
+                "operationId": "Get duty",
+                "responses": {
+                    "200": {
+                        "description": "duty schedules",
+                        "schema": {
+                            "$ref": "#/definitions/response.Duty"
+                        }
+                    },
+                    "404": {
+                        "description": "failed to get duty schedules",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "employee id not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/duty/punchin": {
+            "get": {
+                "description": "Api for employees to punch in it send an otp to the verified phone number",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee - Punching"
+                ],
+                "summary": "Api for employees to punchin",
+                "operationId": "Punchin",
+                "responses": {
+                    "200": {
+                        "description": "Otp send to your verified phone number",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "error while punching",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "failed to get duty schedules",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "employee id not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Api for employees to enter the otp to punchin",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee - Punching"
+                ],
+                "summary": "Api for verify otp for punchin",
+                "operationId": "Verify otp punchin",
+                "responses": {
+                    "200": {
+                        "description": "Punched succesfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "error while punching",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "failed to get duty schedules",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "employee id not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/duty/punchout": {
+            "get": {
+                "description": "Api for employees to punch out",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee - Punching"
+                ],
+                "summary": "Api for punch out",
+                "operationId": "Punch Out",
+                "responses": {
+                    "200": {
+                        "description": "Punchout succesfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "error in punch out",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "failed to get duty schedules",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "employee id not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/form": {
+            "get": {
+                "description": "api for enter all details of employee",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee - Form"
+                ],
+                "summary": "Api for get form",
+                "operationId": "Get Form",
+                "responses": {
+                    "200": {
+                        "description": "Fill the form",
+                        "schema": {
+                            "$ref": "#/definitions/request.Form"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "api for employees to post their form details",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee - Form"
+                ],
+                "summary": "Api for post form details",
+                "operationId": "Post form",
+                "responses": {
+                    "200": {
+                        "description": "Form submitted succesfully pending for verification",
+                        "schema": {
+                            "$ref": "#/definitions/request.Form"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Employee id not found in cookie",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/employee/leave/apply": {
             "post": {
                 "description": "Api for employees to apply leave",
@@ -96,8 +332,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Employee -Apply leave"
+                    "Employee - Leave"
                 ],
+                "summary": "Api for employees to apply leave",
                 "operationId": "Apply leave",
                 "parameters": [
                     {
@@ -145,18 +382,118 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Employee"
+                    "Employee - Leave"
                 ],
+                "summary": "Api for check leave status and history",
                 "operationId": "Leave status",
                 "responses": {
                     "200": {
                         "description": "successfully fetched leave status/history",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.LeaveHistory"
+                            }
                         }
                     },
                     "404": {
                         "description": "no leave history found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "employee id not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/salary/details": {
+            "get": {
+                "description": "api for get employees salary details",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee - Salary"
+                ],
+                "summary": "Api for fetch salary details of an employee",
+                "operationId": "Salary Details",
+                "responses": {
+                    "200": {
+                        "description": "successfully fetched salary details",
+                        "schema": {
+                            "$ref": "#/definitions/response.Salarydetails"
+                        }
+                    },
+                    "404": {
+                        "description": "ailed to get salary details",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "employee id not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/salary/download-slip": {
+            "get": {
+                "description": "api for get employees salary salary slip",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee - Salary"
+                ],
+                "summary": "Api for get salary slip of ana employee",
+                "operationId": "Salary Slip",
+                "responses": {
+                    "404": {
+                        "description": "ailed to get salary details",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "employee id not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/employee/salary/history": {
+            "get": {
+                "description": "api for get employees salary history",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee - Salary"
+                ],
+                "summary": "Api for fetch salary history of an employee",
+                "operationId": "Salary History",
+                "responses": {
+                    "200": {
+                        "description": "successfully fetched salary history",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.Salaryhistory"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "failed to get attendance",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -177,7 +514,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Employee -Sign in"
+                    "Employee - Sign in"
                 ],
                 "summary": "Api for get signin page",
                 "operationId": "Sign In",
@@ -196,7 +533,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Employee -Sign in"
+                    "Employee - Sign in"
                 ],
                 "summary": "Api for post signin details",
                 "operationId": "Sign In",
@@ -229,7 +566,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Employee -Sign up"
+                    "Employee - Sign up"
                 ],
                 "summary": "Api for get signup page",
                 "operationId": "Signup",
@@ -248,7 +585,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Employee -Sign up"
+                    "Employee - Sign up"
                 ],
                 "summary": "Api for post signup details",
                 "operationId": "Signup",
@@ -292,7 +629,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Employee -Sign up"
+                    "Employee - Sign up"
                 ],
                 "summary": "Api for post otp",
                 "operationId": "Verify otp",
@@ -357,6 +694,47 @@
                 }
             }
         },
+        "request.Form": {
+            "type": "object",
+            "properties": {
+                "accno": {
+                    "type": "string"
+                },
+                "adhaarno": {
+                    "type": "string"
+                },
+                "caddress": {
+                    "type": "string"
+                },
+                "dateofbirth": {
+                    "type": "string"
+                },
+                "designation": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "ifsccode": {
+                    "type": "string"
+                },
+                "maritalstatus": {
+                    "type": "string"
+                },
+                "nameinpass": {
+                    "type": "string"
+                },
+                "paddress": {
+                    "type": "string"
+                },
+                "pannumber": {
+                    "type": "string"
+                },
+                "photo": {
+                    "type": "string"
+                }
+            }
+        },
         "request.Leave": {
             "type": "object",
             "properties": {
@@ -416,6 +794,57 @@
                 }
             }
         },
+        "response.Attendance": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "dutytype": {
+                    "type": "string"
+                },
+                "overtime": {
+                    "type": "integer"
+                },
+                "timein": {
+                    "type": "string"
+                },
+                "timeout": {
+                    "type": "string"
+                },
+                "totalhour": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.Duty": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.LeaveHistory": {
+            "type": "object",
+            "properties": {
+                "fromdate": {
+                    "type": "string"
+                },
+                "leavetype": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "todate": {
+                    "type": "string"
+                }
+            }
+        },
         "response.Response": {
             "type": "object",
             "properties": {
@@ -426,6 +855,73 @@
                 },
                 "status": {
                     "type": "integer"
+                }
+            }
+        },
+        "response.Salarydetails": {
+            "type": "object",
+            "properties": {
+                "basesalary": {
+                    "type": "integer"
+                },
+                "bonus": {
+                    "type": "integer"
+                },
+                "dallowance": {
+                    "type": "integer"
+                },
+                "grade": {
+                    "type": "string"
+                },
+                "grosssalary": {
+                    "type": "integer"
+                },
+                "leave_pay": {
+                    "type": "integer"
+                },
+                "mallowance": {
+                    "type": "integer"
+                },
+                "netsalary": {
+                    "type": "integer"
+                },
+                "overtime": {
+                    "type": "integer"
+                },
+                "provident": {
+                    "type": "integer"
+                },
+                "spallowance": {
+                    "type": "integer"
+                },
+                "tax": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.Salaryhistory": {
+            "type": "object",
+            "properties": {
+                "allowance": {
+                    "type": "integer"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "deductions": {
+                    "type": "integer"
+                },
+                "gross_salary": {
+                    "type": "integer"
+                },
+                "net_salary": {
+                    "type": "integer"
+                },
+                "rerence_id": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "string"
                 }
             }
         }

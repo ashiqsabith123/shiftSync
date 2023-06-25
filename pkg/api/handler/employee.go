@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"shiftsync/pkg/auth"
 	"shiftsync/pkg/domain"
@@ -29,7 +28,7 @@ func NewEmployeeHandler(userUseCase service.EmployeeUseCase) *EmployeeHandler {
 // @summary Api for get signup page ///
 // @id Signup
 // @description api for employees to signup
-// @tags Employee -Sign up
+// @tags Employee - Sign up
 // @Produce json
 // @Router /employee/signup [get]
 // @Success 200 {object} request.SignUp{} "Welcome to signup page"
@@ -44,7 +43,7 @@ func (u *EmployeeHandler) GetSignUp(ctxt *gin.Context) {
 // @summary Api for post signup details
 // @id Signup
 // @description api for employees to signup
-// @tags Employee -Sign up
+// @tags Employee - Sign up
 // @Produce json
 // @Param input body domain.Employee{} true "Sign up details"
 // @Router /employee/signup [post]
@@ -96,7 +95,7 @@ func (u *EmployeeHandler) PostSignup(ctxt *gin.Context) {
 // @summary Api for post otp
 // @id Verify otp
 // @description api for employees to verify otp
-// @tags Employee -Sign up
+// @tags Employee - Sign up
 // @Produce json
 // @Param input body request.OTPStruct{} true "Otp"
 // @Router /employee/signup/verify-otp [post]
@@ -158,7 +157,7 @@ func (u *EmployeeHandler) VerifyOtp(ctxt *gin.Context) {
 // @summary Api for get signin page
 // @id Sign In
 // @description api for employees to signin
-// @tags Employee -Sign in
+// @tags Employee - Sign in
 // @Produce json
 // @Router /employee/signin [get]
 // @Success 200 {object} request.LoginStruct{} "Welcome to sign in page"
@@ -171,7 +170,7 @@ func (u *EmployeeHandler) GetLogin(ctxt *gin.Context) {
 // @summary Api for post signin details
 // @id Sign In
 // @description api for employees to signin
-// @tags Employee -Sign in
+// @tags Employee - Sign in
 // @Produce json
 // @Router /employee/signin [post]
 // @Success 200 {object} request.LoginStruct{} "Succesfuly logged in"
@@ -224,11 +223,29 @@ func (u *EmployeeHandler) Logout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+// Form page godoc
+// @summary Api for get form
+// @id Get Form
+// @description api for enter all details of employee
+// @tags Employee - Form
+// @Produce json
+// @Router /employee/form [get]
+// @Success 200 {object} request.Form{} "Fill the form"
 func (u *EmployeeHandler) GetForm(ctxt *gin.Context) {
 	resp := response.SuccessResponse(200, "Fill the form", request.Form{})
 	ctxt.JSON(200, resp)
 }
 
+// Form page godoc
+// @summary Api for post form details
+// @id Post form
+// @description api for employees to post their form details
+// @tags Employee - Form
+// @Produce json
+// @Router /employee/form [post]
+// @Success 200 {object} request.Form{} "Form submitted succesfully pending for verification"
+// @Failure 400 {object} response.Response{} "Invalid input"
+// @Failure 500 {object} response.Response{} "Employee id not found in cookie"
 func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 
 	var tempForm request.Form
@@ -236,7 +253,7 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 	empID, ok := ctxt.Get("userId")
 
 	if !ok || empID == "" {
-		resp := response.ErrorResponse(500, "Value not found", "", nil)
+		resp := response.ErrorResponse(500, "Employee id not found cookie", "", nil)
 		ctxt.JSON(http.StatusInternalServerError, resp)
 	}
 
@@ -254,7 +271,7 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 	copier.Copy(&form, &tempForm)
 
 	if err := u.employeeUseCase.AddForm(ctxt, form); err != nil {
-		resp := response.ErrorResponse(400, "Deatils", err.Error(), tempForm)
+		resp := response.ErrorResponse(400, "Eroor when adding form", err.Error(), tempForm)
 		ctxt.JSON(400, resp)
 		return
 	}
@@ -264,12 +281,22 @@ func (u *EmployeeHandler) PostForm(ctxt *gin.Context) {
 
 }
 
+// Dashboard godoc
+// @summary Api for get dashboard
+// @id Dashboard
+// @description api for get employee dashboard
+// @tags Employee - Dashboard
+// @Produce json
+// @Router /employee/dashboard [get]
+// @Success 200 {object} response.Response{} "Succesfully get dashboard"
+// @Failure 400 {object} response.Response{} "Eror while getting dashboard"
+// @Failure 500 {object} response.Response{} "Employee id not found in cookie"
 func (u *EmployeeHandler) GetDashboard(ctx *gin.Context) {
 
 	tempID, ok := ctx.Get("userId")
 
 	if !ok || tempID == "" {
-		resp := response.ErrorResponse(500, "Value not found", "", nil)
+		resp := response.ErrorResponse(500, "Employee id not found in cookie", "", nil)
 		ctx.JSON(http.StatusInternalServerError, resp)
 	}
 
@@ -288,6 +315,16 @@ func (u *EmployeeHandler) GetDashboard(ctx *gin.Context) {
 
 }
 
+// Punching godoc
+// @id Get duty
+// @summary Api for employees to get duty
+// @description Api for employees to get duty schedule
+// @tags Employee - Punching
+// @Produce json
+// @Router /employee/duty [get]
+// @Success 200 {object} response.Duty{} "duty schedules"
+// @Failure 404 {object} response.Response{} "failed to get duty schedules"
+// @Failure 500 {object} response.Response{} "employee id not found"
 func (e *EmployeeHandler) GetDuty(c *gin.Context) {
 
 	tempid, ok := c.Get("userId")
@@ -312,6 +349,17 @@ func (e *EmployeeHandler) GetDuty(c *gin.Context) {
 
 }
 
+// Punching godoc
+// @id Punchin
+// @summary Api for employees to punchin
+// @description Api for employees to punch in it send an otp to the verified phone number
+// @tags Employee - Punching
+// @Produce json
+// @Router /employee/duty/punchin [get]
+// @Success 200 {object} response.Response{} "Otp send to your verified phone number"
+// @Failure 404 {object} response.Response{} "failed to get duty schedules"
+// @Failure 500 {object} response.Response{} "employee id not found"
+// @Failure 400 {object} response.Response{} "error while punching"
 func (e *EmployeeHandler) PunchIn(c *gin.Context) {
 
 	tempid, ok := c.Get("userId")
@@ -344,6 +392,17 @@ func (e *EmployeeHandler) PunchIn(c *gin.Context) {
 
 }
 
+// Punching godoc
+// @id Verify otp punchin
+// @summary Api for verify otp for punchin
+// @description Api for employees to enter the otp to punchin
+// @tags Employee - Punching
+// @Produce json
+// @Router /employee/duty/punchin [post]
+// @Success 200 {object} response.Response{} "Punched succesfully"
+// @Failure 404 {object} response.Response{} "failed to get duty schedules"
+// @Failure 500 {object} response.Response{} "employee id not found"
+// @Failure 400 {object} response.Response{} "error while punching"
 func (e *EmployeeHandler) VerifyOtpPunchin(c *gin.Context) {
 
 	var otp request.OTPStruct
@@ -373,6 +432,17 @@ func (e *EmployeeHandler) VerifyOtpPunchin(c *gin.Context) {
 
 }
 
+// Punching godoc
+// @id Punch Out
+// @summary Api for punch out
+// @description Api for employees to punch out
+// @tags Employee - Punching
+// @Produce json
+// @Router /employee/duty/punchout [get]
+// @Success 200 {object} response.Response{} "Punchout succesfully"
+// @Failure 404 {object} response.Response{} "failed to get duty schedules"
+// @Failure 500 {object} response.Response{} "employee id not found"
+// @Failure 400 {object} response.Response{} "error in punch out"
 func (e *EmployeeHandler) PunchOut(c *gin.Context) {
 
 	tempid, ok := c.Get("userId")
@@ -399,8 +469,9 @@ func (e *EmployeeHandler) PunchOut(c *gin.Context) {
 
 // Apply Leave godoc
 // @id Apply leave
+// @summary Api for employees to apply leave
 // @description Api for employees to apply leave
-// @tags Employee -Apply leave
+// @tags Employee - Leave
 // @Produce json
 // @Param input body request.Leave{} true "Leave request details"
 // @Router /employee/leave/apply [post]
@@ -447,11 +518,12 @@ func (e *EmployeeHandler) ApplyLeave(c *gin.Context) {
 
 // Leave status/history godoc
 // @id Leave status
+// @Summary Api for check leave status and history
 // @description Api for employees to get leaave status/history
-// @tags Employee
+// @tags Employee - Leave
 // @Produce json
 // @Router /employee/leave/status  [get]
-// @Success 200 {object} response.Response{} "successfully fetched leave status/history"
+// @Success 200 {object} []response.LeaveHistory{} "successfully fetched leave status/history"
 // @Failure 404 {object} response.Response{} "no leave history found"
 // @Failure 500 {object} response.Response{} "employee id not found"
 func (e *EmployeeHandler) LeaveStatus(c *gin.Context) {
@@ -465,8 +537,6 @@ func (e *EmployeeHandler) LeaveStatus(c *gin.Context) {
 	}
 
 	leaveHistory, err := e.employeeUseCase.GetLeaveStatusHistory(c, id)
-
-	fmt.Println(len(leaveHistory))
 
 	if err != nil || len(leaveHistory) == 0 {
 		resp := response.ErrorResponse(404, "no leave history found", "", nil)
@@ -482,13 +552,13 @@ func (e *EmployeeHandler) LeaveStatus(c *gin.Context) {
 }
 
 // Employee attendance godoc
-// @summary access attendance of employees
+// @summary Api for fetch attendance details of an employee
 // @id Attendance
 // @description api for get employees attendances
-// @tags Employee
+// @tags Employee - Attendance
 // @Produce json
-// @Router /attendance [get]
-// @Success 200 {object} response.Response{} "successfully fetched attendance"
+// @Router /employee/attendance [get]
+// @Success 200 {object} []response.Attendance{} "successfully fetched attendance"
 // @Failure 404 {object} response.Response{} "failed to get attendance"
 // @Failure 500 {object} response.Response{} "employee id not found"
 func (e *EmployeeHandler) Attendance(c *gin.Context) {
@@ -509,6 +579,12 @@ func (e *EmployeeHandler) Attendance(c *gin.Context) {
 		return
 	}
 
+	if err != nil || len(attendance) == 0 {
+		resp := response.ErrorResponse(404, "no attendace history found", "", nil)
+		c.JSON(404, resp)
+		return
+	}
+
 	c.JSON(200, gin.H{
 		"status":     200,
 		"Attendance": attendance,
@@ -516,6 +592,16 @@ func (e *EmployeeHandler) Attendance(c *gin.Context) {
 
 }
 
+// Employee Salary godoc
+// @summary Api for fetch salary history of an employee
+// @id Salary History
+// @description api for get employees salary history
+// @tags Employee - Salary
+// @Produce json
+// @Router /employee/salary/history [get]
+// @Success 200 {object} []response.Salaryhistory "successfully fetched salary history"
+// @Failure 404 {object} response.Response{} "failed to get attendance"
+// @Failure 500 {object} response.Response{} "employee id not found"
 func (e *EmployeeHandler) TransactionHistory(c *gin.Context) {
 	tempid, ok := c.Get("userId")
 	id, _ := strconv.Atoi(tempid.(string))
@@ -529,7 +615,13 @@ func (e *EmployeeHandler) TransactionHistory(c *gin.Context) {
 	history, err := e.employeeUseCase.GetSalaryHistory(c, id)
 
 	if err != nil {
-		resp := response.ErrorResponse(404, "failed to get attendance", err.Error(), nil)
+		resp := response.ErrorResponse(404, "failed to get salary history", err.Error(), nil)
+		c.JSON(404, resp)
+		return
+	}
+
+	if err != nil || len(history) == 0 {
+		resp := response.ErrorResponse(404, "no salary history found", "", nil)
 		c.JSON(404, resp)
 		return
 	}
@@ -541,6 +633,16 @@ func (e *EmployeeHandler) TransactionHistory(c *gin.Context) {
 
 }
 
+// Employee Salary godoc
+// @summary Api for fetch salary details of an employee
+// @id Salary Details
+// @description api for get employees salary details
+// @tags Employee - Salary
+// @Produce json
+// @Router /employee/salary/details [get]
+// @Success 200 {object} response.Salarydetails "successfully fetched salary details"
+// @Failure 404 {object} response.Response{} "ailed to get salary details"
+// @Failure 500 {object} response.Response{} "employee id not found"
 func (u *EmployeeHandler) SalaryDetails(c *gin.Context) {
 	tempid, ok := c.Get("userId")
 	id, _ := strconv.Atoi(tempid.(string))
@@ -559,6 +661,12 @@ func (u *EmployeeHandler) SalaryDetails(c *gin.Context) {
 		return
 	}
 
+	if err != nil || details.Gross_salary == 0 {
+		resp := response.ErrorResponse(404, "no attendace history found", "", nil)
+		c.JSON(404, resp)
+		return
+	}
+
 	c.JSON(200, gin.H{
 		"status":         200,
 		"Salary Details": details,
@@ -566,6 +674,16 @@ func (u *EmployeeHandler) SalaryDetails(c *gin.Context) {
 
 }
 
+// Employee Salary godoc
+// @summary Api for get salary slip of ana employee
+// @id Salary Slip
+// @description api for get employees salary salary slip
+// @tags Employee - Salary
+// @Produce json
+// @Produces - application/pdf
+// @Router /employee/salary/download-slip [get]
+// @Failure 404 {object} response.Response{} "ailed to get salary details"
+// @Failure 500 {object} response.Response{} "employee id not found"
 func (u *EmployeeHandler) SalarySlip(c *gin.Context) {
 	tempid, ok := c.Get("userId")
 	id, _ := strconv.Atoi(tempid.(string))

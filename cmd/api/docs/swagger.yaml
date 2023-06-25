@@ -16,6 +16,33 @@ definitions:
       username:
         type: string
     type: object
+  request.Form:
+    properties:
+      accno:
+        type: string
+      adhaarno:
+        type: string
+      caddress:
+        type: string
+      dateofbirth:
+        type: string
+      designation:
+        type: string
+      gender:
+        type: string
+      ifsccode:
+        type: string
+      maritalstatus:
+        type: string
+      nameinpass:
+        type: string
+      paddress:
+        type: string
+      pannumber:
+        type: string
+      photo:
+        type: string
+    type: object
   request.Leave:
     properties:
       fromdate:
@@ -54,6 +81,39 @@ definitions:
       username:
         type: string
     type: object
+  response.Attendance:
+    properties:
+      date:
+        type: string
+      dutytype:
+        type: string
+      overtime:
+        type: integer
+      timein:
+        type: string
+      timeout:
+        type: string
+      totalhour:
+        type: integer
+    type: object
+  response.Duty:
+    properties:
+      time:
+        type: string
+      type:
+        type: string
+    type: object
+  response.LeaveHistory:
+    properties:
+      fromdate:
+        type: string
+      leavetype:
+        type: string
+      status:
+        type: string
+      todate:
+        type: string
+    type: object
   response.Response:
     properties:
       data: {}
@@ -62,6 +122,50 @@ definitions:
         type: string
       status:
         type: integer
+    type: object
+  response.Salarydetails:
+    properties:
+      basesalary:
+        type: integer
+      bonus:
+        type: integer
+      dallowance:
+        type: integer
+      grade:
+        type: string
+      grosssalary:
+        type: integer
+      leave_pay:
+        type: integer
+      mallowance:
+        type: integer
+      netsalary:
+        type: integer
+      overtime:
+        type: integer
+      provident:
+        type: integer
+      spallowance:
+        type: integer
+      tax:
+        type: integer
+    type: object
+  response.Salaryhistory:
+    properties:
+      allowance:
+        type: integer
+      date:
+        type: string
+      deductions:
+        type: integer
+      gross_salary:
+        type: integer
+      net_salary:
+        type: integer
+      rerence_id:
+        type: string
+      time:
+        type: string
     type: object
 info:
   contact: {}
@@ -101,7 +205,7 @@ paths:
       summary: Api for post admin signin details
       tags:
       - Admin -Sign in
-  /attendance:
+  /employee/attendance:
     get:
       description: api for get employees attendances
       operationId: Attendance
@@ -111,7 +215,9 @@ paths:
         "200":
           description: successfully fetched attendance
           schema:
-            $ref: '#/definitions/response.Response'
+            items:
+              $ref: '#/definitions/response.Attendance'
+            type: array
         "404":
           description: failed to get attendance
           schema:
@@ -120,9 +226,166 @@ paths:
           description: employee id not found
           schema:
             $ref: '#/definitions/response.Response'
-      summary: access attendance of employees
+      summary: Api for fetch attendance details of an employee
       tags:
-      - Employee
+      - Employee - Attendance
+  /employee/dashboard:
+    get:
+      description: api for get employee dashboard
+      operationId: Dashboard
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Succesfully get dashboard
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Eror while getting dashboard
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Employee id not found in cookie
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for get dashboard
+      tags:
+      - Employee - Dashboard
+  /employee/duty:
+    get:
+      description: Api for employees to get duty schedule
+      operationId: Get duty
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: duty schedules
+          schema:
+            $ref: '#/definitions/response.Duty'
+        "404":
+          description: failed to get duty schedules
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: employee id not found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for employees to get duty
+      tags:
+      - Employee - Punching
+  /employee/duty/punchin:
+    get:
+      description: Api for employees to punch in it send an otp to the verified phone
+        number
+      operationId: Punchin
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Otp send to your verified phone number
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: error while punching
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: failed to get duty schedules
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: employee id not found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for employees to punchin
+      tags:
+      - Employee - Punching
+    post:
+      description: Api for employees to enter the otp to punchin
+      operationId: Verify otp punchin
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Punched succesfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: error while punching
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: failed to get duty schedules
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: employee id not found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for verify otp for punchin
+      tags:
+      - Employee - Punching
+  /employee/duty/punchout:
+    get:
+      description: Api for employees to punch out
+      operationId: Punch Out
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Punchout succesfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: error in punch out
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: failed to get duty schedules
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: employee id not found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for punch out
+      tags:
+      - Employee - Punching
+  /employee/form:
+    get:
+      description: api for enter all details of employee
+      operationId: Get Form
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Fill the form
+          schema:
+            $ref: '#/definitions/request.Form'
+      summary: Api for get form
+      tags:
+      - Employee - Form
+    post:
+      description: api for employees to post their form details
+      operationId: Post form
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Form submitted succesfully pending for verification
+          schema:
+            $ref: '#/definitions/request.Form'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Employee id not found in cookie
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for post form details
+      tags:
+      - Employee - Form
   /employee/leave/apply:
     post:
       description: Api for employees to apply leave
@@ -153,8 +416,9 @@ paths:
           description: employee id not found
           schema:
             $ref: '#/definitions/response.Response'
+      summary: Api for employees to apply leave
       tags:
-      - Employee -Apply leave
+      - Employee - Leave
   /employee/leave/status:
     get:
       description: Api for employees to get leaave status/history
@@ -165,7 +429,9 @@ paths:
         "200":
           description: successfully fetched leave status/history
           schema:
-            $ref: '#/definitions/response.Response'
+            items:
+              $ref: '#/definitions/response.LeaveHistory'
+            type: array
         "404":
           description: no leave history found
           schema:
@@ -174,8 +440,73 @@ paths:
           description: employee id not found
           schema:
             $ref: '#/definitions/response.Response'
+      summary: Api for check leave status and history
       tags:
-      - Employee
+      - Employee - Leave
+  /employee/salary/details:
+    get:
+      description: api for get employees salary details
+      operationId: Salary Details
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: successfully fetched salary details
+          schema:
+            $ref: '#/definitions/response.Salarydetails'
+        "404":
+          description: ailed to get salary details
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: employee id not found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for fetch salary details of an employee
+      tags:
+      - Employee - Salary
+  /employee/salary/download-slip:
+    get:
+      description: api for get employees salary salary slip
+      operationId: Salary Slip
+      produces:
+      - application/json
+      responses:
+        "404":
+          description: ailed to get salary details
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: employee id not found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for get salary slip of ana employee
+      tags:
+      - Employee - Salary
+  /employee/salary/history:
+    get:
+      description: api for get employees salary history
+      operationId: Salary History
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: successfully fetched salary history
+          schema:
+            items:
+              $ref: '#/definitions/response.Salaryhistory'
+            type: array
+        "404":
+          description: failed to get attendance
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: employee id not found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for fetch salary history of an employee
+      tags:
+      - Employee - Salary
   /employee/signin:
     get:
       description: api for employees to signin
@@ -189,7 +520,7 @@ paths:
             $ref: '#/definitions/request.LoginStruct'
       summary: Api for get signin page
       tags:
-      - Employee -Sign in
+      - Employee - Sign in
     post:
       description: api for employees to signin
       operationId: Sign In
@@ -210,7 +541,7 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: Api for post signin details
       tags:
-      - Employee -Sign in
+      - Employee - Sign in
   /employee/signup:
     get:
       description: api for employees to signup
@@ -224,7 +555,7 @@ paths:
             $ref: '#/definitions/request.SignUp'
       summary: Api for get signup page
       tags:
-      - Employee -Sign up
+      - Employee - Sign up
     post:
       description: api for employees to signup
       operationId: Signup
@@ -252,7 +583,7 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: Api for post signup details
       tags:
-      - Employee -Sign up
+      - Employee - Sign up
   /employee/signup/verify-otp:
     post:
       description: api for employees to verify otp
@@ -281,5 +612,5 @@ paths:
             $ref: '#/definitions/response.Response'
       summary: Api for post otp
       tags:
-      - Employee -Sign up
+      - Employee - Sign up
 swagger: "2.0"
