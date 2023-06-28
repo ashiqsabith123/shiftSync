@@ -90,8 +90,8 @@ func (a *adminDatabase) ScheduleDuty(ctx context.Context, duty domain.Duty) erro
 
 	var duty_type string
 	err := a.DB.Raw("SELECT duty_type FROM duties WHERE employee_id = ? and status = 'S';", duty.EmployeeID).Scan(&duty_type).Error
-
-	if err == nil || duty_type != "" {
+	fmt.Println("hello,", duty_type)
+	if err == nil && duty_type != "" {
 		return errors.New("duty already assigned")
 	}
 
