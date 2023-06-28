@@ -79,7 +79,7 @@ func (a *adminDatabase) GetAllEmployees(ctx context.Context) ([]response.AllEmpl
 
 func (a *adminDatabase) GetAllEmployeesSchedules(ctx context.Context) ([]response.Schedule, error) {
 	var emp []response.Schedule
-	if err := a.DB.Raw("SELECT forms.form_id AS id, employees.first_name || ' ' || employees.last_name AS name, employees.email, employees.phone, forms.designation, duties.status FROM forms INNER JOIN employees ON employees.id = forms.form_id LEFT OUTER JOIN duties ON forms.form_id = duties.employee_id WHERE duties.employee_id IS NULL OR duties.status = 'C';").Scan(&emp).Error; err != nil {
+	if err := a.DB.Raw("SELECT forms.form_id AS id, employees.first_name || ' ' || employees.last_name AS name, employees.email, employees.phone, forms.designation, duties.status FROM forms INNER JOIN employees ON employees.id = forms.form_id LEFT OUTER JOIN duties ON forms.form_id = duties.employee_id WHERE forms.status = 'A' AND duties.employee_id IS NULL OR duties.status = 'C';").Scan(&emp).Error; err != nil {
 		return emp, err
 	}
 
