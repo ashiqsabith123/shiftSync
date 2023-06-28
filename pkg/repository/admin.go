@@ -88,6 +88,10 @@ func (a *adminDatabase) GetAllEmployeesSchedules(ctx context.Context) ([]respons
 
 func (a *adminDatabase) ScheduleDuty(ctx context.Context, duty domain.Duty) error {
 
+	var duty_type string
+	if err := a.DB.Raw("SELECT duty_type FROM duties WHERE employee_id = ? and status = 'S';", duty.EmployeeID).Scan(&duty_type).Error; err == nil {
+		return errors.New("duty already assigned")
+	}
 	duty.Status = "S"
 
 	if err := a.DB.Create(&duty).Error; err != nil {

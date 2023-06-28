@@ -105,6 +105,8 @@ func (u *employeeUseCase) FormStatus(ctx context.Context, empID int) (response.F
 		status.Status = "Admin requested for correction"
 	case "A":
 		status.Status = "Welcome to dashboard"
+	case "":
+		status.Status = "You need to fill the application form"
 
 	}
 	return status, err

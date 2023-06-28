@@ -120,8 +120,8 @@ func (a *AdminHandler) ViewApplications(ctx *gin.Context) {
 	forms, err := a.adminusecase.Applications(ctx)
 
 	if err != nil || len(forms) == 0 {
-		ctx.JSON(204, gin.H{
-			"status":  204,
+		ctx.JSON(404, gin.H{
+			"status":  404,
 			"message": "no new forms found",
 		})
 		return
@@ -210,8 +210,9 @@ func (a *AdminHandler) GetScheduleDuty(c *gin.Context) {
 	tempData, err := a.adminusecase.GetAllEmployeesSchedules(c)
 
 	if err != nil || len(tempData) == 0 {
-		c.JSON(204, gin.H{
-			"status":  204,
+		fmt.Println("hello happy")
+		c.JSON(404, gin.H{
+			"status":  404,
 			"message": "no employees found",
 		})
 		return
@@ -252,8 +253,8 @@ func (a *AdminHandler) GetAllLeaveRequets(c *gin.Context) {
 	tempData, err := a.adminusecase.GetLeaveRequests(c)
 
 	if err != nil || len(tempData) == 0 {
-		c.JSON(204, gin.H{
-			"status":  204,
+		c.JSON(404, gin.H{
+			"status":  404,
 			"message": "no leave requests found",
 		})
 		return
