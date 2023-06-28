@@ -1,10 +1,12 @@
 package repository
 
 import (
-	"fmt"
+	"context"
+	"errors"
 	"log"
 	"reflect"
 	"shiftsync/pkg/domain"
+	"shiftsync/pkg/helper/response"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -13,65 +15,157 @@ import (
 	"gorm.io/gorm"
 )
 
-func TestAddEmployee(t *testing.T) {
-	mockDB, _, err := sqlmock.New()
+func TestGetLastAppliedLeave(t *testing.T) {
+	// Create a mock database connection
+	mockDB, mock, err := sqlmock.New()
 	if assert.NoError(t, err) {
-		log.Println("Mock sql created succesfully")
-
+		log.Println("Mock SQL created successfully")
 	}
 	defer mockDB.Close()
 
 	db, err := gorm.Open(postgres.New(postgres.Config{Conn: mockDB, DriverName: "postgres"}), &gorm.Config{})
 	if assert.NoError(t, err) {
-		log.Println("Mock sql connected with gorm succesfully")
+		log.Println("Mock SQL connected with GORM successfully")
 	}
 
-	// config, _ := config.LoadConfig()
-	// db.ConnectToDatbase(config)
+	// Create the employee database instance with the mock database
+	employeeDB := NewEmployeeRepository(db)
 
-	// DB := db.GetDatabaseInstance()
-
-	emp := domain.Employee{
-		First_name: "Ashiq",
-		Last_name:  "Sabith",
-		Email:      "ashiqsabith328@gmail.com",
-		User_name:  "ashiq328",
-		Pass_word:  "Ashiq@123",
-		Phone:      8606863748,
+	// Insert a sample leave record in the database
+	leave := domain.Leave{
+		From: "10-10-2001",
+		To:   "20-10-2001",
 	}
 
-	// query := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
-	// 	return tx.Create(&emp)
+	// Create a sample check object
+	check := domain.Leave{
+		EmployeeID: 1,
+	}
 
-	// })
+	// Test case 1: Get the leave dates last applied
+	expectedQuery := `SELECT leaves.from, leaves.to FROM leaves WHERE employee_id = \$1 AND status = 'A' OR status='R' OR status = 'D' ORDER BY created_at DESC LIMIT 1;`
+	mock.ExpectQuery(expectedQuery).WithArgs(check.EmployeeID).
+		WillReturnRows(sqlmock.NewRows([]string{"from", "to"}).AddRow("10-10-2001", "20-10-2001"))
 
-	stmt := db.Create(&emp).Statement
-	// v := reflect.ValueOf(stmt)
-	// tv := v.Type()
+	applied, err := employeeDB.GetLastAppliedLeave(context.Background(), check)
 
-	// for i := 0; i < v.NumField(); i++ {
-	// 	field := v.Field(i)
-	// 	fieldName := tv.Field(i).Name
-	// 	fieldValue := field.Interface()
+	assert.NoError(t, err)
 
-	// 	fmt.Printf("%s: %v\n", fieldName, fieldValue)
-	// }
+	assert.Equal(t, leave.From, applied.From)
+	assert.Equal(t, leave.To, applied.To)
 
-	qu := db.Dialector.Explain(stmt.SQL.String(), stmt.Vars...)
-	fmt.Println(qu)
+	err = mock.ExpectationsWereMet()
 
-	fmt.Println("q", query)
-	mock.ExpectBegin()
-	mock.ExpectRollback()
-	mock.ExpectExec("").WillReturnResult(sqlmock.NewResult(1, 1))
+	if assert.NoError(t, err) {
+		log.Println("Test1 Passed")
+	}
 
-	// // // mock.ExpectCommit()
-	// // mock.ExpectRollback()
+	mock.ExpectQuery(expectedQuery).WithArgs(check.EmployeeID).WillReturnError(errors.New("no leaves found"))
+	applied, err = employeeDB.GetLastAppliedLeave(context.Background(), check)
 
-	// employeeDB := NewEmployeeRepository(db)
+	assert.Error(t, err)
 
-	// eerr := employeeDB.AddEmployee(context.Background(), emp)
-	// assert.NoError(t, eerr)
+	if assert.EqualError(t, err, "no leaves found") {
+		log.Println("Test 2 passed")
+	}
 
-	//assert.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestLeaveStatusHistory(t *testing.T) {
+
+	mockDB, mock, err := sqlmock.New()
+	if assert.NoError(t, err) {
+		log.Println("Mock SQL created successfully")
+	}
+	defer mockDB.Close()
+
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: mockDB, DriverName: "postgres"}), &gorm.Config{})
+	if assert.NoError(t, err) {
+		log.Println("Mock SQL connected with GORM successfully")
+	}
+
+	// Create the employee database instance with the mock database
+	employeeDB := NewEmployeeRepository(db)
+
+	check := domain.Leave{
+		EmployeeID: 1,
+	}
+
+	exceptedquery := `SELECT leave_type, leaves.to, leaves.from, status FROM leaves WHERE employee_id = \$1`
+	rows := sqlmock.NewRows([]string{"leave_type", "to", "from", "status"}).
+		AddRow("Casual", "20-10-2001", "10-10-2001", "A").
+		AddRow("Sick", "2023-08-10", "2023-08-11", "P")
+
+	mock.ExpectQuery(exceptedquery).WithArgs(check.EmployeeID).WillReturnRows(rows)
+
+	history, err := employeeDB.LeaveStatusHistory(context.Background(), int(check.EmployeeID))
+
+	assert.NoError(t, err)
+
+	expectedHistory := []response.LeaveHistory{
+		{
+			Leave_type: "Casual",
+			To:         "20-10-2001",
+			From:       "10-10-2001",
+			Status:     "A",
+		},
+		{
+			Leave_type: "Sick",
+			To:         "2023-08-10",
+			From:       "2023-08-11",
+			Status:     "P",
+		},
+	}
+	assert.Equal(t, expectedHistory, history)
+
+	err = mock.ExpectationsWereMet()
+	assert.NoError(t, err)
+
+}
+
+func TestAttendance(t *testing.T) {
+	mockDb, mock, err := sqlmock.New()
+
+	if assert.NoError(t, err) {
+		log.Println("mi")
+	}
+
+	defer mockDb.Close()
+
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: mockDb, DriverName: "postgres"}), &gorm.Config{})
+	if assert.NoError(t, err) {
+		log.Println("Mock SQL connected with GORM successfully")
+	}
+
+	employeeDB := NewEmployeeRepository(db)
+
+	employeeID := 1
+
+	expectedQuery := `select attendances.date, attendances.punch_in , attendances.punch_out, duties.duty_type from attendances inner join duties on attendances.employee_id = duties.employee_id where duties.status = 'C' and duties.employee_id = \$1;`
+	rows := sqlmock.NewRows([]string{"date", "punch_in", "punch_out", "duty_type"}).
+		AddRow("2023-06-26", "09:00:00", "17:00:00", "Regular").
+		AddRow("2023-06-27", "09:30:00", "18:00:00", "Regular")
+
+	mock.ExpectQuery(expectedQuery).WithArgs(employeeID).WillReturnRows(rows)
+
+	attendance, err := employeeDB.Attendance(context.Background(), employeeID)
+	if err != nil {
+		t.Fatalf("Failed to get attendance: %v", err)
+	}
+
+	expectedAttendance := []response.Attendance{
+		{Date: "2023-06-26", Punch_in: "09:00:00", Punch_out: "17:00:00", Duty_type: "Regular"},
+		{Date: "2023-06-27", Punch_in: "09:30:00", Punch_out: "18:00:00", Duty_type: "Regular"},
+	}
+
+	if !reflect.DeepEqual(attendance, expectedAttendance) {
+		t.Errorf("Mismatched attendance. Expected: %v, but got: %v", expectedAttendance, attendance)
+	}
+
+	// Ensure all expectations were met
+	err = mock.ExpectationsWereMet()
+	if err != nil {
+		t.Errorf("Unfulfilled expectations: %v", err)
+	}
+
 }

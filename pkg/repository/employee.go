@@ -24,14 +24,12 @@ func NewEmployeeRepository(DB *gorm.DB) repo.EmployeeRepository {
 
 func (e *employeeDatabase) AddEmployee(cntxt context.Context, emp domain.Employee) error {
 
-	
+	if err := e.DB.Create(&emp).Error; err != nil {
+		return errors.Join(errors.New("error from here"), err)
+	}
 
-	// if err := e.DB.Create(&emp).Error; err != nil {
-	// 	return errors.Join(errors.New("error from here"), err)
-	// }
-
-	err := e.DB.Raw("INSERT INTO employees (first_name, last_name, email, user_name, pass_word, phone) VALUES (?, ?, ?, ?, ?, ?) RETURNING	", emp.First_name, emp.Last_name, emp.Email, emp.User_name, emp.Pass_word, emp.Phone).Error
-	return err
+	//err := e.DB.Raw("INSERT INTO employees (first_name, last_name, email, user_name, pass_word, phone) VALUES (?, ?, ?, ?, ?, ?) RETURNING id", emp.First_name, emp.Last_name, emp.Email, emp.User_name, emp.Pass_word, emp.Phone).Error
+	return nil
 }
 
 func (e *employeeDatabase) FindEmployee(cntxt context.Context, find domain.Employee) (domain.Employee, error) {
@@ -149,7 +147,7 @@ func (e *employeeDatabase) ApplyLeave(ctx context.Context, leave domain.Leave) e
 	return nil
 }
 
-func (e *employeeDatabase) CheckLeaveApplied(ctx context.Context, check domain.Leave) (response.LeaveAppiled, error) {
+func (e *employeeDatabase) GetLastAppliedLeave(ctx context.Context, check domain.Leave) (response.LeaveAppiled, error) {
 	var applied response.LeaveAppiled
 	if err := e.DB.Raw("SELECT leaves.from, leaves.to FROM leaves WHERE employee_id = ? AND status = 'A' OR status='R' OR status = 'D' ORDER BY created_at DESC LIMIT 1;", check.EmployeeID).Scan(&applied).Error; err != nil {
 		return applied, err
@@ -165,7 +163,6 @@ func (e *employeeDatabase) LeaveStatusHistory(ctx context.Context, id int) ([]re
 		return []response.LeaveHistory{}, err
 	}
 
-	fmt.Println("his", history)
 	return history, nil
 }
 

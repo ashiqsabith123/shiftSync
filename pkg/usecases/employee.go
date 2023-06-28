@@ -218,7 +218,7 @@ func (e *employeeUseCase) ApplyLeave(ctx context.Context, leave domain.Leave) (s
 		return "", errors.New("you to date exceeds the limit of leaves")
 	}
 
-	checkApplied, checkErr := e.employeeRepo.CheckLeaveApplied(ctx, leave)
+	checkApplied, checkErr := e.employeeRepo.GetLastAppliedLeave(ctx, leave)
 	if checkErr != nil {
 		return "", checkErr
 	}
