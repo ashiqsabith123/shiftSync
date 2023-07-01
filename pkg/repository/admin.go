@@ -114,7 +114,7 @@ func (a *adminDatabase) GetLeaveRequests(ctx context.Context) ([]response.LeaveR
 }
 
 func (a *adminDatabase) ChangeLeaveStatus(ctx context.Context, status request.LeaveStatus) error {
-	if err := a.DB.Raw("update leaves set status = ? where employee_id = ?", status.Status, status.Id).Scan(&domain.Leave{}).Error; err != nil {
+	if err := a.DB.Raw("UPDATE leaves SET status = ? WHERE employee_id = ? AND status = 'R';", status.Status, status.Id).Scan(&domain.Leave{}).Error; err != nil {
 		return err
 	}
 
