@@ -172,7 +172,7 @@ func (u *EmployeeHandler) GetLogin(ctxt *gin.Context) {
 // @description api for employees to signin
 // @tags Employee - Sign in
 // @Produce json
-// @Param input body request.LoginStruct{} true "Sign in details"
+// @Param input body  request.LoginStruct{} true "Sign in details"
 // @Router /employee/signin [post]
 // @Success 200 {object} request.LoginStruct{} "Succesfuly logged in"
 // @Failure 400 {object} response.Response{} "Username and password is mandatory"
