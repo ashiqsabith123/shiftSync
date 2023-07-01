@@ -127,7 +127,7 @@ func TestAttendance(t *testing.T) {
 	mockDb, mock, err := sqlmock.New()
 
 	if assert.NoError(t, err) {
-		log.Println("mi")
+		log.Println("Mock SQL created successfully")
 	}
 
 	defer mockDb.Close()
@@ -163,6 +163,76 @@ func TestAttendance(t *testing.T) {
 	}
 
 	// Ensure all expectations were met
+	err = mock.ExpectationsWereMet()
+	if err != nil {
+		t.Errorf("Unfulfilled expectations: %v", err)
+	}
+
+}
+
+func TestGetSalaryDetails(t *testing.T) {
+
+	mockDb, mock, err := sqlmock.New()
+
+	if assert.NoError(t, err) {
+		log.Println("Mock SQL created successfully")
+	}
+
+	defer mockDb.Close()
+
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: mockDb, DriverName: "postgres"}), &gorm.Config{})
+	if assert.NoError(t, err) {
+		log.Println("Mock SQL connected with GORM successfully")
+	}
+
+	// Define the expected result
+	expectedDetails := response.Salarydetails{
+		Grade:          "A",
+		Base_salary:    5000,
+		Bonus:          1000,
+		Leave_pay:      500,
+		D_allowance:    300,
+		Sp_allowance:   200,
+		M_allowance:    400,
+		Over_time:      200,
+		Tax:            100,
+		Provident_fund: 500,
+		Gross_salary:   6000,
+		Net_salary:     5500,
+	}
+
+	employeeDB := NewEmployeeRepository(db)
+
+	employeeId := 2
+
+	expectedQuery := `SELECT \* FROM salaries WHERE employee_id = \$1;`
+
+	rows := sqlmock.NewRows([]string{
+		"grade", "base_salary", "bonus", "leave_pay", "d_allowance",
+		"sp_allowance", "m_allowance", "over_time", "tax", "provident_fund",
+		"gross_salary", "net_salary",
+	}).AddRow(
+		expectedDetails.Grade, expectedDetails.Base_salary, expectedDetails.Bonus,
+		expectedDetails.Leave_pay, expectedDetails.D_allowance, expectedDetails.Sp_allowance,
+		expectedDetails.M_allowance, expectedDetails.Over_time, expectedDetails.Tax,
+		expectedDetails.Provident_fund, expectedDetails.Gross_salary, expectedDetails.Net_salary,
+	)
+
+	mock.ExpectQuery(expectedQuery).WithArgs(employeeId).WillReturnRows(rows)
+
+	details, err := employeeDB.GetSalaryDetails(context.Background(), employeeId)
+
+	if err != nil {
+		t.Errorf("Error occurred while getting salary details: %v", err)
+		return
+	}
+
+	// Assert the expected result
+	if !reflect.DeepEqual(details, expectedDetails) {
+		t.Errorf("Mismatch in salary details.\nExpected: %+v\nGot: %+v", expectedDetails, details)
+	}
+
+	// Verify that all expectations were met
 	err = mock.ExpectationsWereMet()
 	if err != nil {
 		t.Errorf("Unfulfilled expectations: %v", err)

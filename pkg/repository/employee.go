@@ -187,7 +187,7 @@ func (e *employeeDatabase) GetCountOfLeaveTaken(ctx context.Context, reqCount re
 
 func (e *employeeDatabase) GetSalaryDetails(ctx context.Context, id int) (response.Salarydetails, error) {
 	var details response.Salarydetails
-	if err := e.DB.Raw("SELECT * FROM salaries WHERE employee_id = ?", id).Scan(&details).Error; err != nil {
+	if err := e.DB.Raw("SELECT * FROM salaries WHERE employee_id = ?;", id).Scan(&details).Error; err != nil {
 		return details, err
 	}
 
