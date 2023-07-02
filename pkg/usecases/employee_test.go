@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"shiftsync/pkg/domain"
+	"shiftsync/pkg/helper/response"
 	mock "shiftsync/pkg/mock/employeeRepoMock"
 	"shiftsync/pkg/usecases/interfaces"
 	"testing"
@@ -33,7 +34,7 @@ func TestSignup(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			name: "Test success responce",
+			name: "Signup_Accout_created_succesfully",
 			employee: domain.Employee{
 				First_name: "Ashiq",
 				Last_name:  "Sabith",
@@ -43,7 +44,8 @@ func TestSignup(t *testing.T) {
 				Pass_word:  "Ashiq@123",
 			},
 			beforeTest: func(employeeRepo *mock.MockEmployeeRepository) {
-				employeeRepo.EXPECT().AddEmployee(gomock.Any(), gomock.Any()).Return(nil)
+				employeeRepo.EXPECT().AddEmployee(gomock.Any(), gomock.Any()).
+					Return(nil)
 			},
 			expectedErr: nil,
 		},
@@ -111,4 +113,78 @@ func TestLogin(t *testing.T) {
 		})
 	}
 
+}
+
+func TestGetLeaveStatusHistory(t *testing.T) {
+	employeeUsecase, mockRepo := mockNeeds(t)
+
+	mockExcepthistory := []response.LeaveHistory{
+		{
+			Leave_type: "Casual",
+			From:       "10-10-2001",
+			To:         "20-10-2001",
+			Status:     "A",
+		},
+		{
+			Leave_type: "Casual",
+			From:       "10-11-2001",
+			To:         "20-11-2001",
+			Status:     "D",
+		},
+	}
+
+	actualHistory := []response.LeaveHistory{
+		{
+			Leave_type: "Casual",
+			From:       "10-10-2001",
+			To:         "20-10-2001",
+			Status:     "Approved",
+		},
+		{
+			Leave_type: "Casual",
+			From:       "10-11-2001",
+			To:         "20-11-2001",
+			Status:     "Declined",
+		},
+	}
+
+	testData := []struct {
+		name        string
+		id          int
+		beforeTest  func(employeeRepo *mock.MockEmployeeRepository)
+		expectedErr error
+	}{
+		{
+			name: "Test Responce success",
+			id:   1,
+			beforeTest: func(employeeRepo *mock.MockEmployeeRepository) {
+				employeeRepo.EXPECT().LeaveStatusHistory(gomock.Any(), 1).
+					Return(mockExcepthistory, nil)
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "Test Responce no leaves found",
+			id:   1,
+			beforeTest: func(employeeRepo *mock.MockEmployeeRepository) {
+				employeeRepo.EXPECT().LeaveStatusHistory(gomock.Any(), 1).
+					Return([]response.LeaveHistory{}, errors.New("No leave found"))
+			},
+			expectedErr: errors.New("No leave found"),
+		},
+	}
+
+	for _, testcase := range testData {
+		t.Run(testcase.name, func(t *testing.T) {
+			testcase.beforeTest(mockRepo)
+			status, err := employeeUsecase.GetLeaveStatusHistory(context.Background(), testcase.id)
+			if err == nil {
+				assert.Equal(t, status, actualHistory)
+			} else {
+				assert.Equal(t, status, []response.LeaveHistory{})
+			}
+
+			assert.Equal(t, testcase.expectedErr, err)
+		})
+	}
 }
