@@ -18,6 +18,7 @@ type ServerHTTP struct {
 func NewHTTPServer(employeeHandler *handler.EmployeeHandler, adminHandler *handler.AdminHandler) *ServerHTTP {
 
 	// creating an instance of gin engine
+
 	server := gin.New()
 
 	// logger middleware
