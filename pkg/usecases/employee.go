@@ -5,8 +5,8 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"math"
+	"os"
 	"shiftsync/pdf"
 	"shiftsync/pkg/domain"
 	"shiftsync/pkg/encrypt"
@@ -265,7 +265,7 @@ func (e *employeeUseCase) GetLeaveStatusHistory(ctx context.Context, id int) ([]
 		return status, err
 	}
 
-	for i, _ := range status {
+	for i := range status {
 		switch status[i].Status {
 		case "A":
 			status[i].Status = "Approved"
@@ -379,7 +379,7 @@ func (e *employeeUseCase) GetDataForSalarySlip(ctx context.Context, id int) ([]b
 		return nil, pdfError
 	}
 
-	pdfData, pdfPathErr := ioutil.ReadFile("/home/ubuntu/shiftSync/pdf/generated/salary_slip" + data.Employee_id + ".pdf")
+	pdfData, pdfPathErr := os.ReadFile("/home/ubuntu/shiftSync/pdf/generated/salary_slip" + data.Employee_id + ".pdf")
 	if pdfPathErr != nil {
 		return nil, pdfPathErr
 	}
