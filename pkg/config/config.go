@@ -45,7 +45,7 @@ func LoadConfig() (Config, error) {
 	vp := viper.New()
 	vp.SetConfigName("config")
 	vp.SetConfigType("json")
-	vp.AddConfigPath("/home/ashiq/Documents/shiftSync/pkg/config/")
+	vp.AddConfigPath("pkg/config/")
 
 	if err := vp.ReadInConfig(); err != nil {
 		return Config{}, err
