@@ -1,54 +1,84 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"shiftsync/pkg/domain"
+	"shiftsync/pkg/helper/request"
+	"shiftsync/pkg/helper/response"
+	mock "shiftsync/pkg/mock/employeeUsecaseMock"
 	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
+	"github.com/go-playground/assert/v2"
+	"github.com/golang/mock/gomock"
 )
 
+func mockNeeds(t *testing.T) (*EmployeeHandler, *mock.MockEmployeeUseCase) {
+
+	cntrl := gomock.NewController(t)
+	mockUseCase := mock.NewMockEmployeeUseCase(cntrl)
+	employeeHandler := NewEmployeeHandler(mockUseCase)
+
+	return employeeHandler, mockUseCase
+}
+
 func TestPostLogin(t *testing.T) {
-	// Create a new Gin router and set the handler function
-	router := gin.Default()
-	handler := &EmployeeHandler{}
-	router.POST("/login", handler.PostLogin)
 
-	// Test case 1: Successful login
-	t.Run("Test successful login", func(t *testing.T) {
-		// Create a new HTTP request with valid credentials
-		jsonData := `{"user_name": "username", "pass_word": "password"}`
-		req, _ := http.NewRequest("POST", "/login", strings.NewReader(jsonData))
-		req.Header.Set("Content-Type", "application/json")
+	employeeHandler, mockUseCase := mockNeeds(t)
 
-		// Create a response recorder to capture the response
-		respRecorder := httptest.NewRecorder()
+	emp := domain.Employee{
+		ID:        1,
+		User_name: "ashiq@328",
+		Pass_word: "Ashiq@123",
+	}
 
-		// Serve the request
-		router.ServeHTTP(respRecorder, req)
+	testData := []struct {
+		name         string
+		loginDetails request.LoginStruct
+		response     response.Response
+		beforeTest   func(employeeUseCase *mock.MockEmployeeUseCase)
+	}{
 
-		// Verify the response
-		assert.Equal(t, http.StatusOK, respRecorder.Code)
-		// TODO: Add more assertions for the response body or cookies if needed
-	})
+		{
+			name: "Test Login",
+			response: response.Response{
+				StatusCode: 200,
+				Message:    "succesfuly logged in",
+				Errors:     nil,
+			},
+			beforeTest: func(employeeUseCase *mock.MockEmployeeUseCase) {
+				employeeUseCase.EXPECT().Login(gomock.Any(), domain.Employee{User_name: "ashiq@328", Pass_word: "Ashiq@123"}).Return(emp, nil)
+			},
+		},
+	}
 
-	// Test case 2: Missing credentials
-	t.Run("Test missing credentials", func(t *testing.T) {
-		// Create a new HTTP request with missing credentials
-		jsonData := `{"user_name": "", "pass_word": ""}`
-		req, _ := http.NewRequest("POST", "/login", strings.NewReader(jsonData))
-		req.Header.Set("Content-Type", "application/json")
+	for _, testCase := range testData {
+		t.Run(testCase.name, func(t *testing.T) {
 
-		// Create a response recorder to capture the response
-		respRecorder := httptest.NewRecorder()
+			router := gin.Default()
+			router.POST("/employee/signin/", employeeHandler.PostLogin)
 
-		// Serve the request
-		router.ServeHTTP(respRecorder, req)
+			data := `{"username":"ashiq@328","password":"Ashiq@123"}`
 
-		// Verify the response
-		assert.Equal(t, http.StatusBadRequest, respRecorder.Code)
-		// TODO: Add more assertions for the response body if needed
-	})
+			req, _ := http.NewRequest("POST", "/employee/signin/", strings.NewReader(data))
+			req.Header.Set("Content-Type", "application/json")
+
+			respRecorder := httptest.NewRecorder()
+			testCase.beforeTest(mockUseCase)
+
+			router.ServeHTTP(respRecorder, req)
+
+			var actual response.Response
+			json.Unmarshal(respRecorder.Body.Bytes(), &actual)
+
+			assert.Equal(t, testCase.response.StatusCode, actual.StatusCode)
+			assert.Equal(t, testCase.response.Message, actual.Message)
+			assert.Equal(t, testCase.response.Errors, actual.Errors)
+
+		})
+	}
+
 }
