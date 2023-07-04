@@ -34,16 +34,11 @@ jobs:
           host: ${{ secrets.HOST_IP }}
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
-          run: |
-            echo "Printing PATH:"
-            echo $PATH
-            which go
           script: |
             echo "Connected to EC2 instance"
             cd shiftSync
             git pull
-
-            
+            which go
             sudo systemctl restart shiftsync.service
       
       
