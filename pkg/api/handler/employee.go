@@ -34,7 +34,7 @@ func NewEmployeeHandler(userUseCase service.EmployeeUseCase) *EmployeeHandler {
 // @Success 200 {object} request.SignUp{} "Welcome to signup page"
 func (u *EmployeeHandler) GetSignUp(ctxt *gin.Context) {
 
-	resp := response.SuccessResponse(200, "hola to signup page", request.SignUp{})
+	resp := response.SuccessResponse(200, "welcome to signup page", request.SignUp{})
 
 	ctxt.JSON(200, resp)
 }
