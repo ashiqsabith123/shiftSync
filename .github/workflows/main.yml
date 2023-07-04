@@ -27,7 +27,12 @@ jobs:
         run: make test
 
       - name: Connect to EC2 instance
-        run: ssh -i ${{ secrets.SSH_KEY }} ubuntu@ec2-34-228-140-218.compute-1.amazonaws.com "echo 'Connected to EC2'"
-
+        uses: appleboy/ssh-action@v0.2.0
+        with:
+          host: 34.228.140.218
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "Connected to EC2 instance"
       
       
