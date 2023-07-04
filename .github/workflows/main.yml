@@ -38,5 +38,6 @@ jobs:
             echo "Connected to EC2 instance"
             go version
             pwd
+            whoami
       
       
