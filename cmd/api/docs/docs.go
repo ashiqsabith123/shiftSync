@@ -589,9 +589,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Employee - Testing for Sign up"
+                    "Employee - Sign up"
                 ],
-                "summary": "Api for get signup page",
+                "summary": "Api for get signup page for employees",
                 "operationId": "Signup",
                 "responses": {
                     "200": {
