@@ -2,9 +2,7 @@ name: shiftSync
 
 on: 
   push:
-    branches: 
-      -testing 
-      -main
+    branches: [ testing ]
     
 jobs:
   build:
