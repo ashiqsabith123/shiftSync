@@ -34,12 +34,13 @@ jobs:
           host: ${{ secrets.HOST_IP }}
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
-          debug: true
+         
           script: |
             echo "Connected to EC2 instance"
             cd shiftSync
             git pull
             go version
             sudo systemctl restart shiftsync.service
+          debug: true
       
       
