@@ -34,6 +34,7 @@ jobs:
           host: ${{ secrets.HOST_IP }}
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
+          debug: true
           script: |
             echo "Connected to EC2 instance"
             cd shiftSync
