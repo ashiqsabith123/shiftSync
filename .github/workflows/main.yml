@@ -38,7 +38,7 @@ jobs:
             git pull
             cd cmd/api
             go build
-            cd ../../
-            systemctl restart shiftsync.service
+            cd ../../../
+            sudo systemctl restart shiftsync.service
       
       
