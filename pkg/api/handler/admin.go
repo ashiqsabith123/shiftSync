@@ -24,7 +24,7 @@ func NewAdminHandler(usecase service.AdminUseCase) *AdminHandler {
 }
 
 // Sign In Page godoc
-// @summary Api for get admin signin page
+// @summary Api for get admin signin page testing
 // @id Admin Sign In
 // @description api for admin to signin
 // @tags Admin -Sign in
