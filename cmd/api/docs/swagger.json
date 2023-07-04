@@ -13,7 +13,7 @@
                 "tags": [
                     "Admin -Sign in"
                 ],
-                "summary": "Api for get admin signin page",
+                "summary": "Api for get admin signin page testing",
                 "operationId": "Admin Sign In",
                 "responses": {
                     "200": {

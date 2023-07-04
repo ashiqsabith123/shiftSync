@@ -181,7 +181,7 @@ paths:
           description: Welcome to sign in page
           schema:
             $ref: '#/definitions/request.LoginStruct'
-      summary: Api for get admin signin page
+      summary: Api for get admin signin page testing
       tags:
       - Admin -Sign in
     post:
