@@ -34,11 +34,11 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             echo "Connected to EC2 instance"
-            cd shiftsync
+            cd shiftSync
             git pull
             cd cmd/api
             go build
-            cd ..
+            cd ../../
             systemctl restart shiftsync.service
       
       
