@@ -3,7 +3,6 @@ name: shiftSync
 on:
   push:
     branches:
-      - testing
       - main
     
 jobs:
@@ -31,18 +30,14 @@ jobs:
       - name: Connect to EC2 instance
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST_IP }}
+          host: ${{secrets.HOST_IP}}
           username: ubuntu
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{secrets.SSH_KEY}}
          
           script: |
             echo "Connected to EC2 instance"
             cd shiftSync
             git pull
-            pwd
             go version
-            echo $PATH
-            sudo systemctl restart shiftsync.service
-          debug: true
       
       
