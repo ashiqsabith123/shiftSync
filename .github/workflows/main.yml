@@ -40,6 +40,7 @@ jobs:
             cd shiftSync
             git pull
             pwd
+            echo $PATH
             sudo systemctl restart shiftsync.service
           debug: true
       
