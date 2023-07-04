@@ -39,5 +39,6 @@ jobs:
             cd shiftSync
             git pull
             go version
+            pwd
       
       
