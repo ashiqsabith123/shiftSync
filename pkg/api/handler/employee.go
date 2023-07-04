@@ -26,7 +26,7 @@ func NewEmployeeHandler(userUseCase service.EmployeeUseCase) *EmployeeHandler {
 }
 
 // Sign Up Page godoc
-// @summary Api for get signup page
+// @summary Api for get signup page ///
 // @id Signup
 // @description api for employees to signup
 // @tags Employee -Sign up
