@@ -19,11 +19,15 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y make
-          
+
       - name: Build
         run: make build
 
       - name: Test
-        run: make
+        run: make test
+
+      - name: Connect to EC2 instance
+        run: ssh -i ${{ secrets.SSH_KEY }} ubuntu@ec2-34-228-140-218.compute-1.amazonaws.com "echo 'Connected to EC2'"
+
       
       
