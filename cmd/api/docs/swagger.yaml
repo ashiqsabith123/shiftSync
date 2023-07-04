@@ -524,6 +524,13 @@ paths:
     post:
       description: api for employees to signin
       operationId: Sign In
+      parameters:
+      - description: Sign in details
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.LoginStruct'
       produces:
       - application/json
       responses:
@@ -555,7 +562,7 @@ paths:
             $ref: '#/definitions/request.SignUp'
       summary: Api for get signup page
       tags:
-      - Employee - Sign up
+      - Employee - Testing for Sign up
     post:
       description: api for employees to signup
       operationId: Signup

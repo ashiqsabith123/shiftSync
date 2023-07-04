@@ -549,6 +549,17 @@ const docTemplate = `{
                 ],
                 "summary": "Api for post signin details",
                 "operationId": "Sign In",
+                "parameters": [
+                    {
+                        "description": "Sign in details",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LoginStruct"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Succesfuly logged in",
@@ -578,7 +589,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Employee - Sign up"
+                    "Employee - Testing for Sign up"
                 ],
                 "summary": "Api for get signup page",
                 "operationId": "Signup",
