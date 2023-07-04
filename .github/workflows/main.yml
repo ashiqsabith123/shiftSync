@@ -1,34 +1,19 @@
-name: shiftSync
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v3
 
-on: 
-  push:
-    branches: [ testing ]
-    
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+  - name: Set up Go
+    uses: actions/setup-go@v3
+    with:
+      go-version: 1.20.5
 
-      - name: Set up Go 
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.20.5
-                
-      - name: Build
-        run: go build -v ./...
+  - name: Install Make
+    run: |
+      sudo apt update
+      sudo apt install -y make
 
-      - name: Test
-        run: go test ./... -v -cover
+  - name: Build
+    run: make build
 
-      - name: Install Make
-        run: |
-          sudo apt update
-          sudo apt install -y make
-
-      - name: Build and push Docker image
-        run: |
-          docker build -t shiftsync:latest .
-          docker tag shiftsync:latest ashiq328/shiftsync:latest
-          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
-          docker push ashiq328/shiftsync:latest
+  - name: Test
+    run: make test
