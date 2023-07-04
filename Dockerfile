@@ -6,4 +6,6 @@ COPY . .
 
 RUN make build
 
+RUN make test
+
 CMD make run
