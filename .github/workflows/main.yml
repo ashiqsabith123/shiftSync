@@ -36,7 +36,8 @@ jobs:
          
           script: |
             echo "Connected to EC2 instance"
-            go version
+            cd shiftSync
+            git pull
             make build
             sudo systemctl restart shiftsync.service
         
