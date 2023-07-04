@@ -22,11 +22,11 @@ jobs:
           sudo apt update
           sudo apt install -y make
 
+      - name: Test
+        run: make test    
+
       - name: Build
         run: make build
-
-      - name: Test
-        run: make test
 
       - name: Connect to EC2 instance
         uses: appleboy/ssh-action@master
@@ -38,8 +38,6 @@ jobs:
             echo "Connected to EC2 instance"
             cd shiftSync
             git pull
-            go build ./cmd/api
-            cd ../../../
             sudo systemctl restart shiftsync.service
       
       
