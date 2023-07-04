@@ -39,7 +39,7 @@ jobs:
             echo "Connected to EC2 instance"
             cd shiftSync
             git pull
-            go version
+            pwd
             sudo systemctl restart shiftsync.service
           debug: true
       
