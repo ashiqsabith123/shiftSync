@@ -28,7 +28,7 @@ func NewEmployeeHandler(userUseCase service.EmployeeUseCase) *EmployeeHandler {
 // @summary Api for get signup page ///
 // @id Signup
 // @description api for employees to signup
-// @tags Employee - Testing Sign up
+// @tags Employee - Testing for Sign up
 // @Produce json
 // @Router /employee/signup [get]
 // @Success 200 {object} request.SignUp{} "Welcome to signup page"
