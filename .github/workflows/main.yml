@@ -31,7 +31,7 @@ jobs:
       - name: Connect to EC2 instance
         uses: appleboy/ssh-action@master
         with:
-          host: 34.228.140.218
+          host: ${{ secrets.HOST_IP }}
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
           script: |
