@@ -2,10 +2,10 @@ GOCMD=go
 CODE_COVERAGE=code-coverage
 
 build:
-	go build -o bin/main cmd/api/main.go
+	go build -o build/bin/main cmd/api/main.go
 
 run:
-	./bin/main
+	./build/bin/main
 
 swag: 
 	swag init -g /pkg/api/server.go -o ./cmd/api/docs

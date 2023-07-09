@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3'
 
 services:
   postgres:
@@ -8,6 +8,10 @@ services:
       - ./data:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+    environment:
+       POSTGRES_USER: ashiq
+       POSTGRES_PASSWORD: ashiq123
+       POSTGRES_DB: shiftsync_db
     networks:
       - mynetwork
 
