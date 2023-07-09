@@ -1,13 +1,9 @@
-version: '3'
+version: '3.8'
+
 services:
   postgres:
     image: postgres
     restart: always
-    environment:
-      POSTGRES_USER: ashiq
-      POSTGRES_PASSWORD: ashiq123
-      POSTGRES_DB: shiftsync_db
-      DATABASE_HOST: 5432
     volumes:
       - ./data:/var/lib/postgresql/data
     ports:
@@ -17,7 +13,7 @@ services:
 
   api:
     build: . 
-    image: shiftsync:latest
+    image: ashiq328/shiftsync:1.0
     ports: 
       - 8081:8081
     restart: on-failure
@@ -25,7 +21,7 @@ services:
       - postgres
     networks:
       - mynetwork
-   
 
 networks:
   mynetwork:
+    driver: bridge
