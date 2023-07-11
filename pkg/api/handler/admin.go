@@ -161,7 +161,7 @@ func (a *AdminHandler) ApproveApplication(ctx *gin.Context) {
 		return
 	}
 
-	accDetails := a.adminusecase.FetchAccountDetailsById(ctx, form.FormID)
+	accDetails := a.adminusecase.FetchAccountDetailsByID(ctx, form.FormID)
 
 	accDetails.Id = form.FormID
 	accDetails.Name = details.Name

@@ -20,7 +20,7 @@ type AdminUseCase interface {
 	AddSalaryDetails(ctx context.Context, salaryDetails domain.Salary) error
 	EditSalaryDetails(ctx context.Context, editDetails domain.Salary) error
 	FindEmployeeById(ctx context.Context, id int) response.EmployeeDetails
-	FetchAccountDetailsById(ctx context.Context, id int) response.AccountDetails
+	FetchAccountDetailsByID(ctx context.Context, id int) response.AccountDetails
 	GetAllTransactions(ctx context.Context) ([]response.AllTransactions, error)
 	GetEmployeeSalaryNotAdded(ctx context.Context) ([]response.EmployeeSal, error)
 	GetAllEmployees(ctx context.Context) ([]response.AllEmployee, error)

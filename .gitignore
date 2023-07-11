@@ -25,3 +25,7 @@ go.work
 
 #Database credentials and secrets
 pkg/config/config.json
+
+# Go ci lint script file and ci lint report
+.golint
+lint_report.txt

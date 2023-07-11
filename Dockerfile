@@ -1,4 +1,4 @@
-FROM golang:1.20
+FROM golang:1.20 AS builder
 
 WORKDIR /SHIFTSYNC
 
@@ -6,6 +6,11 @@ COPY . .
 
 RUN make build
 
-RUN make test
+# Second stage for running the application
+FROM alpine:latest
+
+WORKDIR /SHIFTSYNC
+
+COPY --from=builder /SHIFTSYNC .
 
 CMD make run

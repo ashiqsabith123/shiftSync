@@ -181,7 +181,7 @@ func (a *AdminUseCase) FindEmployeeById(ctx context.Context, id int) response.Em
 	return details
 }
 
-func (a *AdminUseCase) FetchAccountDetailsById(ctx context.Context, id int) response.AccountDetails {
+func (a *AdminUseCase) FetchAccountDetailsByID(ctx context.Context, id int) response.AccountDetails {
 	details := a.adminRepo.FetchAccountDetailsById(ctx, id)
 
 	details.Account_no = string(encrypt.Decrypt(helper.Decode(details.Account_no)))
