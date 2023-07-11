@@ -29,3 +29,6 @@ pkg/config/config.json
 # Go ci lint script file and ci lint report
 .golint
 lint_report.txt
+
+# Go test coverage file
+code-coverage.out
