@@ -31,4 +31,9 @@ pkg/config/config.json
 lint_report.txt
 
 # Go test coverage file
-code-coverage.out
+code-coverage.*
+
+# Service file for automate swagger
+service.sh
+
+
