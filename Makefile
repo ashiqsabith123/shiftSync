@@ -2,7 +2,7 @@ GOCMD=go
 CODE_COVERAGE=code-coverage
 
 build:
-	go build -o build/bin/main cmd/api/main.go
+	$(GOCMD) build -o build/bin/main cmd/api/main.go
 
 run:
 	./build/bin/main

@@ -1,16 +1,37 @@
-FROM golang:1.20 AS builder
+# Build stage
+FROM golang:1.20.5-alpine3.18 AS build-stage
 
-WORKDIR /SHIFTSYNC
+# Maintainer info
+LABEL maintainer="Ashiq Sabith <ashiqsabith328@gmail.com>"
 
+WORKDIR /home/app
+
+# Copy go.mod and go.sum files
+COPY go.mod go.sum ./
+
+# Download Go dependencies
+# RUN go mod download
+
+# Copy the entire project
 COPY . .
 
-RUN make build
+# Build the application
+RUN go build -o /home/build/api ./cmd/api
 
-# Second stage for running the application
-FROM alpine:latest
+# Final stage
+FROM alpine:3.18
 
-WORKDIR /SHIFTSYNC
+# Maintainer info
+LABEL maintainer="Ashiq Sabith <ashiqsabith328@gmail.com>"
 
-COPY --from=builder /SHIFTSYNC .
+WORKDIR /home/app
 
-CMD make run
+# Copy the compiled binary from the build stage
+COPY --from=build-stage /home/build/api ./
+
+# Create a config folder and copy the config.json file
+RUN mkdir -p pkg/config
+
+COPY pkg/config/config.json pkg/config/
+
+CMD ["./api"]
