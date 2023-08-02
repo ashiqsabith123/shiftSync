@@ -35,7 +35,7 @@ type Form struct {
 	Photo                string `json:"photo"`
 }
 
-type OTPStruct struct {
+type OtpStruct struct {
 	Code string `json:"otp"`
 }
 

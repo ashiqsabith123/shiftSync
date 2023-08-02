@@ -15,7 +15,7 @@ type EmployeeUseCase interface {
 	FormStatus(ctx context.Context, empID int) (response.FormStatus, error)
 	GetDutySchedules(ctx context.Context, id int) (response.Duty, error)
 	PunchIn(ctx context.Context, ID int) (string, error)
-	VerifyOtpForPunchin(ctx context.Context, id int, otp request.OTPStruct) error
+	VerifyOtpForPunchin(ctx context.Context, id int, otp request.OtpStruct) error
 	PunchOut(ctx context.Context, id int) error
 	ApplyLeave(ctx context.Context, leave domain.Leave) (string, error)
 	GetLeaveStatusHistory(ctx context.Context, id int) ([]response.LeaveHistory, error)

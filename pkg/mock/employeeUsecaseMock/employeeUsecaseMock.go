@@ -244,7 +244,7 @@ func (mr *MockEmployeeUseCaseMockRecorder) SignUpOtp(r, find interface{}) *gomoc
 }
 
 // VerifyOtpForPunchin mocks base method.
-func (m *MockEmployeeUseCase) VerifyOtpForPunchin(ctx context.Context, id int, otp request.OTPStruct) error {
+func (m *MockEmployeeUseCase) VerifyOtpForPunchin(ctx context.Context, id int, otp request.OtpStruct) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "VerifyOtpForPunchin", ctx, id, otp)
 	ret0, _ := ret[0].(error)

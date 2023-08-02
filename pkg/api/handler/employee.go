@@ -37,6 +37,7 @@ func (u *EmployeeHandler) GetSignUp(ctxt *gin.Context) {
 	resp := response.SuccessResponse(200, "welcome to signup page", request.SignUp{})
 
 	ctxt.JSON(200, resp)
+
 }
 
 // Sign Up Page godoc
@@ -84,7 +85,7 @@ func (u *EmployeeHandler) PostSignup(ctxt *gin.Context) {
 		return
 	}
 
-	ctxt.SetCookie("employee", token, 20*60, "", "", false, true)
+	ctxt.SetCookie("_signup-cookie", token, 20*60, "", "", false, true)
 
 	resp := response.SuccessResponse(200, "Otp send succesfully", nil)
 	ctxt.JSON(200, resp)
@@ -104,7 +105,7 @@ func (u *EmployeeHandler) PostSignup(ctxt *gin.Context) {
 // @Failure 500 {object} response.Response{} "Unable to find details""
 func (u *EmployeeHandler) VerifyOtp(ctxt *gin.Context) {
 
-	var otp request.OTPStruct
+	var otp request.OtpStruct
 
 	if err := ctxt.ShouldBindJSON(&otp); err != nil {
 
@@ -114,8 +115,8 @@ func (u *EmployeeHandler) VerifyOtp(ctxt *gin.Context) {
 
 	}
 
-	value, err := ctxt.Cookie("employee")
-	ctxt.SetCookie("employee", "", -1, "", "", false, true)
+	value, err := ctxt.Cookie("_signup-cookie")
+	ctxt.SetCookie("_signup-cookie", "", -1, "", "", false, true)
 
 	if err != nil {
 		resp := response.ErrorResponse(500, "unable to find details", err.Error(), nil)
@@ -406,7 +407,7 @@ func (e *EmployeeHandler) PunchIn(c *gin.Context) {
 // @Failure 400 {object} response.Response{} "error while punching"
 func (e *EmployeeHandler) VerifyOtpPunchin(c *gin.Context) {
 
-	var otp request.OTPStruct
+	var otp request.OtpStruct
 	if err := c.ShouldBindJSON(&otp); err != nil {
 		resp := response.ErrorResponse(400, "Invalid input", err.Error(), otp)
 		c.JSON(400, resp)

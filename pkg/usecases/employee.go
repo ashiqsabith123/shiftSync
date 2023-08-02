@@ -149,7 +149,7 @@ func (u *employeeUseCase) PunchIn(ctx context.Context, ID int) (string, error) {
 
 }
 
-func (u *employeeUseCase) VerifyOtpForPunchin(ctx context.Context, id int, otp request.OTPStruct) error {
+func (u *employeeUseCase) VerifyOtpForPunchin(ctx context.Context, id int, otp request.OtpStruct) error {
 
 	var find domain.Employee
 
