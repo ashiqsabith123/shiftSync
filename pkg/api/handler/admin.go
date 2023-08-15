@@ -127,12 +127,9 @@ func (a *AdminHandler) ViewApplications(ctx *gin.Context) {
 		return
 	}
 
-	var resform []response.Form
-	copier.Copy(&resform, &forms)
-
 	ctx.JSON(200, gin.H{
 		"status": 200,
-		"forms":  resform,
+		"forms":  forms,
 	})
 
 }
@@ -183,7 +180,7 @@ func (a *AdminHandler) ApproveApplication(ctx *gin.Context) {
 	ctx.JSON(200, resp)
 }
 
-func (a *AdminHandler) FormCorrection(ctx *gin.Context) {
+func (a *AdminHandler) ApplicationCorrection(ctx *gin.Context) {
 	var res request.FormCorrection
 	if err := ctx.ShouldBindJSON(&res); err != nil {
 		resp := response.ErrorResponse(400, "invalid input", err.Error(), res)

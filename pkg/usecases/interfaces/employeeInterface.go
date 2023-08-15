@@ -23,4 +23,5 @@ type EmployeeUseCase interface {
 	GetSalaryHistory(ctx context.Context, id int) ([]response.Salaryhistory, error)
 	GetSalaryDetails(ctx context.Context, id int) (response.Salarydetails, error)
 	GetDataForSalarySlip(ctx context.Context, id int) ([]byte, error)
+	
 }
