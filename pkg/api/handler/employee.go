@@ -45,7 +45,7 @@ func (u *EmployeeHandler) GetSignUp(ctxt *gin.Context) {
 // @id Signup
 // @description api for employees to signup
 // @tags Employee - Sign up
-// @Produce json
+// @Produce json3
 // @Param input body domain.Employee{} true "Sign up details"
 // @Router /employee/signup [post]
 // @Success 200 {object} response.Response{} "Otp senEmployeed succesfully"
@@ -69,10 +69,10 @@ func (u *EmployeeHandler) PostSignup(ctxt *gin.Context) {
 		return
 	}
 
-	e, b := verification.SendOtp(signup.Phone)
+	responce, err := verification.SendOtp(signup.Phone)
 
-	if b != nil {
-		resp := response.ErrorResponse(500, e, b.Error(), nil)
+	if err != nil {
+		resp := response.ErrorResponse(500, "Failed to send otp", err.Error(), nil)
 		ctxt.JSON(http.StatusInternalServerError, resp)
 		return
 	}
@@ -87,7 +87,7 @@ func (u *EmployeeHandler) PostSignup(ctxt *gin.Context) {
 
 	ctxt.SetCookie("_signup-cookie", token, 20*60, "", "", false, true)
 
-	resp := response.SuccessResponse(200, "Otp send succesfully", nil)
+	resp := response.SuccessResponse(200, responce, nil)
 	ctxt.JSON(200, resp)
 
 }
