@@ -320,7 +320,7 @@ func (u *EmployeeHandler) GetDashboard(ctx *gin.Context) {
 // Punching godoc
 // @id Get duty
 // @summary Api for employees to get duty
-// @description Api for employees to get duty schedule
+// @description Api for employees to get duty schedule that assigned by admin
 // @tags Employee - Punching
 // @Produce json
 // @Router /employee/duty [get]
