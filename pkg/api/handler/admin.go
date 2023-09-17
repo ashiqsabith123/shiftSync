@@ -47,8 +47,10 @@ func (a *AdminHandler) GetSignin(ctxt *gin.Context) {
 // @Failure 400 {object} response.Response{} "Username and password is mandatory"
 // @Failure 500 {object} response.Response{} "Unable to login"
 func (a *AdminHandler) PostSignin(ctxt *gin.Context) {
-	var adm request.LoginStruct
-	if err := ctxt.ShouldBindJSON(&adm); err != nil {
+
+	var admminDetalis request.LoginStruct
+
+	if err := ctxt.ShouldBindJSON(&admminDetalis); err != nil {
 		resp := response.ErrorResponse(400, "Invalid input", err.Error(), request.LoginStruct{})
 		ctxt.JSON(400, resp)
 		return
@@ -56,7 +58,7 @@ func (a *AdminHandler) PostSignin(ctxt *gin.Context) {
 
 	var login domain.Admin
 
-	copier.Copy(&login, &adm)
+	copier.Copy(&login, &admminDetalis)
 
 	admin, err := a.adminusecase.SignIn(ctxt, login)
 
@@ -66,9 +68,9 @@ func (a *AdminHandler) PostSignin(ctxt *gin.Context) {
 		return
 	}
 
-	token, terr := auth.GenerateTokens(uint(admin.ID))
+	token, err := auth.GenerateTokens(uint(admin.ID))
 
-	if terr != nil {
+	if err != nil {
 		resp := response.ErrorResponse(500, "unable to login", err.Error(), nil)
 		ctxt.JSON(http.StatusInternalServerError, resp)
 		return

@@ -35,13 +35,11 @@ func SendNotification(cn config.Config) {
 				log.Fatal(err)
 			}
 
-			fmt.Println("hello")
 			fmt.Println(resForgot)
 
 			if len(resForgot) > 0 {
 				for i := 0; i < len(resForgot); i++ {
 					phone := fmt.Sprint(resForgot[i].Phone)
-					fmt.Println(phone)
 
 					params := &api.CreateMessageParams{}
 					params.SetBody("Hi, " + resForgot[i].Name + " please remember to punch out for your shift as you forgot to do so. Thank you. ")
