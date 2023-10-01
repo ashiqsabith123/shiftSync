@@ -26,9 +26,6 @@ func NewHTTPServer(employeeHandler *handler.EmployeeHandler, adminHandler *handl
 
 	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	// The url pointing to API definition
-	//server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-
 	routes.EmployeeRoutes(server.Group("/employee"), employeeHandler)
 	routes.AdminRoutes(server.Group("/admin"), adminHandler)
 

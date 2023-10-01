@@ -19,7 +19,6 @@ func SendNotification(cn config.Config) {
 		Username: cn.Twilio.Account_sid,
 		Password: cn.Twilio.Auth_token,
 	})
-	//SERVICE_ID = cn.Twilio.Service_id
 
 	var resForgot []response.Forgot
 
@@ -40,7 +39,6 @@ func SendNotification(cn config.Config) {
 			if len(resForgot) > 0 {
 				for i := 0; i < len(resForgot); i++ {
 					phone := fmt.Sprint(resForgot[i].Phone)
-
 					params := &api.CreateMessageParams{}
 					params.SetBody("Hi, " + resForgot[i].Name + " please remember to punch out for your shift as you forgot to do so. Thank you. ")
 					params.SetFrom("+12543212748")
