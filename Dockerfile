@@ -9,10 +9,6 @@ WORKDIR /home/app
 # Copy go.mod and go.sum files
 COPY go.mod go.sum ./
 
-# Download Go dependencies
-# RUN go mod download
-
-# Copy the entire project
 COPY . .
 
 # Build the application
