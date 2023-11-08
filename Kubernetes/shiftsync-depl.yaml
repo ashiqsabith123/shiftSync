@@ -6,7 +6,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: shiftsync
+      app: shiftsync 
   template:
     metadata:
       labels:

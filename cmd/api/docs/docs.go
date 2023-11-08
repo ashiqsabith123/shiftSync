@@ -68,6 +68,69 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/signup": {
+            "get": {
+                "description": "api for employees to signup",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Sign up"
+                ],
+                "summary": "Api for get signup page for admin",
+                "operationId": "Admin Sign Up",
+                "responses": {
+                    "200": {
+                        "description": "Welcome to signup page",
+                        "schema": {
+                            "$ref": "#/definitions/request.SignUp"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "api for admin to signup",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin - Sign up"
+                ],
+                "summary": "Api for post signup details",
+                "operationId": "Admin Signup",
+                "parameters": [
+                    {
+                        "description": "Sign up details",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.SignUp"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Succesfully account created",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "unable to signup",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/employee/attendance": {
             "get": {
                 "description": "api for get employees attendances",
@@ -139,7 +202,7 @@ const docTemplate = `{
         },
         "/employee/duty": {
             "get": {
-                "description": "Api for employees to get duty schedule",
+                "description": "Api for employees to get duty schedule that assigned by admin",
                 "produces": [
                     "application/json"
                 ],
@@ -663,7 +726,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.OTPStruct"
+                            "$ref": "#/definitions/request.OtpStruct"
                         }
                     }
                 ],
@@ -786,7 +849,7 @@ const docTemplate = `{
                 }
             }
         },
-        "request.OTPStruct": {
+        "request.OtpStruct": {
             "type": "object",
             "properties": {
                 "otp": {

@@ -88,11 +88,30 @@ func (u *AdminHandler) Logout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+// Sign Up Page godoc
+// @summary Api for get signup page for admin
+// @id  Admin Sign Up
+// @description api for employees to signup
+// @tags Admin - Sign up
+// @Produce json
+// @Router /admin/signup [get]
+// @Success 200 {object} request.SignUp{} "Welcome to signup page"
 func (a *AdminHandler) GetSignUp(ctxt *gin.Context) {
 	resp := response.SuccessResponse(200, "Welcome to signup page", request.SignUp{})
 	ctxt.JSON(200, resp)
 }
 
+// Sign Up Page godoc
+// @summary Api for post signup details
+// @id Admin Signup
+// @description api for admin to signup
+// @tags Admin - Sign up
+// @Produce json
+// @Param input body request.SignUp true "Sign up details"
+// @Router /admin/signup [post]
+// @Success 201 {object} response.Response{} "Succesfully account created"
+// @Failure 400 {object} response.Response{} "Invalid input"
+// @Failure 500 {object} response.Response{} "unable to signup"
 func (a *AdminHandler) PostSignup(ctxt *gin.Context) {
 
 	var rep request.SignUp

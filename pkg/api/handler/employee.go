@@ -45,7 +45,7 @@ func (u *EmployeeHandler) GetSignUp(ctxt *gin.Context) {
 // @id Signup
 // @description api for employees to signup
 // @tags Employee - Sign up
-// @Produce json3
+// @Produce json
 // @Param input body domain.Employee{} true "Sign up details"
 // @Router /employee/signup [post]
 // @Success 200 {object} response.Response{} "Otp senEmployeed succesfully"
@@ -98,7 +98,7 @@ func (u *EmployeeHandler) PostSignup(ctxt *gin.Context) {
 // @description api for employees to verify otp
 // @tags Employee - Sign up
 // @Produce json
-// @Param input body request.OTPStruct{} true "Otp"
+// @Param input body request.OtpStruct{} true "Otp"
 // @Router /employee/signup/verify-otp [post]
 // @Success 200 {object} response.Response{} "Successfully Account Created"
 // @Failure 400 {object} response.Response{} "Invalid otp"

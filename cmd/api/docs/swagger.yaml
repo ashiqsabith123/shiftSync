@@ -61,7 +61,7 @@ definitions:
       username:
         type: string
     type: object
-  request.OTPStruct:
+  request.OtpStruct:
     properties:
       otp:
         type: string
@@ -205,6 +205,48 @@ paths:
       summary: Api for post admin signin details
       tags:
       - Admin -Sign in
+  /admin/signup:
+    get:
+      description: api for employees to signup
+      operationId: Admin Sign Up
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Welcome to signup page
+          schema:
+            $ref: '#/definitions/request.SignUp'
+      summary: Api for get signup page for admin
+      tags:
+      - Admin - Sign up
+    post:
+      description: api for admin to signup
+      operationId: Admin Signup
+      parameters:
+      - description: Sign up details
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/request.SignUp'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Succesfully account created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: unable to signup
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Api for post signup details
+      tags:
+      - Admin - Sign up
   /employee/attendance:
     get:
       description: api for get employees attendances
@@ -253,7 +295,7 @@ paths:
       - Employee - Dashboard
   /employee/duty:
     get:
-      description: Api for employees to get duty schedule
+      description: Api for employees to get duty schedule that assigned by admin
       operationId: Get duty
       produces:
       - application/json
@@ -601,7 +643,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/request.OTPStruct'
+          $ref: '#/definitions/request.OtpStruct'
       produces:
       - application/json
       responses:
